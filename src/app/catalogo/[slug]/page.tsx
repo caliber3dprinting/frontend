@@ -10,10 +10,17 @@ interface ProductPageProps {
   params: Promise<{ slug: string }>
 }
 
-// Genera las rutas estáticas en build time para todos los productos publicados
+// Si Strapi no está disponible en build time, retorna [] y las páginas
+// se generan on-demand en runtime (dynamicParams = true)
+export const dynamicParams = true
+
 export async function generateStaticParams() {
-  const { data } = await getProducts({ pageSize: 100 })
-  return data.map((p) => ({ slug: p.slug }))
+  try {
+    const { data } = await getProducts({ pageSize: 100 })
+    return data.map((p) => ({ slug: p.slug }))
+  } catch {
+    return []
+  }
 }
 
 // Metadata dinámica por producto
