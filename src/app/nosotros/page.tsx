@@ -5,7 +5,7 @@ import RichText from '@/components/ui/RichText'
 import { getAboutPage, getStrapiImageUrl } from '@/lib/strapi'
 import type { AboutPage } from '@/lib/types'
 
-export const revalidate = process.env.NODE_ENV === 'development' ? 0 : 3600
+export const revalidate = 3600
 
 export const metadata: Metadata = {
   title: 'Nosotros',

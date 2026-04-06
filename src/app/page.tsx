@@ -5,8 +5,7 @@ import AboutPreview from '@/components/home/AboutPreview'
 import TestimonialsSection from '@/components/home/TestimonialsSection'
 import QuoteCTA from '@/components/home/QuoteCTA'
 
-// ISR: sin caché en desarrollo, 1 hora en producción
-export const revalidate = process.env.NODE_ENV === 'development' ? 0 : 3600
+export const revalidate = 3600
 
 export default async function HomePage() {
   // Todas las llamadas corren en paralelo; si algún content type
