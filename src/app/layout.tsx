@@ -41,7 +41,7 @@ export default async function RootLayout({
 
   return (
     <html lang="es" className={inter.variable}>
-      <body className="bg-zinc-950 text-zinc-100 antialiased">
+      <body className="bg-zinc-950 text-zinc-100 antialiased" suppressHydrationWarning>
         <Navbar whatsapp={config.whatsapp_number} />
         <main className="min-h-screen">{children}</main>
         <Footer config={config} />

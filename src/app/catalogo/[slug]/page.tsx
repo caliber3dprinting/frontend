@@ -45,7 +45,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
   ]
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-30">
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-sm text-zinc-400 mb-8">
         <Link href="/" className="hover:text-white transition-colors">Inicio</Link>

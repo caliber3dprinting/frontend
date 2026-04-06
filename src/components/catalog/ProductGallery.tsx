@@ -28,7 +28,7 @@ export default function ProductGallery({ images, title }: ProductGalleryProps) {
 
   return (
     <>
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 ">
         {/* Main image */}
         <button
           className="relative aspect-square rounded-2xl overflow-hidden bg-zinc-800 cursor-zoom-in group"

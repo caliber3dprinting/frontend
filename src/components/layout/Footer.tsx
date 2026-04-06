@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import type { GlobalConfig } from '@/lib/types'
 
@@ -23,13 +24,14 @@ export default function Footer({ config }: FooterProps) {
 
           {/* Brand */}
           <div>
-            <Link href="/" className="inline-flex items-center gap-2.5 mb-4">
-              <span className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center text-white font-display font-black text-sm leading-none">
-                C3
-              </span>
-              <span className="font-display font-bold text-lg text-white tracking-wide">
-                CALIBER <span className="text-orange-500">3D</span>
-              </span>
+            <Link href="/" className="inline-flex items-center mb-4">
+              <Image
+                src="/caliber-3d-logo.svg"
+                alt="Caliber 3D"
+                width={140}
+                height={140}
+                className="h-30 w-auto"
+              />
             </Link>
             <p className="text-zinc-500 text-sm leading-relaxed">
               Impresiones 3D a medida desde Playa del Carmen, México. Transformamos tus ideas en piezas reales con 4 impresoras y dedicación artesanal.

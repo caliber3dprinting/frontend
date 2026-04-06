@@ -16,52 +16,23 @@ Sitio web de Caliber 3D, emprendimiento de impresión 3D personalizada en Playa 
 - ISR (revalidación cada hora en producción)
 - Imágenes desde Strapi local con `dangerouslyAllowLocalIP`
 
-### 🔴 Tareas para mañana (contenido en Strapi)
 
-#### 1. GlobalConfig — PRIORITARIO
-El Navbar muestra WhatsApp vacío y el Footer no tiene datos de contacto.
+####  Pendientes:
 
 Ir a **Content Manager → GlobalConfig → editar → Save & Publish**:
 
 | Campo | Ejemplo |
 |-------|---------|
-| `whatsapp_number` | `529841234567` (sin +, con código de país) |
-| `contact_email` | `caliber3d@gmail.com` |
-| `instagram_url` | `https://instagram.com/caliber3d` |
-| `facebook_url` | `https://facebook.com/caliber3d` |
 | `tiktok_url` | `https://tiktok.com/@caliber3d` |
-| `business_hours` | `Lunes a Viernes de 9 a 18hs` |
-| `address` | `Playa del Carmen, Quintana Roo, México` |
 
-#### 2. HomePage — hero_image faltante
-El hero tiene título y subtítulo pero sin imagen de fondo.
 
-Ir a **Content Manager → HomePage**:
-- Subir una imagen impactante en `hero_image` (foto de impresora o pieza terminada)
-- Verificar que `hero_cta_label` diga algo como `Solicitar cotización`
-
-#### 3. AboutPage — completar historia y valores
-Ir a **Content Manager → AboutPage**:
-- `title`: "Sobre Nosotros" o similar
-- `story`: Escribir la historia del emprendimiento (Rich Text — admite formato)
-- `team_photo`: Subir foto del equipo
-- `team_caption`: Pie de foto (ej: "El equipo de Caliber 3D · Playa del Carmen")
-- `values`: Agregar 3 valores con título y descripción (ej: Calidad, Personalización, Familia)
-
-#### 4. Testimonios — sección vacía
+#### . Testimonios — sección vacía
 La sección de testimonios en la home no muestra nada porque no hay entradas.
 
 Ir a **Content Manager → Testimonial → Create new entry** y agregar al menos 2–3 testimonios reales o de prueba:
 - `author_name`, `author_city`, `content`, `rating` (1–5)
 - Opcionalmente vincular al producto relacionado
 
-#### 5. Verificar que todos los productos tengan categoría asignada
-En **Content Manager → Product**, revisar que cada producto tenga:
-- `category` asignada (manyToOne con Category)
-- `featured: true` si debe aparecer en la home
-- `slug` único y descriptivo (ej: `lagartija-articulada`, `copa-del-mundo-llavero`)
-
----
 
 ## Tecnologías
 

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
@@ -42,17 +43,19 @@ export default function Navbar({ whatsapp }: NavbarProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
 
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2.5 group">
-            <span className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center text-white font-display font-black text-sm leading-none select-none group-hover:bg-orange-400 transition-colors">
-              C3
-            </span>
-            <span className="font-display font-bold text-lg text-white tracking-wide">
-              CALIBER <span className="text-orange-500">3D</span>
-            </span>
+          <Link href="/" className="flex items-center group">
+            <Image
+              src="/caliber-3d-logo.svg"
+              alt="Caliber 3D"
+              width={120}
+              height={120}
+              className="h-26 w-auto"
+              priority
+            />
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-1">
+          <nav className="hidden md:flex items-center gap-3">
             {NAV_LINKS.map(({ href, label, accent }) =>
               accent ? (
                 <Link
@@ -119,7 +122,7 @@ export default function Navbar({ whatsapp }: NavbarProps) {
         />
         {/* Panel */}
         <nav
-          className={`absolute top-0 right-0 h-full w-72 bg-zinc-900 border-l border-zinc-800 flex flex-col pt-20 px-6 pb-8 transition-transform duration-300 ${
+          className={`absolute top-0 right-0 h-full w-72 bg-zinc-900 border-l border-zinc-800 flex flex-col pt-30 px-6 pb-8 transition-transform duration-300 ${
             open ? 'translate-x-0' : 'translate-x-full'
           }`}
         >
