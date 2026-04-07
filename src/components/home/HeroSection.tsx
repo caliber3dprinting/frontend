@@ -45,7 +45,7 @@ export default function HeroSection({ data }: HeroSectionProps) {
           <div className="flex items-center gap-3 mb-6">
             <div className="h-px w-10 bg-orange-500" />
             <span className="text-orange-400 text-sm font-semibold tracking-widest uppercase">
-              Playa del Carmen · 4 Impresoras
+              Playa del Carmen · 5 Impresoras
             </span>
           </div>
 
