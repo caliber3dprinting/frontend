@@ -102,7 +102,7 @@ export default function HeroSection({ data }: HeroSectionProps) {
             style={{ animation: 'fadeUp 0.6s ease 0.7s both' }}
           >
             {[
-              { value: '4', label: 'Impresoras' },
+              { value: '5', label: 'Impresoras' },
               { value: '3', label: 'Miembros del equipo' },
               { value: '100%', label: 'A medida' },
             ].map(({ value, label }) => (
