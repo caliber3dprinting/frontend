@@ -14,10 +14,23 @@ Sitio web de Caliber 3D, emprendimiento de impresión 3D personalizada en Playa 
 - Filtro de catálogo por categoría (en memoria, compatible con Strapi v5)
 - Rich text con `@strapi/blocks-react-renderer` (descripciones de productos y story de nosotros)
 - ISR (revalidación cada hora en producción)
-- Imágenes desde Strapi local con `dangerouslyAllowLocalIP`
+- Deploy en Railway (frontend + backend Strapi)
 
+### ⏳ Pendientes
 
-####  Pendientes:
+#### Variables de entorno en Railway (requerido para que el frontend lea datos de Strapi)
+
+En Railway → servicio frontend → **Variables**, agregar:
+
+| Variable | Valor |
+|----------|-------|
+| `NEXT_PUBLIC_STRAPI_URL` | `https://backend-production-e1964.up.railway.app` |
+| `STRAPI_API_TOKEN` | token generado en Strapi → Settings → API Tokens |
+| `NEXT_PUBLIC_WHATSAPP` | número sin `+`, con código de país (ej: `529841234567`) |
+
+> Sin estas variables, el frontend usa los fallbacks hardcodeados y no muestra el contenido de Strapi.
+
+#### GlobalConfig — completar TikTok
 
 Ir a **Content Manager → GlobalConfig → editar → Save & Publish**:
 
@@ -25,19 +38,20 @@ Ir a **Content Manager → GlobalConfig → editar → Save & Publish**:
 |-------|---------|
 | `tiktok_url` | `https://tiktok.com/@caliber3d` |
 
+#### Testimonios — sección vacía
 
-#### . Testimonios — sección vacía
-La sección de testimonios en la home no muestra nada porque no hay entradas.
+La sección de testimonios en la home no muestra nada si no hay entradas.
 
-Ir a **Content Manager → Testimonial → Create new entry** y agregar al menos 2–3 testimonios reales o de prueba:
+Ir a **Content Manager → Testimonial → Create new entry** y agregar al menos 2–3 testimonios:
 - `author_name`, `author_city`, `content`, `rating` (1–5)
 - Opcionalmente vincular al producto relacionado
 
+---
 
 ## Tecnologías
 
 - **Next.js 16** — App Router, React 19, ISR
-- **Strapi v5** — CMS headless (backend separado)
+- **Strapi v5** — CMS headless (backend separado, deploy en Railway)
 - **Tailwind CSS v4** — tema oscuro con acento naranja
 - **@strapi/blocks-react-renderer** — Rich Text (Blocks editor)
 - **TypeScript**
@@ -54,7 +68,9 @@ Ir a **Content Manager → Testimonial → Create new entry** y agregar al menos
 
 ## Variables de entorno
 
-Crear `.env.local` en la raíz:
+### Desarrollo local
+
+Crear `.env.local` en la raíz del frontend:
 
 ```env
 NEXT_PUBLIC_STRAPI_URL=http://localhost:1337
@@ -62,7 +78,17 @@ STRAPI_API_TOKEN=tu_token_de_api_de_strapi
 NEXT_PUBLIC_WHATSAPP=529841234567
 ```
 
-> `NEXT_PUBLIC_WHATSAPP` es el número de fallback si GlobalConfig no tiene datos. Usar el mismo formato: código de país sin `+`.
+### Producción (Railway)
+
+Configurar en Railway → servicio frontend → **Variables** (no en `.env.local`, ese archivo no se despliega):
+
+```env
+NEXT_PUBLIC_STRAPI_URL=https://backend-production-e1964.up.railway.app
+STRAPI_API_TOKEN=tu_token_de_api_de_strapi
+NEXT_PUBLIC_WHATSAPP=529841234567
+```
+
+> `NEXT_PUBLIC_WHATSAPP`: número de fallback si GlobalConfig no tiene datos. Formato: código de país sin `+`.
 
 ## Comandos
 

@@ -12,13 +12,13 @@ export default async function HomePage() {
   // todavía no existe en Strapi, se usa un fallback vacío.
   const [homeData, products, testimonials] = await Promise.all([
     getHomePage().catch(() => ({
-      hero_title: 'Impresiones 3D a Medida',
-      hero_subtitle: 'Fabricamos tus ideas en 3D en Playa del Carmen.',
-      hero_cta_label: 'Solicitar cotización',
+      hero_title: 'Impresión 3D de alta precisión',
+      hero_subtitle: 'Servicio de impresiones 3D con precisión milimétrica',
+      hero_cta_label: 'Solicitar Presupuesto',
       hero_image: null,
-      about_preview_title: 'Quiénes somos',
+      about_preview_title: 'Conoce Caliber 3D',
       about_preview_text:
-        'Lorem ipsum dolor sit amet — aquí irá tu presentación. Contá quiénes son, cómo nació el emprendimiento y qué los diferencia. Este texto lo editás desde el panel de Strapi en HomePage → about_preview_text.',
+        'De la idea a la realidad con precisión milimétrica. Desde nuestro taller en Playa del Carmen, operamos más de 5 impresoras 3D listas para materializar tus ideas. Fabricamos repuestos, piezas únicas y soluciones técnicas enfocadas en la durabilidad, el acabado perfecto y el diseño a medida.',
       about_preview_image: null,
     })),
     getFeaturedProducts(6).catch(() => []),

@@ -30,13 +30,13 @@ export default async function RootLayout({
   // datos dinámicos (WhatsApp, redes sociales) sin prop drilling.
   // Fallback mientras el single type no exista en Strapi.
   const config = await getGlobalConfig().catch(() => ({
-    whatsapp_number: '',
-    contact_email: '',
-    instagram_url: null,
-    facebook_url: null,
+    whatsapp_number: process.env.NEXT_PUBLIC_WHATSAPP ?? '',
+    contact_email: 'caliber3dprinting@gmail.com', // TODO: actualiza si cambia
+    instagram_url: 'https://www.instagram.com/caliber3d.mx/',
+    facebook_url: "https://www.facebook.com/caliber3d.mx",
     tiktok_url: null,
-    business_hours: null,
-    address: null,
+    business_hours: "Lunes a viernes de 08 a 18 hrs, sábados de 9 a 14 hrs",
+    address: 'Playa del Carmen, Quintana Roo',
   }))
 
   return (
