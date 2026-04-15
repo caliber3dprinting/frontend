@@ -14,13 +14,13 @@ interface CatalogPageProps {
 
 // ─── Contacto de fallback (se usa cuando Strapi no responde) ──────────────────
 // TODO: reemplaza estos valores con los reales si Strapi sigue caído
-const WHATSAPP = process.env.NEXT_PUBLIC_WHATSAPP ?? ''
+const WHATSAPP = process.env.NEXT_PUBLIC_WHATSAPP ?? '529982017863'
 const CONTACT_EMAIL = 'caliber3dprinting@gmail.com' // ← actualiza con el email real
 // ─────────────────────────────────────────────────────────────────────────────
 
 function CatalogError() {
   const waUrl = WHATSAPP
-    ? `https://wa.me/${WHATSAPP}?text=Hola%2C%20quiero%20ver%20el%20cat%C3%A1logo%20de%20productos`
+    ? `https://wa.me/${WHATSAPP.replace(/\D/g, '')}?text=Hola%2C%20quiero%20ver%20el%20cat%C3%A1logo%20de%20productos`
     : null
 
   return (
