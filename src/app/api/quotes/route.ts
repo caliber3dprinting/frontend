@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createQuoteRequest } from '@/lib/strapi'
 import { z } from 'zod'
+import { sendQuoteEmail } from '@/lib/mailer'
+import { createQuoteRequest } from '@/lib/strapi'
 
 const quoteSchema = z.object({
   name: z.string().min(2, 'El nombre es requerido'),
@@ -22,13 +23,19 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const result = await createQuoteRequest(parsed.data)
+    // Email es la acción principal — si falla, devolvemos error
+    await sendQuoteEmail(parsed.data)
 
-    return NextResponse.json({ success: true, id: result.id }, { status: 201 })
+    // Guardado en Strapi es opcional — no bloquea la respuesta
+    createQuoteRequest(parsed.data).catch((err) =>
+      console.warn('[/api/quotes] Strapi save failed (non-critical):', err)
+    )
+
+    return NextResponse.json({ success: true }, { status: 201 })
   } catch (err) {
     console.error('[/api/quotes]', err)
     return NextResponse.json(
-      { error: 'Error interno. Intenta de nuevo o contáctanos por WhatsApp.' },
+      { error: 'Error al enviar la cotización. Intenta de nuevo o contáctanos por WhatsApp.' },
       { status: 500 }
     )
   }
