@@ -1,5 +1,8 @@
+'use client'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRef } from 'react'
+import { motion, useInView } from 'framer-motion'
 import type { HomePage } from '@/lib/types'
 import { getStrapiImageUrl } from '@/lib/strapi'
 
@@ -36,22 +39,29 @@ const PILLARS = [
 
 export default function AboutPreview({ data }: AboutPreviewProps) {
   const imgUrl = getStrapiImageUrl(data.about_preview_image, 'large')
+  const sectionRef = useRef(null)
+  const inView = useInView(sectionRef, { once: true, margin: '-10% 0px' })
 
   return (
-    <section className="py-24 bg-zinc-900/40">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ">
+    <section className="py-24 bg-zinc-900/40" ref={sectionRef}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
 
-          {/* Image side */}
-          <div className="relative order-2 lg:order-1">
-            <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-zinc-800">
+          {/* Image side — slides in from left */}
+          <motion.div
+            className="relative order-2 lg:order-1"
+            initial={{ opacity: 0, x: -60 }}
+            animate={inView ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.8, ease: [0.25, 0.4, 0.25, 1] }}
+          >
+            <div className="relative aspect-4/3 rounded-2xl overflow-hidden bg-zinc-800">
               {data.about_preview_image ? (
                 <Image
                   src={imgUrl}
                   alt="El equipo de Caliber 3D"
                   fill
                   sizes="(max-width: 1024px) 100vw, 50vw"
-                  className="object-cover"
+                  className="object-cover transition-transform duration-700 hover:scale-105"
                 />
               ) : (
                 <div className="absolute inset-0 flex items-center justify-center text-zinc-700">
@@ -63,7 +73,12 @@ export default function AboutPreview({ data }: AboutPreviewProps) {
             </div>
 
             {/* Floating badge */}
-            <div className="absolute -bottom-5 -right-5 hidden sm:flex items-center gap-3 bg-zinc-950 border border-zinc-800 rounded-2xl px-5 py-4 shadow-xl">
+            <motion.div
+              className="absolute -bottom-5 -right-5 hidden sm:flex items-center gap-3 bg-zinc-950 border border-zinc-800 rounded-2xl px-5 py-4 shadow-xl"
+              initial={{ opacity: 0, scale: 0.8, y: 10 }}
+              animate={inView ? { opacity: 1, scale: 1, y: 0 } : {}}
+              transition={{ duration: 0.5, delay: 0.4, ease: 'backOut' }}
+            >
               <div className="w-10 h-10 bg-orange-500/10 rounded-xl flex items-center justify-center text-orange-500">
                 <svg className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
                   <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
@@ -73,11 +88,16 @@ export default function AboutPreview({ data }: AboutPreviewProps) {
                 <div className="font-display font-black text-white text-xl leading-none">100%</div>
                 <div className="text-zinc-500 text-xs mt-0.5">personalizado</div>
               </div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
-          {/* Text side */}
-          <div className="order-1 lg:order-2">
+          {/* Text side — slides in from right */}
+          <motion.div
+            className="order-1 lg:order-2"
+            initial={{ opacity: 0, x: 60 }}
+            animate={inView ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.15, ease: [0.25, 0.4, 0.25, 1] }}
+          >
             <p className="text-orange-500 text-sm font-semibold tracking-widest uppercase mb-3">
               Quiénes somos
             </p>
@@ -89,15 +109,21 @@ export default function AboutPreview({ data }: AboutPreviewProps) {
               {data.about_preview_text}
             </p>
 
-            {/* Pillars */}
+            {/* Pillars staggered */}
             <ul className="space-y-3 mb-10">
-              {PILLARS.map(({ icon, label }) => (
-                <li key={label} className="flex items-center gap-3 text-zinc-300">
+              {PILLARS.map(({ icon, label }, i) => (
+                <motion.li
+                  key={label}
+                  className="flex items-center gap-3 text-zinc-300"
+                  initial={{ opacity: 0, x: 30 }}
+                  animate={inView ? { opacity: 1, x: 0 } : {}}
+                  transition={{ duration: 0.5, delay: 0.35 + i * 0.1, ease: 'easeOut' }}
+                >
                   <span className="w-8 h-8 rounded-lg bg-orange-500/10 text-orange-500 flex items-center justify-center shrink-0">
                     {icon}
                   </span>
                   {label}
-                </li>
+                </motion.li>
               ))}
             </ul>
 
@@ -110,7 +136,7 @@ export default function AboutPreview({ data }: AboutPreviewProps) {
                 <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd"/>
               </svg>
             </Link>
-          </div>
+          </motion.div>
 
         </div>
       </div>

@@ -1,3 +1,6 @@
+'use client'
+import { useRef } from 'react'
+import { motion, useInView } from 'framer-motion'
 import type { Testimonial } from '@/lib/types'
 
 interface TestimonialsSectionProps {
@@ -24,11 +27,22 @@ function StarRating({ rating }: { rating: number }) {
 export default function TestimonialsSection({ testimonials }: TestimonialsSectionProps) {
   if (testimonials.length === 0) return null
 
+  const headerRef = useRef(null)
+  const gridRef = useRef(null)
+  const headerInView = useInView(headerRef, { once: true, margin: '-10% 0px' })
+  const gridInView = useInView(gridRef, { once: true, margin: '-5% 0px' })
+
   return (
     <section className="py-24 bg-zinc-950 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        <div className="text-center mb-14">
+        <motion.div
+          ref={headerRef}
+          className="text-center mb-14"
+          initial={{ opacity: 0, y: 40 }}
+          animate={headerInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.7, ease: [0.25, 0.4, 0.25, 1] }}
+        >
           <p className="text-orange-500 text-sm font-semibold tracking-widest uppercase mb-2">
             Clientes satisfechos
           </p>
@@ -36,18 +50,18 @@ export default function TestimonialsSection({ testimonials }: TestimonialsSectio
             style={{ fontSize: 'clamp(2rem, 4vw, 3.5rem)' }}>
             Lo que dicen de nosotros
           </h2>
-        </div>
+        </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {testimonials.map((t, i) => (
-            <article
+            <motion.article
               key={t.id}
-              className={`bg-zinc-900 border border-zinc-800 rounded-2xl p-6 flex flex-col gap-4 ${
-                // Make first card span 2 columns on lg to create visual variation
-                i === 0 ? 'lg:col-span-1 lg:row-span-1' : ''
-              }`}
+              className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 flex flex-col gap-4 hover:border-zinc-700 transition-colors"
+              initial={{ opacity: 0, y: 50 }}
+              animate={gridInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: i * 0.12, ease: [0.25, 0.4, 0.25, 1] }}
+              whileHover={{ y: -4, transition: { duration: 0.2 } }}
             >
-              {/* Quote icon */}
               <svg className="w-8 h-8 text-orange-500/30" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/>
               </svg>
@@ -71,7 +85,7 @@ export default function TestimonialsSection({ testimonials }: TestimonialsSectio
                   Proyecto: <span className="text-zinc-500">{t.product.title}</span>
                 </div>
               )}
-            </article>
+            </motion.article>
           ))}
         </div>
 
