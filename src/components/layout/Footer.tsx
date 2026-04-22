@@ -34,7 +34,7 @@ export default function Footer({ config }: FooterProps) {
               />
             </Link>
             <p className="text-zinc-500 text-sm leading-relaxed">
-              Impresiones 3D a medida desde Playa del Carmen, México. Transformamos tus ideas en piezas reales con 4 impresoras y dedicación artesanal.
+              Impresiones 3D a medida desde Playa del Carmen, México. Transformamos tus ideas en piezas reales con 5 impresoras y dedicación artesanal.
             </p>
             {config.address && (
               <p className="text-zinc-600 text-xs mt-3 flex items-start gap-1.5">
