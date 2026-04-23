@@ -4,8 +4,9 @@ import CategoryFilter from '@/components/catalog/CategoryFilter'
 import ProductGrid from '@/components/catalog/ProductGrid'
 
 export const metadata: Metadata = {
-  title: 'Catálogo',
-  description: 'Explora nuestros trabajos de impresión 3D: decoración, repuestos, figuras personalizadas y más.',
+  title: 'Catálogo de Impresión 3D a Medida',
+  description:
+    'Catálogo de repuestos 3D, figuras personalizadas y piezas técnicas de Caliber 3D Printing. Impresión 3D a medida con alta precisión en Playa del Carmen.',
 }
 
 interface CatalogPageProps {
@@ -15,7 +16,7 @@ interface CatalogPageProps {
 // ─── Contacto de fallback (se usa cuando Strapi no responde) ──────────────────
 // TODO: reemplaza estos valores con los reales si Strapi sigue caído
 const WHATSAPP = process.env.NEXT_PUBLIC_WHATSAPP ?? '529982017863'
-const CONTACT_EMAIL = 'caliber3dprinting@gmail.com' // ← actualiza con el email real
+const CONTACT_EMAIL = 'caliber.3dprinting@gmail.com'
 // ─────────────────────────────────────────────────────────────────────────────
 
 function CatalogError() {

@@ -10,13 +10,13 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 
 export const metadata: Metadata = {
   title: {
-    default: 'Caliber 3D — Impresiones 3D a Medida en Playa del Carmen',
-    template: '%s | Caliber 3D',
+    default: 'Caliber 3D Printing — Impresión 3D a Medida, Playa del Carmen',
+    template: '%s | Caliber 3D Printing',
   },
   description:
-    'Fabricamos tus ideas en 3D. Figuras personalizadas, repuestos, decoración y más. Cotiza sin compromiso.',
+    'Impresión 3D a medida en Playa del Carmen. Fabricamos repuestos 3D, piezas técnicas y figuras personalizadas con precisión profesional. Solicita tu cotización sin compromiso.',
   openGraph: {
-    siteName: 'Caliber 3D',
+    siteName: 'Caliber 3D Printing',
     locale: 'es_MX',
     type: 'website',
   },
@@ -59,7 +59,7 @@ export default async function RootLayout({
   // Fallback mientras el single type no exista en Strapi.
   const config = await getGlobalConfig().catch(() => ({
     whatsapp_number: process.env.NEXT_PUBLIC_WHATSAPP ?? '529982017863',
-    contact_email: 'caliber3dprinting@gmail.com', // TODO: actualiza si cambia
+    contact_email: 'caliber.3dprinting@gmail.com',
     instagram_url: 'https://www.instagram.com/caliber3d.mx/',
     facebook_url: "https://www.facebook.com/caliber3d.mx",
     tiktok_url: null,

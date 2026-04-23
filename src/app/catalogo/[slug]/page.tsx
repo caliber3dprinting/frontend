@@ -29,9 +29,11 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   const product = await getProductBySlug(slug)
   if (!product) return { title: 'Producto no encontrado' }
 
+  const materialNote = product.material ? ` Material: ${product.material}.` : ''
+
   return {
-    title: product.title,
-    description: `Impresión 3D personalizada: ${product.title}. ${product.material ? `Material: ${product.material}.` : ''} Solicita tu cotización.`,
+    title: `${product.title} — Impresión 3D a Medida`,
+    description: `${product.title}: impresión 3D a medida fabricada con precisión profesional por Caliber 3D Printing en Playa del Carmen.${materialNote} Solicita tu cotización personalizada.`,
     openGraph: {
       images: product.cover_image
         ? [{ url: getStrapiImageUrl(product.cover_image, 'large') }]

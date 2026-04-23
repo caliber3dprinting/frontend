@@ -3,8 +3,9 @@ import { Suspense } from 'react'
 import QuoteForm from '@/components/forms/QuoteForm'
 
 export const metadata: Metadata = {
-  title: 'Solicitar cotización',
-  description: 'Cuéntanos tu idea y recibe un presupuesto personalizado para tu impresión 3D en menos de 24 horas.',
+  title: 'Solicita tu Cotización de Impresión 3D',
+  description:
+    'Describe tu proyecto y recibe una propuesta técnica personalizada en menos de 24 horas. Impresión 3D a medida, repuestos 3D y piezas de precisión en Playa del Carmen.',
 }
 
 export default function QuotePage() {

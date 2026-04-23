@@ -8,9 +8,9 @@ import type { AboutPage } from '@/lib/types'
 export const revalidate = 3600
 
 export const metadata: Metadata = {
-  title: 'Nosotros',
+  title: 'Ingeniería y Proceso en Impresión 3D',
   description:
-    'Somos un emprendimiento especializado en manufactura aditiva. No imprimimos "cosas", fabricamos soluciones.',
+    'Proceso técnico riguroso y trato personalizado en cada proyecto. Caliber 3D Printing fabrica repuestos 3D, piezas técnicas y prototipos de alta calidad en Playa del Carmen.',
 }
 
 // ── Fallbacks con lorem ipsum (formato Blocks de Strapi v5) ──────────────────
