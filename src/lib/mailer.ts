@@ -14,10 +14,14 @@ export interface QuoteEmailData {
   phone?: string
   category?: string
   description: string
+  notes?: string
+  fileId?: number
 }
 
 export async function sendQuoteEmail(data: QuoteEmailData) {
-  const { name, email, phone, category, description } = data
+  const { name, email, phone, category, description, notes, fileId } = data
+
+  const strapiUrl = process.env.NEXT_PUBLIC_STRAPI_URL ?? 'http://localhost:1337'
 
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #18181b; color: #fafafa; border-radius: 12px; overflow: hidden;">
@@ -57,9 +61,24 @@ export async function sendQuoteEmail(data: QuoteEmailData) {
           <div style="background: #27272a; border-radius: 8px; padding: 16px; line-height: 1.7; white-space: pre-wrap;">${description}</div>
         </div>
 
-        <div style="margin-top: 28px; display: flex; gap: 12px;">
+        ${notes ? `
+        <div style="margin-top: 20px;">
+          <p style="color: #a1a1aa; font-size: 13px; margin: 0 0 8px;">Notas / Medidas de referencia</p>
+          <div style="background: #27272a; border-radius: 8px; padding: 16px; line-height: 1.7; white-space: pre-wrap;">${notes}</div>
+        </div>` : ''}
+
+        ${fileId ? `
+        <div style="margin-top: 20px;">
+          <p style="color: #a1a1aa; font-size: 13px; margin: 0 0 8px;">Imagen de referencia</p>
+          <a href="${strapiUrl}/admin/content-manager/collection-types/api::quote-request.quote-request"
+             style="display: inline-block; background: #27272a; border: 1px solid #3f3f46; color: #f97316; padding: 10px 16px; border-radius: 8px; text-decoration: none; font-size: 13px;">
+            Ver imagen en Strapi →
+          </a>
+        </div>` : ''}
+
+        <div style="margin-top: 28px;">
           <a href="mailto:${email}?subject=Re: Cotización Caliber 3D"
-             style="display: inline-block; background: #f97316; color: #fff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px;">
+             style="display: inline-block; background: #f97316; color: #fff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px; margin-right: 12px;">
             Responder por email
           </a>
           ${phone ? `

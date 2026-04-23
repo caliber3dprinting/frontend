@@ -61,7 +61,8 @@ export interface QuoteRequestPayload {
   phone?: string
   description: string
   category?: string
-  // file_reference se maneja por separado con multipart/form-data
+  notes?: string
+  file_reference?: number  // ID del archivo subido a Strapi
 }
 
 // ─────────────────────────────────────────────

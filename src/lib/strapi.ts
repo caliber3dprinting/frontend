@@ -175,6 +175,27 @@ export async function getGlobalConfig(): Promise<GlobalConfig> {
 // Quote Request (POST — sin caché)
 // ─────────────────────────────────────────────
 
+export async function uploadFileToStrapi(file: Blob, filename: string): Promise<number> {
+  const form = new FormData()
+  form.append('files', file, filename)
+
+  const res = await fetch(`${STRAPI_URL}/api/upload`, {
+    method: 'POST',
+    headers: {
+      ...(STRAPI_TOKEN ? { Authorization: `Bearer ${STRAPI_TOKEN}` } : {}),
+    },
+    body: form,
+  })
+
+  if (!res.ok) {
+    const text = await res.text()
+    throw new Error(`Strapi upload error [${res.status}]: ${text}`)
+  }
+
+  const data: Array<{ id: number }> = await res.json()
+  return data[0].id
+}
+
 export async function createQuoteRequest(payload: QuoteRequestPayload): Promise<{ id: number }> {
   const res = await strapiRequest<{ data: { id: number } }>(
     '/quote-requests',
