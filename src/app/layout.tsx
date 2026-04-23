@@ -22,6 +22,33 @@ export const metadata: Metadata = {
   },
 }
 
+const localBusinessJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  name: 'Caliber 3D Printing',
+  telephone: '+529982017863',
+  email: 'caliber.3dprinting@gmail.com',
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Playa del Carmen',
+    addressRegion: 'Quintana Roo',
+    addressCountry: 'MX',
+  },
+  areaServed: [
+    { '@type': 'City', name: 'Playa del Carmen' },
+    { '@type': 'City', name: 'Cancún' },
+    { '@type': 'City', name: 'Tulum' },
+  ],
+  openingHoursSpecification: [
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+      opens: '09:00',
+      closes: '18:00',
+    },
+  ],
+}
+
 export default async function RootLayout({
   children,
 }: {
@@ -43,6 +70,12 @@ export default async function RootLayout({
   return (
     <html lang="es" className={inter.variable}>
       <body className="bg-zinc-950 text-zinc-100 antialiased" suppressHydrationWarning>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(localBusinessJsonLd).replace(/</g, '\\u003c'),
+          }}
+        />
         <ScrollProgressBar />
         <Navbar whatsapp={config.whatsapp_number} />
         <main className="min-h-screen">{children}</main>
