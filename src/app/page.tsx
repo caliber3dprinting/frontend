@@ -1,16 +1,15 @@
-import { getHomePage, getFeaturedProducts, getTestimonials } from '@/lib/strapi'
+import { getHomePage, getFeaturedProducts, getTestimonials, getBlogPosts } from '@/lib/strapi'
 import HeroSection from '@/components/home/HeroSection'
 import FeaturedProducts from '@/components/home/FeaturedProducts'
 import AboutPreview from '@/components/home/AboutPreview'
 import TestimonialsSection from '@/components/home/TestimonialsSection'
+import LatestPosts from '@/components/home/LatestPosts'
 import QuoteCTA from '@/components/home/QuoteCTA'
 
 export const revalidate = 3600
 
 export default async function HomePage() {
-  // Todas las llamadas corren en paralelo; si algún content type
-  // todavía no existe en Strapi, se usa un fallback vacío.
-  const [homeData, products, testimonials] = await Promise.all([
+  const [homeData, products, testimonials, blogResult] = await Promise.all([
     getHomePage().catch(() => ({
       hero_title: 'Impresión 3D de alta precisión',
       hero_subtitle: 'Servicio de impresiones 3D con precisión milimétrica',
@@ -23,6 +22,7 @@ export default async function HomePage() {
     })),
     getFeaturedProducts(6).catch(() => []),
     getTestimonials(4).catch(() => []),
+    getBlogPosts({ pageSize: 3 }).catch(() => ({ data: [], meta: { pagination: { page: 1, pageSize: 3, pageCount: 0, total: 0 } } })),
   ])
 
   return (
@@ -31,6 +31,7 @@ export default async function HomePage() {
       <FeaturedProducts products={products} />
       <AboutPreview data={homeData} />
       <TestimonialsSection testimonials={testimonials} />
+      <LatestPosts posts={blogResult.data} />
       <QuoteCTA />
     </>
   )
