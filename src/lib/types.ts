@@ -102,12 +102,40 @@ export interface GlobalConfig {
 }
 
 // ─────────────────────────────────────────────
+// Blog
+// ─────────────────────────────────────────────
+
+export interface BlogPost {
+  id: number
+  documentId: string
+  title: string
+  slug: string
+  excerpt: string
+  content: StrapiBlocks | null
+  cover_image: StrapiImage | null
+  category: string | null
+  author: string | null
+  reading_time: number | null
+  meta_title: string | null
+  meta_description: string | null
+  publishedAt: string
+  createdAt: string
+  updatedAt: string
+}
+
+// ─────────────────────────────────────────────
 // Query param helpers
 // ─────────────────────────────────────────────
 
 export interface ProductFilters {
   categorySlug?: string
   featured?: boolean
+  page?: number
+  pageSize?: number
+}
+
+export interface BlogFilters {
+  category?: string
   page?: number
   pageSize?: number
 }

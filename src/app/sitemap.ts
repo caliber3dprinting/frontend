@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next'
-import { getProducts } from '@/lib/strapi'
+import { getProducts, getBlogPosts } from '@/lib/strapi'
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://caliber3d.mx'
 
@@ -47,5 +47,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Si Strapi no responde, el sitemap se genera solo con rutas estáticas
   }
 
-  return [...staticRoutes, ...productRoutes]
+  let blogRoutes: MetadataRoute.Sitemap = []
+  try {
+    const { data } = await getBlogPosts({ pageSize: 200 })
+    blogRoutes = data.map((post) => ({
+      url: `${BASE_URL}/blog/${post.slug}`,
+      lastModified: new Date(post.updatedAt),
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    }))
+  } catch {
+    // Si Strapi no responde, se omiten los posts del blog
+  }
+
+  return [...staticRoutes, ...productRoutes, ...blogRoutes]
 }

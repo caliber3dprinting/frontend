@@ -9,6 +9,8 @@ import type {
   ProductFilters,
   QuoteRequestPayload,
   StrapiImage,
+  BlogPost,
+  BlogFilters,
 } from './types'
 
 // ─────────────────────────────────────────────
@@ -169,6 +171,51 @@ export async function getGlobalConfig(): Promise<GlobalConfig> {
     tags: ['global-config'],
   })
   return res.data
+}
+
+// ─────────────────────────────────────────────
+// Blog
+// ─────────────────────────────────────────────
+
+export async function getBlogPosts(filters: BlogFilters = {}): Promise<{
+  data: BlogPost[]
+  meta: { pagination: { page: number; pageSize: number; pageCount: number; total: number } }
+}> {
+  const { category, page = 1, pageSize = 9 } = filters
+
+  const res = await strapiRequest<{
+    data: BlogPost[]
+    meta: { pagination: { page: number; pageSize: number; pageCount: number; total: number } }
+  }>('/blog-posts', {
+    populate: { cover_image: true },
+    pagination: { page: 1, pageSize: 100 },
+    sort: ['publishedAt:desc'],
+  }, { tags: ['blog-posts'] })
+
+  const filtered = res.data.filter((p) => !category || p.category === category)
+  const total = filtered.length
+  const pageCount = Math.max(1, Math.ceil(total / pageSize))
+  const start = (page - 1) * pageSize
+  const data = filtered.slice(start, start + pageSize)
+
+  return { data, meta: { pagination: { page, pageSize, pageCount, total } } }
+}
+
+export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
+  const res = await strapiRequest<{ data: BlogPost[] }>('/blog-posts', {
+    populate: { cover_image: true },
+    filters: { slug: { $eq: slug } },
+  }, { tags: [`blog-post-${slug}`] })
+
+  return res.data[0] ?? null
+}
+
+export async function getAllBlogSlugs(): Promise<string[]> {
+  const res = await strapiRequest<{ data: BlogPost[] }>('/blog-posts', {
+    fields: ['slug'],
+    pagination: { pageSize: 200 },
+  }, { tags: ['blog-posts'] })
+  return res.data.map((p) => p.slug)
 }
 
 // ─────────────────────────────────────────────

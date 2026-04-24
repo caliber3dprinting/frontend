@@ -1,5 +1,14 @@
 import nodemailer from 'nodemailer'
 
+function h(text: string): string {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -22,6 +31,7 @@ export async function sendQuoteEmail(data: QuoteEmailData) {
   const { name, email, phone, category, description, notes, fileId } = data
 
   const strapiUrl = process.env.NEXT_PUBLIC_STRAPI_URL ?? 'http://localhost:1337'
+  const safePhone = phone ? phone.replace(/\D/g, '') : ''
 
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #18181b; color: #fafafa; border-radius: 12px; overflow: hidden;">
@@ -34,55 +44,55 @@ export async function sendQuoteEmail(data: QuoteEmailData) {
         <table style="width: 100%; border-collapse: collapse;">
           <tr>
             <td style="padding: 10px 0; border-bottom: 1px solid #3f3f46; color: #a1a1aa; font-size: 13px; width: 140px;">Nombre</td>
-            <td style="padding: 10px 0; border-bottom: 1px solid #3f3f46; font-weight: 600;">${name}</td>
+            <td style="padding: 10px 0; border-bottom: 1px solid #3f3f46; font-weight: 600;">${h(name)}</td>
           </tr>
           <tr>
             <td style="padding: 10px 0; border-bottom: 1px solid #3f3f46; color: #a1a1aa; font-size: 13px;">Email</td>
             <td style="padding: 10px 0; border-bottom: 1px solid #3f3f46;">
-              <a href="mailto:${email}" style="color: #f97316; text-decoration: none;">${email}</a>
+              <a href="mailto:${h(email)}" style="color: #f97316; text-decoration: none;">${h(email)}</a>
             </td>
           </tr>
           ${phone ? `
           <tr>
             <td style="padding: 10px 0; border-bottom: 1px solid #3f3f46; color: #a1a1aa; font-size: 13px;">WhatsApp / Tel.</td>
             <td style="padding: 10px 0; border-bottom: 1px solid #3f3f46;">
-              <a href="https://wa.me/${phone.replace(/\D/g, '')}" style="color: #25D366; text-decoration: none;">${phone}</a>
+              <a href="https://wa.me/${safePhone}" style="color: #25D366; text-decoration: none;">${h(phone)}</a>
             </td>
           </tr>` : ''}
           ${category ? `
           <tr>
             <td style="padding: 10px 0; border-bottom: 1px solid #3f3f46; color: #a1a1aa; font-size: 13px;">Tipo de proyecto</td>
-            <td style="padding: 10px 0; border-bottom: 1px solid #3f3f46;">${category}</td>
+            <td style="padding: 10px 0; border-bottom: 1px solid #3f3f46;">${h(category)}</td>
           </tr>` : ''}
         </table>
 
         <div style="margin-top: 24px;">
           <p style="color: #a1a1aa; font-size: 13px; margin: 0 0 8px;">Descripción del proyecto</p>
-          <div style="background: #27272a; border-radius: 8px; padding: 16px; line-height: 1.7; white-space: pre-wrap;">${description}</div>
+          <div style="background: #27272a; border-radius: 8px; padding: 16px; line-height: 1.7; white-space: pre-wrap;">${h(description)}</div>
         </div>
 
         ${notes ? `
         <div style="margin-top: 20px;">
           <p style="color: #a1a1aa; font-size: 13px; margin: 0 0 8px;">Notas / Medidas de referencia</p>
-          <div style="background: #27272a; border-radius: 8px; padding: 16px; line-height: 1.7; white-space: pre-wrap;">${notes}</div>
+          <div style="background: #27272a; border-radius: 8px; padding: 16px; line-height: 1.7; white-space: pre-wrap;">${h(notes)}</div>
         </div>` : ''}
 
         ${fileId ? `
         <div style="margin-top: 20px;">
           <p style="color: #a1a1aa; font-size: 13px; margin: 0 0 8px;">Imagen de referencia</p>
-          <a href="${strapiUrl}/admin/content-manager/collection-types/api::quote-request.quote-request"
+          <a href="${h(strapiUrl)}/admin/content-manager/collection-types/api::quote-request.quote-request"
              style="display: inline-block; background: #27272a; border: 1px solid #3f3f46; color: #f97316; padding: 10px 16px; border-radius: 8px; text-decoration: none; font-size: 13px;">
             Ver imagen en Strapi →
           </a>
         </div>` : ''}
 
         <div style="margin-top: 28px;">
-          <a href="mailto:${email}?subject=Re: Cotización Caliber 3D"
+          <a href="mailto:${h(email)}?subject=Re: Cotizaci%C3%B3n Caliber 3D"
              style="display: inline-block; background: #f97316; color: #fff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px; margin-right: 12px;">
             Responder por email
           </a>
           ${phone ? `
-          <a href="https://wa.me/${phone.replace(/\D/g, '')}?text=${encodeURIComponent(`Hola ${name}, te contactamos de Caliber 3D sobre tu cotización.`)}"
+          <a href="https://wa.me/${safePhone}?text=${encodeURIComponent(`Hola ${name}, te contactamos de Caliber 3D sobre tu cotización.`)}"
              style="display: inline-block; background: #25D366; color: #fff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px;">
             Responder por WhatsApp
           </a>` : ''}
