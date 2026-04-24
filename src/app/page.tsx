@@ -6,7 +6,7 @@ import TestimonialsSection from '@/components/home/TestimonialsSection'
 import LatestPosts from '@/components/home/LatestPosts'
 import QuoteCTA from '@/components/home/QuoteCTA'
 
-export const revalidate = 3600
+export const revalidate = 60
 
 export default async function HomePage() {
   const [homeData, products, testimonials, blogResult] = await Promise.all([

@@ -4,6 +4,8 @@ import BlogCard from '@/components/blog/BlogCard'
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://caliber3d.mx'
 
+export const revalidate = 60
+
 export const metadata: Metadata = {
   title: 'Blog de Impresión 3D | Guías, Materiales y Proyectos',
   description:
