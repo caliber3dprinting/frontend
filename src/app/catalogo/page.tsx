@@ -28,7 +28,8 @@ function CatalogError() {
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-30">
       <div className="mb-10">
-        <h1 className="text-4xl font-bold text-white mb-2">Catálogo</h1>
+        <Breadcrumb items={[{ label: 'Catálogo' }]} />
+        <h1 className="text-4xl font-bold text-white mt-4 mb-2">Catálogo</h1>
       </div>
 
       <div className="flex flex-col items-center justify-center py-24 text-center">
@@ -103,11 +104,15 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
   }
 
   const { data, meta } = products
+  const activeCategory = categoria ? categories.find((c) => c.slug === categoria) : null
 
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-30">
       <div className="mb-10">
-        <Breadcrumb items={[{ label: 'Catálogo', href: '/catalogo' }]} />
+        <Breadcrumb items={[
+          { label: 'Catálogo', href: activeCategory ? '/catalogo' : undefined },
+          ...(activeCategory ? [{ label: activeCategory.name }] : []),
+        ]} />
         <h1 className="text-4xl font-bold text-white mt-4 mb-2">Catálogo</h1>
         <p className="text-zinc-400">
           {meta.pagination.total} trabajo{meta.pagination.total !== 1 ? 's' : ''} disponible{meta.pagination.total !== 1 ? 's' : ''}

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import QuoteForm from '@/components/forms/QuoteForm'
+import Breadcrumb from '@/components/ui/Breadcrumb'
 
 export const metadata: Metadata = {
   title: 'Solicita tu Cotización de Impresión 3D',
@@ -12,7 +13,8 @@ export default function QuotePage() {
   return (
     <section className="max-w-2xl mx-auto px-4 sm:px-6 py-28">
       <div className="mb-10">
-        <h1 className="text-4xl font-bold text-white mb-3">Solicita tu cotización</h1>
+        <Breadcrumb items={[{ label: 'Cotizar' }]} />
+        <h1 className="text-4xl font-bold text-white mt-4 mb-3">Solicita tu cotización</h1>
         <p className="text-zinc-400 leading-relaxed">
           Cuéntanos tu idea con el mayor detalle posible. Si tienes referencias visuales
           o archivos 3D, puedes mencionarlos y te pediremos que los compartas por WhatsApp.
