@@ -3,7 +3,7 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 
 const MAX_FILE_MB = 15
@@ -44,6 +44,13 @@ export default function QuoteForm() {
   const [fileError, setFileError] = useState('')
   const [preview, setPreview] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const topRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (status === 'success') {
+      topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }, [status])
 
   const {
     register,
@@ -119,7 +126,7 @@ export default function QuoteForm() {
 
   if (status === 'success') {
     return (
-      <div className="bg-zinc-800/50 border border-zinc-700 rounded-2xl p-10 text-center">
+      <div ref={topRef} className="bg-zinc-800/50 border border-zinc-700 rounded-2xl p-10 text-center">
         <div className="w-16 h-16 bg-orange-500/10 border border-orange-500/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
           <svg className="w-8 h-8 text-orange-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />

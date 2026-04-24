@@ -61,10 +61,12 @@ export async function POST(req: NextRequest) {
       ...(fileId !== undefined ? { file_reference: fileId } : {}),
     })
 
-    // Email de notificación (secundario — no bloquea si falla)
-    sendQuoteEmail({ ...parsed.data, fileId }).catch((err) =>
+    // Email de notificación — awaited para que no lo corte Netlify al cerrar la función
+    try {
+      await sendQuoteEmail({ ...parsed.data, fileId })
+    } catch (err) {
       console.warn('[/api/quotes] Email notification failed:', err)
-    )
+    }
 
     return NextResponse.json({ success: true, id: result.id }, { status: 201 })
   } catch (err) {
