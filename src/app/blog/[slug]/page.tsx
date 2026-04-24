@@ -179,7 +179,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
         {/* Contenido */}
         {post.content && (
-          <div className="prose-blog">
+          <div>
             <RichText content={post.content} />
           </div>
         )}
