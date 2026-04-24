@@ -4,7 +4,6 @@ import Link from 'next/link'
 import { useRef, useEffect, useState } from 'react'
 import { motion, useScroll, useTransform, useInView, animate } from 'framer-motion'
 import type { HomePage } from '@/lib/types'
-import { getStrapiImageUrl } from '@/lib/strapi'
 
 interface HeroSectionProps {
   data: HomePage
@@ -37,7 +36,6 @@ function AnimatedCounter({ value, suffix = '' }: { value: string; suffix?: strin
 }
 
 export default function HeroSection({ data }: HeroSectionProps) {
-  const imgUrl = getStrapiImageUrl(data.hero_image, 'large')
   const containerRef = useRef<HTMLElement>(null)
   const { scrollY } = useScroll()
   const bgY = useTransform(scrollY, [0, 600], [0, 180])
@@ -53,7 +51,7 @@ export default function HeroSection({ data }: HeroSectionProps) {
       {data.hero_image && (
         <motion.div className="absolute inset-0" style={{ y: bgY }}>
           <Image
-            src={imgUrl}
+            src={data.hero_image!}
             alt="Impresión 3D Caliber"
             fill
             priority

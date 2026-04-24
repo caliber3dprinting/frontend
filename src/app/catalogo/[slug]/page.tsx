@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import RichText from '@/components/ui/RichText'
+import Breadcrumb from '@/components/ui/Breadcrumb'
 import { getProductBySlug, getProducts, getStrapiImageUrl } from '@/lib/strapi'
 import ProductGallery from '@/components/catalog/ProductGallery'
 
@@ -56,24 +57,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-30">
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-sm text-zinc-400 mb-8">
-        <Link href="/" className="hover:text-white transition-colors">Inicio</Link>
-        <span>/</span>
-        <Link href="/catalogo" className="hover:text-white transition-colors">Catálogo</Link>
-        {product.category && (
-          <>
-            <span>/</span>
-            <Link
-              href={`/catalogo?categoria=${product.category.slug}`}
-              className="hover:text-white transition-colors"
-            >
-              {product.category.name}
-            </Link>
-          </>
-        )}
-        <span>/</span>
-        <span className="text-zinc-200">{product.title}</span>
-      </nav>
+      <div className="mb-8">
+        <Breadcrumb items={[
+          { label: 'Catálogo', href: '/catalogo' },
+          ...(product.category ? [{ label: product.category.name, href: `/catalogo?categoria=${product.category.slug}` }] : []),
+          { label: product.title },
+        ]} />
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
         {/* Galería */}

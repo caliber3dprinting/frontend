@@ -73,10 +73,10 @@ export interface HomePage {
   hero_title: string
   hero_subtitle: string
   hero_cta_label: string
-  hero_image: StrapiImage | null
+  hero_image: string | null
   about_preview_title: string
   about_preview_text: string
-  about_preview_image: StrapiImage | null
+  about_preview_image: string | null
 }
 
 // Strapi v5 Blocks editor returns an array of block nodes
@@ -85,8 +85,8 @@ export type StrapiBlocks = any[]
 
 export interface AboutPage {
   title: string
-  story: StrapiBlocks // Rich text → Blocks JSON (usa BlocksRenderer)
-  team_photo: StrapiImage | null
+  story: StrapiBlocks
+  team_photo: string | null
   team_caption: string | null
   values: { id: number; title: string; text: string }[]
 }

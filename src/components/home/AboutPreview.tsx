@@ -4,7 +4,6 @@ import Link from 'next/link'
 import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 import type { HomePage } from '@/lib/types'
-import { getStrapiImageUrl } from '@/lib/strapi'
 
 interface AboutPreviewProps {
   data: HomePage
@@ -38,7 +37,6 @@ const PILLARS = [
 ]
 
 export default function AboutPreview({ data }: AboutPreviewProps) {
-  const imgUrl = getStrapiImageUrl(data.about_preview_image, 'large')
   const sectionRef = useRef(null)
   const inView = useInView(sectionRef, { once: true, margin: '-10% 0px' })
 
@@ -57,7 +55,7 @@ export default function AboutPreview({ data }: AboutPreviewProps) {
             <div className="relative aspect-4/3 rounded-2xl overflow-hidden bg-zinc-800">
               {data.about_preview_image ? (
                 <Image
-                  src={imgUrl}
+                  src={data.about_preview_image}
                   alt="El equipo de Caliber 3D"
                   fill
                   sizes="(max-width: 1024px) 100vw, 50vw"

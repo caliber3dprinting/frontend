@@ -4,6 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { getBlogPostBySlug, getAllBlogSlugs, getStrapiImageUrl } from '@/lib/strapi'
 import RichText from '@/components/ui/RichText'
+import Breadcrumb from '@/components/ui/Breadcrumb'
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://caliber3d.mx'
 
@@ -117,24 +118,13 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
       <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-30">
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-sm text-zinc-400 mb-10">
-          <Link href="/" className="hover:text-white transition-colors">Inicio</Link>
-          <span>/</span>
-          <Link href="/blog" className="hover:text-white transition-colors">Blog</Link>
-          {categoryLabel && (
-            <>
-              <span>/</span>
-              <Link
-                href={`/blog?categoria=${post.category}`}
-                className="hover:text-white transition-colors"
-              >
-                {categoryLabel}
-              </Link>
-            </>
-          )}
-          <span>/</span>
-          <span className="text-zinc-200 truncate max-w-[200px]">{post.title}</span>
-        </nav>
+        <div className="mb-10">
+          <Breadcrumb items={[
+            { label: 'Blog', href: '/blog' },
+            ...(categoryLabel && post.category ? [{ label: categoryLabel, href: `/blog?categoria=${post.category}` }] : []),
+            { label: post.title },
+          ]} />
+        </div>
 
         {/* Header */}
         <header className="mb-10">
@@ -165,7 +155,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
         {/* Imagen de portada */}
         {imageUrl && (
-          <div className="relative w-full aspect-[16/9] rounded-2xl overflow-hidden mb-12 bg-zinc-800">
+          <div className="relative w-full aspect-video rounded-2xl overflow-hidden mb-12 bg-zinc-800">
             <Image
               src={imageUrl}
               alt={post.cover_image?.alternativeText ?? post.title}

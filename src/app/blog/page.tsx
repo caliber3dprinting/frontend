@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { getBlogPosts } from '@/lib/strapi'
 import BlogCard from '@/components/blog/BlogCard'
+import Breadcrumb from '@/components/ui/Breadcrumb'
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://caliber3d.mx'
 
@@ -83,7 +84,8 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-30">
         {/* Header */}
         <div className="mb-10">
-          <h1 className="text-4xl font-bold text-white mb-2">Blog</h1>
+          <Breadcrumb items={[{ label: 'Blog', href: '/blog' }]} />
+          <h1 className="text-4xl font-bold text-white mt-4 mb-2">Blog</h1>
           <p className="text-zinc-400">
             {meta.pagination.total} artículo{meta.pagination.total !== 1 ? 's' : ''}
           </p>

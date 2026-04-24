@@ -2,10 +2,6 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import RichText from '@/components/ui/RichText'
-import { getAboutPage, getStrapiImageUrl } from '@/lib/strapi'
-import type { AboutPage } from '@/lib/types'
-
-export const revalidate = 3600
 
 export const metadata: Metadata = {
   title: 'Ingeniería y Proceso en Impresión 3D',
@@ -13,43 +9,39 @@ export const metadata: Metadata = {
     'Proceso técnico riguroso y trato personalizado en cada proyecto. Caliber 3D Printing fabrica repuestos 3D, piezas técnicas y prototipos de alta calidad en Playa del Carmen.',
 }
 
-// ── Fallbacks con lorem ipsum (formato Blocks de Strapi v5) ──────────────────
-
-const FALLBACK: AboutPage = {
+const ABOUT_DATA = {
   title: 'Sobre Nosotros',
   story: [
     {
       type: 'paragraph',
       children: [
-        { type: 'text', text: 'Lorem ipsum — ' },
-        { type: 'text', text: 'aquí irá la historia de Caliber 3D', bold: true },
-        { type: 'text', text: ': cómo nació, quiénes lo forman, y qué los mueve a hacer lo que hacen. Editalo desde Strapi → AboutPage → story.' },
+        { type: 'text', text: 'Somos Caliber 3D, un taller familiar ubicado en Playa del Carmen. Fabricamos piezas, repuestos y prototipos con impresoras 3D de precisión milimétrica.' },
       ],
     },
     {
       type: 'paragraph',
       children: [
-        { type: 'text', text: 'Podés usar texto enriquecido: negrita, listas, enlaces, etc.' },
+        { type: 'text', text: 'Nuestro objetivo es simple: convertir tu idea en un objeto real, con el material correcto, el acabado que necesitás y en el tiempo justo.' },
       ],
     },
   ],
-  team_photo: null,
-  team_caption: 'El equipo de Caliber 3D · Playa del Carmen',
+  team_photo: '/cabezal-impresora-3d.webp',
+  team_caption: 'Caliber 3D · Playa del Carmen',
   values: [
     {
       id: 1,
       title: 'Calidad garantizada',
-      text: 'Lorem ipsum — editá este valor en Strapi → AboutPage → values → ítem 1 → text.',
+      text: 'Cada pieza pasa por control de calidad antes de salir del taller. Si no cumple, la reimprimimos.',
     },
     {
       id: 2,
       title: 'Personalización total',
-      text: 'Lorem ipsum — editá este valor en Strapi → AboutPage → values → ítem 2 → text.',
+      text: 'Sin moldes, sin mínimos. Fabricamos desde una unidad y adaptamos cada parámetro a tu proyecto.',
     },
     {
       id: 3,
       title: 'Equipo familiar',
-      text: 'Lorem ipsum — editá este valor en Strapi → AboutPage → values → ítem 3 → text.',
+      text: 'Somos un equipo chico y comprometido. Cada cliente habla directamente con quien fabrica su pieza.',
     },
   ],
 }
@@ -79,10 +71,8 @@ const STEPS = [
   },
 ]
 
-export default async function NosotrosPage() {
-  const about = await getAboutPage().catch(() => FALLBACK)
-
-  const teamImgUrl = getStrapiImageUrl(about.team_photo, 'large')
+export default function NosotrosPage() {
+  const about = ABOUT_DATA
 
   return (
     <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-25 space-y-16">
@@ -109,7 +99,7 @@ export default async function NosotrosPage() {
           <div className="relative aspect-4/3 rounded-2xl overflow-hidden bg-zinc-800">
             {about.team_photo ? (
               <Image
-                src={teamImgUrl}
+                src={about.team_photo}
                 alt={about.team_caption ?? 'El equipo de Caliber 3D'}
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"

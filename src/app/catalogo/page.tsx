@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { getProducts, getCategories } from '@/lib/strapi'
 import CategoryFilter from '@/components/catalog/CategoryFilter'
 import ProductGrid from '@/components/catalog/ProductGrid'
+import Breadcrumb from '@/components/ui/Breadcrumb'
 
 export const metadata: Metadata = {
   title: 'Catálogo de Impresión 3D a Medida',
@@ -106,7 +107,8 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-30">
       <div className="mb-10">
-        <h1 className="text-4xl font-bold text-white mb-2">Catálogo</h1>
+        <Breadcrumb items={[{ label: 'Catálogo', href: '/catalogo' }]} />
+        <h1 className="text-4xl font-bold text-white mt-4 mb-2">Catálogo</h1>
         <p className="text-zinc-400">
           {meta.pagination.total} trabajo{meta.pagination.total !== 1 ? 's' : ''} disponible{meta.pagination.total !== 1 ? 's' : ''}
         </p>
