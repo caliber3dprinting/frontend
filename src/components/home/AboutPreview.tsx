@@ -45,12 +45,12 @@ export default function AboutPreview({ data }: AboutPreviewProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
 
-          {/* Image side — slides in from left */}
+          {/* Image side — fades up */}
           <motion.div
             className="relative order-2 lg:order-1"
-            initial={{ opacity: 0, x: -60 }}
-            animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.8, ease: [0.25, 0.4, 0.25, 1] }}
+            initial={{ opacity: 0, y: 40 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.7, ease: [0.25, 0.4, 0.25, 1] }}
           >
             <div className="relative aspect-4/3 rounded-2xl overflow-hidden bg-zinc-800">
               {data.about_preview_image ? (
@@ -89,12 +89,12 @@ export default function AboutPreview({ data }: AboutPreviewProps) {
             </motion.div>
           </motion.div>
 
-          {/* Text side — slides in from right */}
+          {/* Text side — fades up with slight delay */}
           <motion.div
             className="order-1 lg:order-2"
-            initial={{ opacity: 0, x: 60 }}
-            animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.15, ease: [0.25, 0.4, 0.25, 1] }}
+            initial={{ opacity: 0, y: 40 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.7, delay: 0.12, ease: [0.25, 0.4, 0.25, 1] }}
           >
             <p className="text-orange-500 text-sm font-semibold tracking-widest uppercase mb-3">
               Quiénes somos
@@ -113,9 +113,9 @@ export default function AboutPreview({ data }: AboutPreviewProps) {
                 <motion.li
                   key={label}
                   className="flex items-center gap-3 text-zinc-300"
-                  initial={{ opacity: 0, x: 30 }}
-                  animate={inView ? { opacity: 1, x: 0 } : {}}
-                  transition={{ duration: 0.5, delay: 0.35 + i * 0.1, ease: 'easeOut' }}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={inView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: 0.45, delay: 0.3 + i * 0.1, ease: 'easeOut' }}
                 >
                   <span className="w-8 h-8 rounded-lg bg-orange-500/10 text-orange-500 flex items-center justify-center shrink-0">
                     {icon}
