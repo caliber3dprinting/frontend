@@ -56,7 +56,7 @@ export default function HeroSection({ data }: HeroSectionProps) {
             fill
             priority
             fetchPriority="high"
-            className="object-cover opacity-25"
+            className="object-cover opacity-15 sm:opacity-25"
             sizes="100vw"
           />
           <div className="absolute inset-0 bg-linear-to-r from-zinc-950 via-zinc-950/85 to-zinc-950/40" />
