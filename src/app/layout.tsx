@@ -4,6 +4,7 @@ import './globals.css'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import ScrollProgressBar from '@/components/ui/ScrollProgressBar'
+import PageLoader from '@/components/ui/PageLoader'
 import { getGlobalConfig } from '@/lib/strapi'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap', preload: true })
@@ -94,6 +95,7 @@ export default async function RootLayout({
       <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="anonymous" />
       <link rel="dns-prefetch" href="https://res.cloudinary.com" />
       <body className="bg-zinc-950 text-zinc-100 antialiased" suppressHydrationWarning>
+        <PageLoader />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
