@@ -36,20 +36,22 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
   const post = await getBlogPostBySlug(slug)
   if (!post) return { title: 'Artículo no encontrado' }
 
-  const title = post.meta_title ?? `${post.title} | Blog Caliber 3D`
+  const ogTitle = post.meta_title ?? post.title
   const description = post.meta_description ?? post.excerpt
   const imageUrl = post.cover_image
     ? getStrapiImageUrl(post.cover_image, 'large')
     : undefined
 
   return {
-    title,
+    // absolute evita que el template del layout duplique la marca cuando
+    // meta_title ya la incluye (ej. "Título | Caliber 3D | Caliber 3D Printing")
+    title: post.meta_title ? { absolute: post.meta_title } : post.title,
     description,
     alternates: {
       canonical: `${BASE_URL}/blog/${post.slug}`,
     },
     openGraph: {
-      title,
+      title: ogTitle,
       description,
       url: `${BASE_URL}/blog/${post.slug}`,
       type: 'article',
@@ -60,7 +62,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
     },
     twitter: {
       card: 'summary_large_image',
-      title,
+      title: ogTitle,
       description,
       images: imageUrl ? [imageUrl] : [],
     },

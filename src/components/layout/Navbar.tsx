@@ -54,7 +54,7 @@ export default function Navbar({ whatsapp }: NavbarProps) {
           <Link href="/" className="flex items-center group">
             <Image
               src="/caliber-3d-logo.svg"
-              alt="Caliber 3D"
+              alt="Caliber 3D Printing — Impresión 3D a Medida en Playa del Carmen"
               width={120}
               height={120}
               className="h-26 w-auto"
@@ -131,7 +131,7 @@ export default function Navbar({ whatsapp }: NavbarProps) {
               <Link href="/" onClick={() => setOpen(false)}>
                 <Image
                   src="/caliber-3d-logo.svg"
-                  alt="Caliber 3D"
+                  alt="Caliber 3D Printing — Impresión 3D a Medida en Playa del Carmen"
                   width={90}
                   height={90}
                   className="h-14 w-auto"

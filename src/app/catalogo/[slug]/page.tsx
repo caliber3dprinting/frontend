@@ -1,11 +1,12 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import Image from 'next/image'
 import Link from 'next/link'
 import RichText from '@/components/ui/RichText'
 import Breadcrumb from '@/components/ui/Breadcrumb'
 import { getProductBySlug, getProducts, getStrapiImageUrl } from '@/lib/strapi'
 import ProductGallery from '@/components/catalog/ProductGallery'
+
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://caliber3d.mx'
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>
@@ -30,11 +31,12 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   const product = await getProductBySlug(slug)
   if (!product) return { title: 'Producto no encontrado' }
 
-  const materialNote = product.material ? ` Material: ${product.material}.` : ''
+  const materialNote = product.material ? ` en ${product.material}` : ''
+  const desc = `${product.title}${materialNote}. Impresión 3D a medida en Playa del Carmen. Cotización personalizada en menos de 24h.`
 
   return {
     title: `${product.title} — Impresión 3D a Medida`,
-    description: `${product.title}: impresión 3D a medida fabricada con precisión profesional por Caliber 3D Printing en Playa del Carmen.${materialNote} Solicita tu cotización personalizada.`,
+    description: desc.length > 160 ? desc.slice(0, 157) + '…' : desc,
     openGraph: {
       images: product.cover_image
         ? [{ url: getStrapiImageUrl(product.cover_image, 'large') }]
@@ -54,7 +56,37 @@ export default async function ProductPage({ params }: ProductPageProps) {
     ...product.gallery,
   ]
 
+  const coverUrl = product.cover_image ? getStrapiImageUrl(product.cover_image, 'large') : undefined
+  const materialNote = product.material ? ` en ${product.material}` : ''
+
+  const productJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.title,
+    ...(coverUrl ? { image: coverUrl } : {}),
+    description: `${product.title}${materialNote}. Impresión 3D a medida en Playa del Carmen.`,
+    brand: {
+      '@type': 'Brand',
+      name: 'Caliber 3D Printing',
+    },
+    offers: {
+      '@type': 'Offer',
+      availability: 'https://schema.org/InStock',
+      priceCurrency: 'MXN',
+      seller: {
+        '@type': 'Organization',
+        name: 'Caliber 3D Printing',
+        url: BASE_URL,
+      },
+    },
+  }
+
   return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+      />
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-30">
       {/* Breadcrumb */}
       <div className="mb-8">
@@ -113,5 +145,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
         </div>
       </div>
     </div>
+    </>
   )
 }

@@ -9,8 +9,17 @@ interface FooterProps {
 const FOOTER_LINKS = [
   { href: '/', label: 'Inicio' },
   { href: '/catalogo', label: 'Catálogo' },
+  { href: '/blog', label: 'Blog' },
   { href: '/nosotros', label: 'Nosotros' },
   { href: '/cotizar', label: 'Solicitar cotización' },
+]
+
+const BLOG_CATEGORY_LINKS = [
+  { href: '/blog?categoria=guides', label: 'Guías' },
+  { href: '/blog?categoria=materials', label: 'Materiales' },
+  { href: '/blog?categoria=projects', label: 'Proyectos' },
+  { href: '/blog?categoria=news', label: 'Novedades' },
+  { href: '/blog?categoria=tips', label: 'Consejos' },
 ]
 
 export default function Footer({ config }: FooterProps) {
@@ -20,14 +29,14 @@ export default function Footer({ config }: FooterProps) {
   return (
     <footer className="border-t border-zinc-800 bg-zinc-950">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
 
           {/* Brand */}
-          <div>
+          <div className="md:col-span-2 lg:col-span-1">
             <Link href="/" className="inline-flex items-center mb-4">
               <Image
                 src="/caliber-3d-logo.svg"
-                alt="Caliber 3D"
+                alt="Logo de Caliber 3D Printing — Impresión 3D en Playa del Carmen"
                 width={140}
                 height={140}
                 className="h-30 w-auto"
@@ -53,6 +62,25 @@ export default function Footer({ config }: FooterProps) {
             </h3>
             <ul className="space-y-2">
               {FOOTER_LINKS.map(({ href, label }) => (
+                <li key={href}>
+                  <Link
+                    href={href}
+                    className="text-zinc-500 hover:text-white text-sm transition-colors"
+                  >
+                    {label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Recursos */}
+          <div>
+            <h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-4">
+              Recursos
+            </h3>
+            <ul className="space-y-2">
+              {BLOG_CATEGORY_LINKS.map(({ href, label }) => (
                 <li key={href}>
                   <Link
                     href={href}

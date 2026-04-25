@@ -25,26 +25,45 @@ export const metadata: Metadata = {
 const localBusinessJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'LocalBusiness',
+  '@id': 'https://caliber3d.mx/#business',
   name: 'Caliber 3D Printing',
+  url: 'https://caliber3d.mx',
+  image: 'https://caliber3d.mx/caliber-3d-logo.svg',
   telephone: '+529982017863',
   email: 'caliber.3dprinting@gmail.com',
+  priceRange: '$$',
   address: {
     '@type': 'PostalAddress',
     addressLocality: 'Playa del Carmen',
     addressRegion: 'Quintana Roo',
+    postalCode: '77710',
     addressCountry: 'MX',
+  },
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: 20.6296,
+    longitude: -87.0739,
   },
   areaServed: [
     { '@type': 'City', name: 'Playa del Carmen' },
     { '@type': 'City', name: 'Cancún' },
     { '@type': 'City', name: 'Tulum' },
+    { '@type': 'City', name: 'Cozumel' },
+    { '@type': 'City', name: 'Puerto Morelos' },
+    { '@type': 'City', name: 'Solidaridad' },
   ],
   openingHoursSpecification: [
     {
       '@type': 'OpeningHoursSpecification',
       dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-      opens: '09:00',
+      opens: '08:00',
       closes: '18:00',
+    },
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Saturday'],
+      opens: '09:00',
+      closes: '14:00',
     },
   ],
 }

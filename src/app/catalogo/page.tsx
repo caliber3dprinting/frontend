@@ -4,6 +4,8 @@ import CategoryFilter from '@/components/catalog/CategoryFilter'
 import ProductGrid from '@/components/catalog/ProductGrid'
 import Breadcrumb from '@/components/ui/Breadcrumb'
 
+export const revalidate = 60
+
 export const metadata: Metadata = {
   title: 'Catálogo de Impresión 3D a Medida',
   description:
