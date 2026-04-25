@@ -52,9 +52,10 @@ export default function HeroSection({ data }: HeroSectionProps) {
         <motion.div className="absolute inset-0" style={{ y: bgY }}>
           <Image
             src={data.hero_image!}
-            alt="Impresión 3D Caliber"
+            alt="Taller de impresión 3D de Caliber 3D Printing en Playa del Carmen, Quintana Roo"
             fill
             priority
+            fetchPriority="high"
             className="object-cover opacity-25"
             sizes="100vw"
           />

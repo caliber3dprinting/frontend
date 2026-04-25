@@ -6,7 +6,7 @@ import Footer from '@/components/layout/Footer'
 import ScrollProgressBar from '@/components/ui/ScrollProgressBar'
 import { getGlobalConfig } from '@/lib/strapi'
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap', preload: true })
 
 export const metadata: Metadata = {
   title: {
@@ -88,6 +88,11 @@ export default async function RootLayout({
 
   return (
     <html lang="es" className={inter.variable}>
+      {/* Preconnect para el backend de imágenes — reduce el tiempo de conexión del LCP */}
+      <link rel="preconnect" href="https://backend-production-e1964.up.railway.app" />
+      <link rel="dns-prefetch" href="https://backend-production-e1964.up.railway.app" />
+      <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="anonymous" />
+      <link rel="dns-prefetch" href="https://res.cloudinary.com" />
       <body className="bg-zinc-950 text-zinc-100 antialiased" suppressHydrationWarning>
         <script
           type="application/ld+json"
