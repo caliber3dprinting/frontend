@@ -11,7 +11,7 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'sw
 
 export const metadata: Metadata = {
   title: {
-    default: 'Caliber 3D Printing — Impresión 3D a Medida, Playa del Carmen',
+    default: 'Caliber 3D Printing — Impresión 3D, Playa del Carmen',
     template: '%s | Caliber 3D Printing',
   },
   description:
