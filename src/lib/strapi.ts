@@ -91,7 +91,7 @@ export async function getProducts(filters: ProductFilters = {}): Promise<{
     data: Product[]
     meta: { pagination: { page: number; pageSize: number; pageCount: number; total: number } }
   }>('/products', {
-    populate: { cover_image: true, category: true },
+    populate: { cover_image: true, categories: true },
     pagination: { page: 1, pageSize: 100 },
     sort: ['createdAt:desc'],
   }, { tags: ['products'] })
@@ -99,7 +99,7 @@ export async function getProducts(filters: ProductFilters = {}): Promise<{
   // Filtros en memoria (evita problemas con Strapi v5 y filtros de relaciones/booleanos)
   const filtered = res.data
     .filter((p) => featured === undefined || p.featured === featured)
-    .filter((p) => !categorySlug || p.category?.slug === categorySlug)
+    .filter((p) => !categorySlug || p.categories?.some((c) => c.slug === categorySlug))
 
   // Paginación manual
   const total = filtered.length
@@ -112,7 +112,7 @@ export async function getProducts(filters: ProductFilters = {}): Promise<{
 
 export async function getProductBySlug(slug: string): Promise<Product | null> {
   const res = await strapiRequest<{ data: Product[] }>('/products', {
-    populate: { cover_image: true, gallery: true, category: true },
+    populate: { cover_image: true, gallery: true, categories: true },
     filters: { slug: { $eq: slug } },
   }, { tags: [`product-${slug}`] })
 
