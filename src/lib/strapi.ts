@@ -50,7 +50,7 @@ async function strapiRequest<T>(
   query?: Record<string, unknown>,
   options: FetchOptions = {}
 ): Promise<T> {
-  const defaultRevalidate = process.env.NODE_ENV === 'development' ? 0 : 3600
+  const defaultRevalidate = process.env.NODE_ENV === 'development' ? 0 : 60
   const { method = 'GET', body, tags, revalidate = defaultRevalidate } = options
 
   const queryString = query ? `?${qs.stringify(query, { encodeValuesOnly: true })}` : ''
