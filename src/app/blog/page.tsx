@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-export const revalidate = 60
 import { getBlogPosts } from '@/lib/strapi'
 import BlogCard from '@/components/blog/BlogCard'
 import Breadcrumb from '@/components/ui/Breadcrumb'
