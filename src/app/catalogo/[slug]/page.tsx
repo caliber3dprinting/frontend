@@ -53,7 +53,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
   const allImages = [
     ...(product.cover_image ? [product.cover_image] : []),
-    ...product.gallery,
+    ...(product.gallery ?? []),
   ]
 
   const coverUrl = product.cover_image ? getStrapiImageUrl(product.cover_image, 'large') : undefined
