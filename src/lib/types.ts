@@ -40,7 +40,7 @@ export interface Product {
   status: 'draft' | 'published'
   cover_image: StrapiImage | null
   gallery: StrapiImage[]
-  categories: Category[]
+  products: Category[]
   createdAt: string
   updatedAt: string
 }

@@ -92,7 +92,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
       <div className="mb-8">
         <Breadcrumb items={[
           { label: 'Catálogo', href: '/catalogo' },
-          ...(product.categories?.length > 0 ? [{ label: product.categories[0].name, href: `/catalogo?categoria=${product.categories[0].slug}` }] : []),
+          ...(product.products?.length > 0 ? [{ label: product.products[0].name, href: `/catalogo?categoria=${product.products[0].slug}` }] : []),
           { label: product.title },
         ]} />
       </div>
@@ -103,9 +103,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
         {/* Info */}
         <div className="flex flex-col gap-6">
-          {product.categories?.length > 0 && (
+          {product.products?.length > 0 && (
             <div className="flex flex-wrap gap-2">
-              {product.categories.map((cat) => (
+              {product.products.map((cat) => (
                 <span key={cat.id} className="inline-block bg-orange-500/10 text-orange-400 border border-orange-500/20 text-xs font-medium px-3 py-1 rounded-full">
                   {cat.name}
                 </span>

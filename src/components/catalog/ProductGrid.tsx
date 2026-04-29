@@ -28,9 +28,9 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           className="object-cover group-hover:scale-105 transition-transform duration-500"
         />
-        {product.categories?.length > 0 && (
+        {product.products?.length > 0 && (
           <span className="absolute top-3 left-3 bg-black/60 backdrop-blur-sm text-white text-xs px-2.5 py-1 rounded-full">
-            {product.categories[0].name}
+            {product.products[0].name}
           </span>
         )}
       </div>
