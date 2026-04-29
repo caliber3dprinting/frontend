@@ -91,7 +91,7 @@ export async function getProducts(filters: ProductFilters = {}): Promise<{
     data: Product[]
     meta: { pagination: { page: number; pageSize: number; pageCount: number; total: number } }
   }>('/products', {
-    populate: { cover_image: true, products: true },
+    populate: { cover_image: true },
     pagination: { page: 1, pageSize: 100 },
     sort: ['createdAt:desc'],
   }, { tags: ['products'] })
@@ -112,7 +112,7 @@ export async function getProducts(filters: ProductFilters = {}): Promise<{
 
 export async function getProductBySlug(slug: string): Promise<Product | null> {
   const res = await strapiRequest<{ data: Product[] }>('/products', {
-    populate: { cover_image: true, gallery: true, products: true },
+    populate: { cover_image: true, gallery: true },
     filters: { slug: { $eq: slug } },
   }, { tags: [`product-${slug}`] })
 
