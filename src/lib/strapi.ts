@@ -120,8 +120,10 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
 }
 
 export async function getFeaturedProducts(limit = 6): Promise<Product[]> {
-  const res = await getProducts({ featured: true, pageSize: limit })
-  return res.data
+  const featured = await getProducts({ featured: true, pageSize: limit })
+  if (featured.data.length > 0) return featured.data
+  const recent = await getProducts({ pageSize: limit })
+  return recent.data
 }
 
 // ─────────────────────────────────────────────

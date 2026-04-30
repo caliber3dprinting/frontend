@@ -37,7 +37,7 @@ export default function FeaturedProducts({ products }: FeaturedProductsProps) {
             </p>
             <h2 className="font-display font-black text-white accent-line"
               style={{ fontSize: 'clamp(2rem, 4vw, 3.5rem)' }}>
-              Trabajos destacados
+              Algunos trabajos
             </h2>
           </div>
           <Link
