@@ -10,6 +10,7 @@ const FOOTER_LINKS = [
   { href: '/', label: 'Inicio' },
   { href: '/catalogo', label: 'Catálogo' },
   { href: '/blog', label: 'Blog' },
+  { href: '/calculadora', label: 'Calculadora 3D' },
   { href: '/nosotros', label: 'Nosotros' },
   { href: '/cotizar', label: 'Solicitar cotización' },
 ]

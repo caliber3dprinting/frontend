@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 const NAV_LINKS = [
   { href: '/catalogo', label: 'Catálogo' },
   { href: '/blog', label: 'Blog' },
+  { href: '/calculadora', label: 'Calculadora' },
   { href: '/nosotros', label: 'Nosotros' },
   { href: '/cotizar', label: 'Cotizar', accent: true },
 ]
