@@ -6,6 +6,7 @@ import { apiVersion, dataset, projectId } from './src/sanity/env'
 export default defineConfig({
   name: 'caliber-3d',
   title: 'Caliber 3D Printing',
+  basePath: '/studio',
   projectId,
   dataset,
   plugins: [

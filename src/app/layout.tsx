@@ -1,10 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
-import Navbar from '@/components/layout/Navbar'
-import Footer from '@/components/layout/Footer'
-import ScrollProgressBar from '@/components/ui/ScrollProgressBar'
-import PageLoader from '@/components/ui/PageLoader'
+import SiteChrome from '@/components/layout/SiteChrome'
 import { getGlobalConfig } from '@/lib/sanity'
 import { GoogleAnalytics } from '@next/third-parties/google'
 
@@ -95,17 +92,13 @@ export default async function RootLayout({
       <link rel="preconnect" href="https://cdn.sanity.io" crossOrigin="anonymous" />
       <link rel="dns-prefetch" href="https://cdn.sanity.io" />
       <body className="bg-zinc-950 text-zinc-100 antialiased" suppressHydrationWarning>
-        <PageLoader />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(localBusinessJsonLd).replace(/</g, '\\u003c'),
           }}
         />
-        <ScrollProgressBar />
-        <Navbar whatsapp={config.whatsapp_number} />
-        <main className="min-h-screen">{children}</main>
-        <Footer config={config} />
+        <SiteChrome config={config}>{children}</SiteChrome>
       </body>
       {process.env.NEXT_PUBLIC_GA_ID && (
         <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
