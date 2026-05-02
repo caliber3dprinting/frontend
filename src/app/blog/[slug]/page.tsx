@@ -8,13 +8,6 @@ import Breadcrumb from '@/components/ui/Breadcrumb'
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://caliber3d.mx'
 
-const CATEGORY_LABELS: Record<string, string> = {
-  guides: 'Guías',
-  materials: 'Materiales',
-  projects: 'Proyectos',
-  news: 'Novedades',
-  tips: 'Consejos',
-}
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>
@@ -85,7 +78,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   if (!post) notFound()
 
   const imageUrl = post.cover_image ? getStrapiImageUrl(post.cover_image, 'large') : null
-  const categoryLabel = post.category ? (CATEGORY_LABELS[post.category] ?? post.category) : null
+  const categories = post.categories ?? []
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -124,17 +117,25 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         <div className="mb-10">
           <Breadcrumb items={[
             { label: 'Blog', href: '/blog' },
-            ...(categoryLabel && post.category ? [{ label: categoryLabel, href: `/blog?categoria=${post.category}` }] : []),
+            ...(categories.length > 0 ? [{ label: categories[0].name, href: `/blog?categoria=${categories[0].slug}` }] : []),
             { label: post.title },
           ]} />
         </div>
 
         {/* Header */}
         <header className="mb-10">
-          {categoryLabel && (
-            <span className="inline-block bg-orange-500/10 text-orange-400 border border-orange-500/20 text-xs font-medium px-3 py-1 rounded-full mb-4">
-              {categoryLabel}
-            </span>
+          {categories.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-4">
+              {categories.map((cat) => (
+                <Link
+                  key={cat.id}
+                  href={`/blog?categoria=${cat.slug}`}
+                  className="inline-block bg-orange-500/10 text-orange-400 border border-orange-500/20 text-xs font-medium px-3 py-1 rounded-full hover:bg-orange-500/20 transition-colors"
+                >
+                  {cat.name}
+                </Link>
+              ))}
+            </div>
           )}
 
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight mb-6">

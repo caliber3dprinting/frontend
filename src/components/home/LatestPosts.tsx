@@ -6,14 +6,6 @@ import { useRef } from 'react'
 import type { BlogPost } from '@/lib/types'
 import { getStrapiImageUrl } from '@/lib/strapi'
 
-const CATEGORY_LABELS: Record<string, string> = {
-  guides: 'Guías',
-  materials: 'Materiales',
-  projects: 'Proyectos',
-  news: 'Novedades',
-  tips: 'Consejos',
-}
-
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString('es-MX', {
     day: 'numeric',
@@ -24,14 +16,14 @@ function formatDate(iso: string) {
 
 function PostCard({ post, index, inView }: { post: BlogPost; index: number; inView: boolean }) {
   const imageUrl = getStrapiImageUrl(post.cover_image, 'medium')
-  const categoryLabel = post.category ? (CATEGORY_LABELS[post.category] ?? post.category) : null
+  const categories = post.categories ?? []
 
   return (
     <motion.article
       initial={{ opacity: 0, y: 50 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.6, delay: index * 0.12, ease: [0.25, 0.4, 0.25, 1] }}
-      className="group flex flex-col bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden hover:border-zinc-700 transition-colors"
+      className="group flex flex-col bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden hover:border-zinc-600 transition-all duration-300 hover:-translate-y-0.5"
     >
       <Link href={`/blog/${post.slug}`} className="block relative aspect-[16/9] overflow-hidden bg-zinc-800">
         <Image
@@ -44,12 +36,12 @@ function PostCard({ post, index, inView }: { post: BlogPost; index: number; inVi
       </Link>
 
       <div className="flex flex-col flex-1 p-6 gap-3">
-        <div className="flex items-center gap-3 text-xs text-zinc-400">
-          {categoryLabel && (
-            <span className="bg-orange-500/10 text-orange-400 border border-orange-500/20 px-2.5 py-0.5 rounded-full font-medium">
-              {categoryLabel}
+        <div className="flex flex-wrap items-center gap-2 text-xs text-zinc-400">
+          {categories.slice(0, 2).map((cat) => (
+            <span key={cat.id} className="bg-orange-500/10 text-orange-400 border border-orange-500/20 px-2.5 py-0.5 rounded-full font-medium">
+              {cat.name}
             </span>
-          )}
+          ))}
           <time dateTime={post.publishedAt}>{formatDate(post.publishedAt)}</time>
           {post.reading_time && <span>{post.reading_time} min</span>}
         </div>

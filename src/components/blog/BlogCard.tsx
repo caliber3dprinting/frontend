@@ -3,14 +3,6 @@ import Link from 'next/link'
 import { getStrapiImageUrl } from '@/lib/strapi'
 import type { BlogPost } from '@/lib/types'
 
-const CATEGORY_LABELS: Record<string, string> = {
-  guides: 'Guías',
-  materials: 'Materiales',
-  projects: 'Proyectos',
-  news: 'Novedades',
-  tips: 'Consejos',
-}
-
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString('es-MX', {
     day: 'numeric',
@@ -21,10 +13,10 @@ function formatDate(iso: string) {
 
 export default function BlogCard({ post }: { post: BlogPost }) {
   const imageUrl = getStrapiImageUrl(post.cover_image, 'medium')
-  const categoryLabel = post.category ? (CATEGORY_LABELS[post.category] ?? post.category) : null
+  const categories = post.categories ?? []
 
   return (
-    <article className="group flex flex-col bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden hover:border-zinc-700 transition-colors">
+    <article className="group flex flex-col bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden hover:border-zinc-600 transition-all duration-300 hover:-translate-y-0.5">
       <Link href={`/blog/${post.slug}`} className="block relative aspect-[16/9] overflow-hidden bg-zinc-800">
         <Image
           src={imageUrl}
@@ -36,12 +28,16 @@ export default function BlogCard({ post }: { post: BlogPost }) {
       </Link>
 
       <div className="flex flex-col flex-1 p-6 gap-3">
-        <div className="flex items-center gap-3 text-xs text-zinc-400">
-          {categoryLabel && (
-            <span className="bg-orange-500/10 text-orange-400 border border-orange-500/20 px-2.5 py-0.5 rounded-full font-medium">
-              {categoryLabel}
-            </span>
-          )}
+        <div className="flex flex-wrap items-center gap-2 text-xs text-zinc-400">
+          {categories.map((cat) => (
+            <Link
+              key={cat.id}
+              href={`/blog?categoria=${cat.slug}`}
+              className="bg-orange-500/10 text-orange-400 border border-orange-500/20 px-2.5 py-0.5 rounded-full font-medium hover:bg-orange-500/20 transition-colors"
+            >
+              {cat.name}
+            </Link>
+          ))}
           <time dateTime={post.publishedAt}>{formatDate(post.publishedAt)}</time>
           {post.reading_time && (
             <span>{post.reading_time} min de lectura</span>

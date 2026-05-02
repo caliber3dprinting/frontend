@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { getProducts, getCategories } from '@/lib/strapi'
 import CategoryFilter from '@/components/catalog/CategoryFilter'
 import ProductGrid from '@/components/catalog/ProductGrid'
@@ -133,7 +134,7 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
       {meta.pagination.pageCount > 1 && (
         <div className="mt-12 flex justify-center gap-2">
           {Array.from({ length: meta.pagination.pageCount }, (_, i) => i + 1).map((p) => (
-            <a
+            <Link
               key={p}
               href={`/catalogo?${categoria ? `categoria=${categoria}&` : ''}pagina=${p}`}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
@@ -143,7 +144,7 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
               }`}
             >
               {p}
-            </a>
+            </Link>
           ))}
         </div>
       )}

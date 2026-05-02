@@ -5,6 +5,7 @@ import RichText from '@/components/ui/RichText'
 import Breadcrumb from '@/components/ui/Breadcrumb'
 import { getProductBySlug, getProducts, getStrapiImageUrl } from '@/lib/strapi'
 import ProductGallery from '@/components/catalog/ProductGallery'
+import { ProductCard } from '@/components/catalog/ProductGrid'
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://caliber3d.mx'
 
@@ -50,6 +51,16 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const product = await getProductBySlug(slug)
 
   if (!product) notFound()
+
+  // Productos relacionados: misma categoría, excluyendo el actual
+  const firstCategorySlug = product.products?.[0]?.slug
+  const relatedRes = await getProducts({
+    categorySlug: firstCategorySlug,
+    pageSize: 4,
+  }).catch(() => ({ data: [] }))
+  const related = relatedRes.data
+    .filter((p) => p.slug !== slug)
+    .slice(0, 3)
 
   const allImages = [
     ...(product.cover_image ? [product.cover_image] : []),
@@ -148,6 +159,27 @@ export default async function ProductPage({ params }: ProductPageProps) {
           </div>
         </div>
       </div>
+    </div>
+
+      {/* Productos relacionados */}
+      {related.length > 0 && (
+        <div className="mt-20 pt-12 border-t border-zinc-800">
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-2xl font-bold text-white">Proyectos similares</h2>
+            <Link
+              href={firstCategorySlug ? `/catalogo?categoria=${firstCategorySlug}` : '/catalogo'}
+              className="text-sm text-orange-400 hover:text-orange-300 transition-colors"
+            >
+              Ver todos →
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {related.map((p) => (
+              <ProductCard key={p.id} product={p} />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
     </>
   )

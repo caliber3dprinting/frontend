@@ -113,7 +113,7 @@ export interface BlogPost {
   excerpt: string
   content: StrapiBlocks | null
   cover_image: StrapiImage | null
-  category: string | null
+  categories: Category[]
   author: string | null
   reading_time: number | null
   meta_title: string | null
@@ -135,7 +135,7 @@ export interface ProductFilters {
 }
 
 export interface BlogFilters {
-  category?: string
+  categorySlug?: string
   page?: number
   pageSize?: number
 }

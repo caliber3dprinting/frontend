@@ -183,18 +183,20 @@ export async function getBlogPosts(filters: BlogFilters = {}): Promise<{
   data: BlogPost[]
   meta: { pagination: { page: number; pageSize: number; pageCount: number; total: number } }
 }> {
-  const { category, page = 1, pageSize = 9 } = filters
+  const { categorySlug, page = 1, pageSize = 9 } = filters
 
   const res = await strapiRequest<{
     data: BlogPost[]
     meta: { pagination: { page: number; pageSize: number; pageCount: number; total: number } }
   }>('/blog-posts', {
-    populate: { cover_image: true },
+    populate: { cover_image: true, categories: true },
     pagination: { page: 1, pageSize: 100 },
     sort: ['publishedAt:desc'],
   }, { tags: ['blog-posts'] })
 
-  const filtered = res.data.filter((p) => !category || p.category === category)
+  const filtered = res.data.filter((p) =>
+    !categorySlug || p.categories?.some((c) => c.slug === categorySlug)
+  )
   const total = filtered.length
   const pageCount = Math.max(1, Math.ceil(total / pageSize))
   const start = (page - 1) * pageSize
@@ -205,7 +207,7 @@ export async function getBlogPosts(filters: BlogFilters = {}): Promise<{
 
 export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
   const res = await strapiRequest<{ data: BlogPost[] }>('/blog-posts', {
-    populate: { cover_image: true },
+    populate: { cover_image: true, categories: true },
     filters: { slug: { $eq: slug } },
   }, { tags: [`blog-post-${slug}`] })
 
