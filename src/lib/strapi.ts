@@ -194,9 +194,15 @@ export async function getBlogPosts(filters: BlogFilters = {}): Promise<{
     sort: ['publishedAt:desc'],
   }, { tags: ['blog-posts'] })
 
-  const filtered = res.data.filter((p) =>
-    !categorySlug || p.categories?.some((c) => c.slug === categorySlug)
-  )
+  const filtered = res.data
+    .filter((p) => !categorySlug || p.categories?.some((c) => c.slug === categorySlug))
+    // Garantiza orden por fecha descendente (publishedAt puede ser null en Strapi v5)
+    .sort((a, b) => {
+      const dateA = new Date(a.publishedAt ?? a.createdAt).getTime()
+      const dateB = new Date(b.publishedAt ?? b.createdAt).getTime()
+      return dateB - dateA
+    })
+
   const total = filtered.length
   const pageCount = Math.max(1, Math.ceil(total / pageSize))
   const start = (page - 1) * pageSize
