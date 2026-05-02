@@ -150,8 +150,8 @@ export async function getTestimonials(limit = 6): Promise<Testimonial[]> {
 // Single Types
 // ─────────────────────────────────────────────
 
-export async function getHomePage(): Promise<HomePage> {
-  return sanityFetch<HomePage>(
+export async function getHomePage(): Promise<HomePage | null> {
+  return sanityFetch<HomePage | null>(
     `*[_type == "homePage"][0] {
       hero_title,
       hero_subtitle,
@@ -166,8 +166,8 @@ export async function getHomePage(): Promise<HomePage> {
   )
 }
 
-export async function getAboutPage(): Promise<AboutPage> {
-  return sanityFetch<AboutPage>(
+export async function getAboutPage(): Promise<AboutPage | null> {
+  return sanityFetch<AboutPage | null>(
     `*[_type == "aboutPage"][0] {
       title,
       story,
@@ -180,8 +180,8 @@ export async function getAboutPage(): Promise<AboutPage> {
   )
 }
 
-export async function getGlobalConfig(): Promise<GlobalConfig> {
-  return sanityFetch<GlobalConfig>(
+export async function getGlobalConfig(): Promise<GlobalConfig | null> {
+  return sanityFetch<GlobalConfig | null>(
     `*[_type == "globalConfig"][0] {
       whatsapp_number,
       contact_email,
