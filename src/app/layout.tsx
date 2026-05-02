@@ -6,6 +6,7 @@ import Footer from '@/components/layout/Footer'
 import ScrollProgressBar from '@/components/ui/ScrollProgressBar'
 import PageLoader from '@/components/ui/PageLoader'
 import { getGlobalConfig } from '@/lib/strapi'
+import { GoogleAnalytics } from '@next/third-parties/google'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap', preload: true })
 
@@ -107,6 +108,9 @@ export default async function RootLayout({
         <main className="min-h-screen">{children}</main>
         <Footer config={config} />
       </body>
+      {process.env.NEXT_PUBLIC_GA_ID && (
+        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
+      )}
     </html>
   )
 }
