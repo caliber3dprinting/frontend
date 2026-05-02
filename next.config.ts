@@ -14,7 +14,7 @@ const securityHeaders = [
       "img-src 'self' data: blob: https://res.cloudinary.com https://cdn.sanity.io https://img.clerk.com",
       "font-src 'self' https://*.clerk.accounts.dev",
       "worker-src blob:",
-      "connect-src 'self' https://cdn.sanity.io https://*.api.sanity.io https://*.clerk.accounts.dev https://api.clerk.com wss://*.clerk.accounts.dev https://challenges.cloudflare.com",
+      "connect-src 'self' https://cdn.sanity.io https://*.api.sanity.io https://*.clerk.accounts.dev https://api.clerk.com wss://*.clerk.accounts.dev https://challenges.cloudflare.com https://clerk-telemetry.com",
       "frame-src https://*.clerk.accounts.dev https://challenges.cloudflare.com",
       "frame-ancestors 'none'",
       "object-src 'none'",
