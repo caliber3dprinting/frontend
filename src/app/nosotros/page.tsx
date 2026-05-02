@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
-import RichText from '@/components/ui/RichText'
 import Breadcrumb from '@/components/ui/Breadcrumb'
 
 export const metadata: Metadata = {
@@ -13,18 +12,8 @@ export const metadata: Metadata = {
 const ABOUT_DATA = {
   title: 'Sobre Nosotros',
   story: [
-    {
-      type: 'paragraph',
-      children: [
-        { type: 'text', text: 'Somos Caliber 3D, un taller familiar ubicado en Playa del Carmen. Fabricamos piezas, repuestos y prototipos con impresoras 3D de precisión milimétrica.' },
-      ],
-    },
-    {
-      type: 'paragraph',
-      children: [
-        { type: 'text', text: 'Nuestro objetivo es simple: convertir tu idea en un objeto real, con el material correcto, el acabado que necesitás y en el tiempo justo.' },
-      ],
-    },
+    'Somos Caliber 3D, un taller familiar ubicado en Playa del Carmen. Fabricamos piezas, repuestos y prototipos con impresoras 3D de precisión milimétrica.',
+    'Nuestro objetivo es simple: convertir tu idea en un objeto real, con el material correcto, el acabado que necesitás y en el tiempo justo.',
   ],
   team_photo: '/cabezal-impresora-3d.webp',
   team_caption: 'Caliber 3D · Playa del Carmen',
@@ -92,9 +81,10 @@ export default function NosotrosPage() {
 
       {/* ── Historia + foto del equipo ── */}
       <section className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-        {/* Rich text renderizado (Strapi v5 Blocks) */}
         <div className="space-y-4">
-          <RichText content={about.story} />
+          {about.story.map((paragraph, i) => (
+            <p key={i} className="text-zinc-300 leading-[1.85] text-[1.0625rem]">{paragraph}</p>
+          ))}
         </div>
 
         {/* Foto del equipo */}

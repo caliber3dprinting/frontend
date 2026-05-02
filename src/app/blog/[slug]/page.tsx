@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { getBlogPostBySlug, getAllBlogSlugs, getStrapiImageUrl } from '@/lib/strapi'
+import { getBlogPostBySlug, getAllBlogSlugs, getStrapiImageUrl } from '@/lib/sanity'
 import RichText from '@/components/ui/RichText'
 import Breadcrumb from '@/components/ui/Breadcrumb'
 
@@ -162,7 +162,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           <div className="relative w-full aspect-video rounded-2xl overflow-hidden mb-12 bg-zinc-800">
             <Image
               src={imageUrl}
-              alt={post.cover_image?.alternativeText ?? post.title}
+              alt={post.cover_image?.alt ?? post.title}
               fill
               priority
               sizes="(max-width: 768px) 100vw, 896px"

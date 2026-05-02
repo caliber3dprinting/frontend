@@ -1,19 +1,16 @@
+import type { PortableTextBlock } from '@portabletext/react'
+
 // ─────────────────────────────────────────────
-// Strapi v5 response shape helpers
+// Sanity image shape (resolved via GROQ asset->)
 // ─────────────────────────────────────────────
 
-export interface StrapiImage {
-  id: number
+export interface SanityImage {
+  _type: 'image'
   url: string
-  alternativeText: string | null
-  width: number
-  height: number
-  formats?: {
-    thumbnail?: { url: string }
-    small?: { url: string }
-    medium?: { url: string }
-    large?: { url: string }
-  }
+  alt: string | null
+  width: number | null
+  height: number | null
+  asset: { _ref: string; _type: 'reference' }
 }
 
 // ─────────────────────────────────────────────
@@ -21,7 +18,7 @@ export interface StrapiImage {
 // ─────────────────────────────────────────────
 
 export interface Category {
-  id: number
+  id: string
   documentId: string
   name: string
   slug: string
@@ -30,23 +27,23 @@ export interface Category {
 }
 
 export interface Product {
-  id: number
+  id: string
   documentId: string
   title: string
   slug: string
-  description: StrapiBlocks | null // Rich text (Blocks)
+  description: PortableTextBlock[] | null
   material: string | null
   featured: boolean
   status: 'draft' | 'published'
-  cover_image: StrapiImage | null
-  gallery: StrapiImage[]
-  products: Category[]
+  cover_image: SanityImage | null
+  gallery: SanityImage[]
+  categories: Category[]
   createdAt: string
   updatedAt: string
 }
 
 export interface Testimonial {
-  id: number
+  id: string
   documentId: string
   author_name: string
   author_city: string | null
@@ -62,7 +59,6 @@ export interface QuoteRequestPayload {
   description: string
   category?: string
   notes?: string
-  file_reference?: number  // ID del archivo subido a Strapi
 }
 
 // ─────────────────────────────────────────────
@@ -73,22 +69,18 @@ export interface HomePage {
   hero_title: string
   hero_subtitle: string
   hero_cta_label: string
-  hero_image: string | null
+  hero_image: SanityImage | string | null
   about_preview_title: string
   about_preview_text: string
-  about_preview_image: string | null
+  about_preview_image: SanityImage | string | null
 }
-
-// Strapi v5 Blocks editor returns an array of block nodes
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type StrapiBlocks = any[]
 
 export interface AboutPage {
   title: string
-  story: StrapiBlocks
-  team_photo: string | null
+  story: PortableTextBlock[]
+  team_photo: SanityImage | null
   team_caption: string | null
-  values: { id: number; title: string; text: string }[]
+  values: { id: string; title: string; text: string }[]
 }
 
 export interface GlobalConfig {
@@ -106,13 +98,13 @@ export interface GlobalConfig {
 // ─────────────────────────────────────────────
 
 export interface BlogPost {
-  id: number
+  id: string
   documentId: string
   title: string
   slug: string
   excerpt: string
-  content: StrapiBlocks | null
-  cover_image: StrapiImage | null
+  content: PortableTextBlock[] | null
+  cover_image: SanityImage | null
   categories: Category[]
   author: string | null
   reading_time: number | null

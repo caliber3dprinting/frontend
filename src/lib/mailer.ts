@@ -24,13 +24,12 @@ export interface QuoteEmailData {
   category?: string
   description: string
   notes?: string
-  fileId?: number
+  attachment?: { filename: string; content: Buffer; contentType: string }
 }
 
 export async function sendQuoteEmail(data: QuoteEmailData) {
-  const { name, email, phone, category, description, notes, fileId } = data
+  const { name, email, phone, category, description, notes, attachment } = data
 
-  const strapiUrl = process.env.NEXT_PUBLIC_STRAPI_URL ?? 'http://localhost:1337'
   const safePhone = phone ? phone.replace(/\D/g, '') : ''
 
   const html = `
@@ -77,13 +76,10 @@ export async function sendQuoteEmail(data: QuoteEmailData) {
           <div style="background: #27272a; border-radius: 8px; padding: 16px; line-height: 1.7; white-space: pre-wrap;">${h(notes)}</div>
         </div>` : ''}
 
-        ${fileId ? `
+        ${attachment ? `
         <div style="margin-top: 20px;">
           <p style="color: #a1a1aa; font-size: 13px; margin: 0 0 8px;">Imagen de referencia</p>
-          <a href="${h(strapiUrl)}/admin/content-manager/collection-types/api::quote-request.quote-request"
-             style="display: inline-block; background: #27272a; border: 1px solid #3f3f46; color: #f97316; padding: 10px 16px; border-radius: 8px; text-decoration: none; font-size: 13px;">
-            Ver imagen en Strapi →
-          </a>
+          <p style="color: #71717a; font-size: 12px; margin: 0;">Ver adjunto: ${h(attachment.filename)}</p>
         </div>` : ''}
 
         <div style="margin-top: 28px;">
@@ -111,5 +107,8 @@ export async function sendQuoteEmail(data: QuoteEmailData) {
     replyTo: email,
     subject: `Nueva cotización de ${name}${category ? ` — ${category}` : ''}`,
     html,
+    ...(attachment
+      ? { attachments: [{ filename: attachment.filename, content: attachment.content, contentType: attachment.contentType }] }
+      : {}),
   })
 }

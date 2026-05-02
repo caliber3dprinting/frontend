@@ -1,4 +1,4 @@
-import { getFeaturedProducts, getTestimonials, getBlogPosts } from '@/lib/strapi'
+import { getFeaturedProducts, getTestimonials, getBlogPosts } from '@/lib/sanity'
 import HeroSection from '@/components/home/HeroSection'
 import FeaturedProducts from '@/components/home/FeaturedProducts'
 import AboutPreview from '@/components/home/AboutPreview'

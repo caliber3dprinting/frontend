@@ -55,7 +55,7 @@ export default function AboutPreview({ data }: AboutPreviewProps) {
             <div className="relative aspect-4/3 rounded-2xl overflow-hidden bg-zinc-800">
               {data.about_preview_image ? (
                 <Image
-                  src={data.about_preview_image}
+                  src={typeof data.about_preview_image === 'string' ? data.about_preview_image : data.about_preview_image.url}
                   alt="El equipo de Caliber 3D"
                   fill
                   sizes="(max-width: 1024px) 100vw, 50vw"

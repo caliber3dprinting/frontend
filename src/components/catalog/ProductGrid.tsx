@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import type { Product } from '@/lib/types'
-import { getStrapiImageUrl } from '@/lib/strapi'
+import { getStrapiImageUrl } from '@/lib/sanity'
 
 // ─── ProductCard ────────────────────────────────
 
@@ -22,7 +22,7 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
       <div className="relative aspect-square overflow-hidden bg-zinc-800">
         <Image
           src={imgUrl}
-          alt={product.cover_image?.alternativeText ?? product.title}
+          alt={product.cover_image?.alt ?? product.title}
           fill
           priority={priority}
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
@@ -30,7 +30,7 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
         />
         {/* Badges superpuestos */}
         <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
-          {product.products?.slice(0, 2).map((cat) => (
+          {product.categories?.slice(0, 2).map((cat) => (
             <span
               key={cat.id}
               className="bg-orange-500/90 backdrop-blur-sm text-white text-xs px-2.5 py-0.5 rounded-full font-medium"

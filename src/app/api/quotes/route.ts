@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
-import { createQuoteRequest, uploadFileToStrapi } from '@/lib/strapi'
 import { sendQuoteEmail } from '@/lib/mailer'
 
 const MAX_FILE_SIZE = 15 * 1024 * 1024
@@ -36,21 +35,16 @@ function isRateLimited(ip: string): boolean {
   const now = Date.now()
   const windowMs = 60_000
   const limit = 5
-
   const entry = rateLimitMap.get(ip)
-
   if (!entry || now > entry.resetAt) {
     rateLimitMap.set(ip, { count: 1, resetAt: now + windowMs })
     return false
   }
-
   if (entry.count >= limit) return true
-
   entry.count++
   return false
 }
 
-// Prevent excessively large rate limit maps from accumulating in memory
 setInterval(() => {
   const now = Date.now()
   for (const [key, val] of rateLimitMap) {
@@ -103,7 +97,7 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    let fileId: number | undefined
+    let attachment: { filename: string; content: Buffer; contentType: string } | undefined
     const file = formData.get('file') as File | null
     if (file && file.size > 0) {
       if (!ALLOWED_TYPES.includes(file.type)) {
@@ -118,8 +112,8 @@ export async function POST(req: NextRequest) {
           { status: 400 }
         )
       }
-      const safeFilename = sanitizeFilename(file.name)
-      fileId = await uploadFileToStrapi(file, safeFilename)
+      const buffer = Buffer.from(await file.arrayBuffer())
+      attachment = { filename: sanitizeFilename(file.name), content: buffer, contentType: file.type }
     }
 
     const cleanData = {
@@ -131,18 +125,13 @@ export async function POST(req: NextRequest) {
       notes: parsed.data.notes || undefined,
     }
 
-    const result = await createQuoteRequest({
-      ...cleanData,
-      ...(fileId !== undefined ? { file_reference: fileId } : {}),
-    })
-
     try {
-      await sendQuoteEmail({ ...cleanData, fileId })
+      await sendQuoteEmail({ ...cleanData, attachment })
     } catch (err) {
       console.warn('[/api/quotes] Email notification failed:', err)
     }
 
-    return NextResponse.json({ success: true, id: result.id }, { status: 201 })
+    return NextResponse.json({ success: true }, { status: 201 })
   } catch (err) {
     console.error('[/api/quotes]', err)
     return NextResponse.json(

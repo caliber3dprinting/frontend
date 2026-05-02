@@ -2,11 +2,11 @@
 
 import { useState, useCallback, useRef, useEffect } from 'react'
 import Image from 'next/image'
-import type { StrapiImage } from '@/lib/types'
-import { getStrapiImageUrl } from '@/lib/strapi'
+import type { SanityImage } from '@/lib/types'
+import { getStrapiImageUrl } from '@/lib/sanity'
 
 interface ProductGalleryProps {
-  images: StrapiImage[]
+  images: SanityImage[]
   title: string
 }
 
@@ -93,7 +93,7 @@ export default function ProductGallery({ images, title }: ProductGalleryProps) {
 
           <Image
             src={getStrapiImageUrl(current, 'large')}
-            alt={current.alternativeText ?? title}
+            alt={current.alt ?? title}
             fill
             sizes="(max-width: 1024px) 100vw, 50vw"
             className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -156,7 +156,7 @@ export default function ProductGallery({ images, title }: ProductGalleryProps) {
           <div className="grid grid-cols-5 gap-2">
             {images.map((img, i) => (
               <button
-                key={img.id}
+                key={img.asset?._ref ?? i}
                 onClick={() => setActive(i)}
                 aria-label={`Ver imagen ${i + 1}`}
                 className={`relative aspect-square overflow-hidden rounded-lg bg-zinc-800 transition-all ${
@@ -167,7 +167,7 @@ export default function ProductGallery({ images, title }: ProductGalleryProps) {
               >
                 <Image
                   src={getStrapiImageUrl(img, 'thumbnail')}
-                  alt={img.alternativeText ?? `${title} ${i + 1}`}
+                  alt={img.alt ?? `${title} ${i + 1}`}
                   fill
                   sizes="80px"
                   className="object-cover"
@@ -231,7 +231,7 @@ export default function ProductGallery({ images, title }: ProductGalleryProps) {
           >
             <Image
               src={getStrapiImageUrl(current)}
-              alt={current.alternativeText ?? title}
+              alt={current.alt ?? title}
               fill
               sizes="90vw"
               className="object-contain"

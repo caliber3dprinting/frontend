@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import RichText from '@/components/ui/RichText'
 import Breadcrumb from '@/components/ui/Breadcrumb'
-import { getProductBySlug, getProducts, getStrapiImageUrl } from '@/lib/strapi'
+import { getProductBySlug, getProducts, getStrapiImageUrl } from '@/lib/sanity'
 import ProductGallery from '@/components/catalog/ProductGallery'
 import { ProductCard } from '@/components/catalog/ProductGrid'
 
@@ -53,7 +53,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
   if (!product) notFound()
 
   // Productos relacionados: misma categoría, excluyendo el actual
-  const firstCategorySlug = product.products?.[0]?.slug
+  const firstCategorySlug = product.categories?.[0]?.slug
   const relatedRes = await getProducts({
     categorySlug: firstCategorySlug,
     pageSize: 4,
@@ -103,7 +103,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
       <div className="mb-8">
         <Breadcrumb items={[
           { label: 'Catálogo', href: '/catalogo' },
-          ...(product.products?.length > 0 ? [{ label: product.products[0].name, href: `/catalogo?categoria=${product.products[0].slug}` }] : []),
+          ...(product.categories?.length > 0 ? [{ label: product.categories[0].name, href: `/catalogo?categoria=${product.categories[0].slug}` }] : []),
           { label: product.title },
         ]} />
       </div>
@@ -114,9 +114,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
         {/* Info */}
         <div className="flex flex-col gap-6">
-          {product.products?.length > 0 && (
+          {product.categories?.length > 0 && (
             <div className="flex flex-wrap gap-2">
-              {product.products.map((cat) => (
+              {product.categories.map((cat) => (
                 <span key={cat.id} className="inline-block bg-orange-500/10 text-orange-400 border border-orange-500/20 text-xs font-medium px-3 py-1 rounded-full">
                   {cat.name}
                 </span>
@@ -180,7 +180,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
           </div>
         </div>
       )}
-    </div>
     </>
   )
 }

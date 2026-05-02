@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { getBlogPosts, getCategories } from '@/lib/strapi'
+import { getBlogPosts, getCategories } from '@/lib/sanity'
 import BlogCard from '@/components/blog/BlogCard'
 import Breadcrumb from '@/components/ui/Breadcrumb'
 

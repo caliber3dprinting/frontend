@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { getProducts, getCategories } from '@/lib/strapi'
+import { getProducts, getCategories } from '@/lib/sanity'
 import CategoryFilter from '@/components/catalog/CategoryFilter'
 import ProductGrid from '@/components/catalog/ProductGrid'
 import Breadcrumb from '@/components/ui/Breadcrumb'

@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next'
-import { getProducts, getBlogPosts } from '@/lib/strapi'
+import { getProducts, getBlogPosts } from '@/lib/sanity'
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://caliber3d.mx'
 

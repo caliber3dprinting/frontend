@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
 import type { BlogPost } from '@/lib/types'
-import { getStrapiImageUrl } from '@/lib/strapi'
+import { getStrapiImageUrl } from '@/lib/sanity'
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString('es-MX', {
@@ -28,7 +28,7 @@ function PostCard({ post, index, inView }: { post: BlogPost; index: number; inVi
       <Link href={`/blog/${post.slug}`} className="block relative aspect-[16/9] overflow-hidden bg-zinc-800">
         <Image
           src={imageUrl}
-          alt={post.cover_image?.alternativeText ?? post.title}
+          alt={post.cover_image?.alt ?? post.title}
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           className="object-cover transition-transform duration-500 group-hover:scale-105"

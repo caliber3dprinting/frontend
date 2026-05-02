@@ -5,7 +5,7 @@ import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import ScrollProgressBar from '@/components/ui/ScrollProgressBar'
 import PageLoader from '@/components/ui/PageLoader'
-import { getGlobalConfig } from '@/lib/strapi'
+import { getGlobalConfig } from '@/lib/sanity'
 import { GoogleAnalytics } from '@next/third-parties/google'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap', preload: true })
@@ -91,10 +91,8 @@ export default async function RootLayout({
   return (
     <html lang="es" className={inter.variable}>
       {/* Preconnect para el backend de imágenes — reduce el tiempo de conexión del LCP */}
-      <link rel="preconnect" href="https://backend-production-e1964.up.railway.app" />
-      <link rel="dns-prefetch" href="https://backend-production-e1964.up.railway.app" />
-      <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="anonymous" />
-      <link rel="dns-prefetch" href="https://res.cloudinary.com" />
+      <link rel="preconnect" href="https://cdn.sanity.io" crossOrigin="anonymous" />
+      <link rel="dns-prefetch" href="https://cdn.sanity.io" />
       <body className="bg-zinc-950 text-zinc-100 antialiased" suppressHydrationWarning>
         <PageLoader />
         <script

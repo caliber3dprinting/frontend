@@ -51,7 +51,7 @@ export default function HeroSection({ data }: HeroSectionProps) {
       {data.hero_image && (
         <motion.div className="absolute inset-0" style={{ y: bgY }}>
           <Image
-            src={data.hero_image!}
+            src={typeof data.hero_image === 'string' ? data.hero_image : data.hero_image.url}
             alt="Taller de impresión 3D de Caliber 3D Printing en Playa del Carmen, Quintana Roo"
             fill
             priority
