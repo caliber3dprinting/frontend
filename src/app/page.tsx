@@ -1,6 +1,7 @@
 import { getFeaturedProducts, getTestimonials, getBlogPosts, getHomePage } from '@/lib/sanity'
 import HeroSection from '@/components/home/HeroSection'
 import FeaturedProducts from '@/components/home/FeaturedProducts'
+import CalculadoraCTA from '@/components/home/CalculadoraCTA'
 import AboutPreview from '@/components/home/AboutPreview'
 import TestimonialsSection from '@/components/home/TestimonialsSection'
 import LatestPosts from '@/components/home/LatestPosts'
@@ -33,6 +34,7 @@ export default async function HomePage() {
     <>
       <HeroSection data={homeData} />
       <FeaturedProducts products={products} />
+      <CalculadoraCTA />
       <AboutPreview data={homeData} />
       <TestimonialsSection testimonials={testimonials} />
       <LatestPosts posts={blogResult.data} />

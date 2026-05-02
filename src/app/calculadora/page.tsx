@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { auth } from '@clerk/nextjs/server'
 import CalculadoraCostos from '@/components/tools/CalculadoraCostos'
+import CalculadoraGate from '@/components/tools/CalculadoraGate'
 
 const BLOG_POST_SLUG = 'como-calcular-costo-impresion-3d'
 
@@ -10,7 +12,11 @@ export const metadata: Metadata = {
     'Herramienta gratuita para diseñadores e impresores: calculá el costo real de producir una pieza 3D considerando material, energía, amortización de máquina y mano de obra.',
 }
 
-export default function CalculadoraPage() {
+export default async function CalculadoraPage() {
+  const { userId } = await auth()
+
+  if (!userId) return <CalculadoraGate />
+
   return (
     <main className="min-h-screen bg-zinc-950 pt-28 pb-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
