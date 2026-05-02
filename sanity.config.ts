@@ -26,8 +26,27 @@ export default defineConfig({
             ),
             S.divider(),
             S.documentTypeListItem('product').title('Productos'),
-            S.documentTypeListItem('category').title('Categorías'),
+            S.listItem()
+              .title('Categorías de producto')
+              .id('product-categories')
+              .child(
+                S.documentList()
+                  .title('Categorías de producto')
+                  .schemaType('category')
+                  .filter('_type == "category" && categoryType == "product"')
+              ),
+            S.divider(),
             S.documentTypeListItem('blogPost').title('Blog'),
+            S.listItem()
+              .title('Categorías de blog')
+              .id('blog-categories')
+              .child(
+                S.documentList()
+                  .title('Categorías de blog')
+                  .schemaType('category')
+                  .filter('_type == "category" && categoryType == "blog"')
+              ),
+            S.divider(),
             S.documentTypeListItem('testimonial').title('Testimonios'),
           ]),
     }),

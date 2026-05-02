@@ -114,13 +114,13 @@ export async function getFeaturedProducts(limit = 6): Promise<Product[]> {
 // Categories
 // ─────────────────────────────────────────────
 
-export async function getCategories(): Promise<Category[]> {
+export async function getCategories(type: 'product' | 'blog' = 'product'): Promise<Category[]> {
   return sanityFetch<Category[]>(
-    `*[_type == "category"] | order(name asc) {
+    `*[_type == "category" && categoryType == $type] | order(name asc) {
       "id": _id, "documentId": _id, name, "slug": slug.current, description, icon
     }`,
-    {},
-    ['categories']
+    { type },
+    [`categories-${type}`]
   )
 }
 

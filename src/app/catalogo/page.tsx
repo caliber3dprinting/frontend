@@ -100,7 +100,7 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
   try {
     ;[products, categories] = await Promise.all([
       getProducts({ categorySlug: categoria, page, pageSize: 12 }),
-      getCategories(),
+      getCategories('product'),
     ])
   } catch {
     return <CatalogError />

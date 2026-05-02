@@ -38,7 +38,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
   try {
     ;[posts, categories] = await Promise.all([
       getBlogPosts({ categorySlug: categoria, page, pageSize: 9 }),
-      getCategories(),
+      getCategories('blog'),
     ])
   } catch {
     return (
