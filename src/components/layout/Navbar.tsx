@@ -5,7 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs'
+import { useAuth, SignInButton, UserButton } from '@clerk/nextjs'
 
 const NAV_LINKS = [
   { href: '/catalogo', label: 'Catálogo' },
@@ -21,6 +21,7 @@ interface NavbarProps {
 
 export default function Navbar({ whatsapp }: NavbarProps) {
   const pathname = usePathname()
+  const { isSignedIn } = useAuth()
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
 
@@ -93,16 +94,15 @@ export default function Navbar({ whatsapp }: NavbarProps) {
 
           {/* Auth — desktop */}
           <div className="hidden md:flex items-center gap-2">
-            <SignedOut>
+            {isSignedIn ? (
+              <UserButton />
+            ) : (
               <SignInButton mode="modal">
                 <button className="px-4 py-2 rounded-lg text-sm font-medium text-zinc-400 hover:text-white hover:bg-zinc-800/60 transition-colors">
                   Iniciar sesión
                 </button>
               </SignInButton>
-            </SignedOut>
-            <SignedIn>
-              <UserButton afterSignOutUrl="/" />
-            </SignedIn>
+            )}
           </div>
 
           {/* WhatsApp pill — desktop */}
@@ -196,19 +196,18 @@ export default function Navbar({ whatsapp }: NavbarProps) {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.20, duration: 0.25 }}
             >
-              <SignedOut>
-                <SignInButton mode="redirect" redirectUrl="/calculadora">
+              {isSignedIn ? (
+                <div className="flex items-center gap-3 px-4 py-2">
+                  <UserButton />
+                  <span className="text-sm text-zinc-400">Mi cuenta</span>
+                </div>
+              ) : (
+                <SignInButton mode="modal">
                   <button className="flex items-center justify-center w-full px-4 py-3 rounded-xl text-sm font-medium text-zinc-300 hover:text-white hover:bg-zinc-800/60 transition-colors">
                     Iniciar sesión
                   </button>
                 </SignInButton>
-              </SignedOut>
-              <SignedIn>
-                <div className="flex items-center gap-3 px-4 py-2">
-                  <UserButton afterSignOutUrl="/" />
-                  <span className="text-sm text-zinc-400">Mi cuenta</span>
-                </div>
-              </SignedIn>
+              )}
             </motion.div>
 
             {/* Bottom: WhatsApp */}
