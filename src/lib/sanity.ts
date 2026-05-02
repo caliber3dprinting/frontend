@@ -56,7 +56,7 @@ const PRODUCT_FIELDS = `
   description,
   material,
   featured,
-  "status": select(defined(status) => status, "published"),
+  "status": select(defined(status) => status, "Published"),
   "cover_image": cover_image ${IMAGE_PROJECTION},
   "gallery": gallery[]{${IMAGE_PROJECTION}},
   "categories": categories[]->{
