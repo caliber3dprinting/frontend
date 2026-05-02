@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
+import { ClerkProvider } from '@clerk/nextjs'
 import SiteChrome from '@/components/layout/SiteChrome'
 import { getGlobalConfig } from '@/lib/sanity'
 import { GoogleAnalytics } from '@next/third-parties/google'
@@ -87,22 +88,24 @@ export default async function RootLayout({
   const config = (await getGlobalConfig().catch(() => null)) ?? FALLBACK_CONFIG
 
   return (
-    <html lang="es" className={inter.variable}>
-      {/* Preconnect para el backend de imágenes — reduce el tiempo de conexión del LCP */}
-      <link rel="preconnect" href="https://cdn.sanity.io" crossOrigin="anonymous" />
-      <link rel="dns-prefetch" href="https://cdn.sanity.io" />
-      <body className="bg-zinc-950 text-zinc-100 antialiased" suppressHydrationWarning>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(localBusinessJsonLd).replace(/</g, '\\u003c'),
-          }}
-        />
-        <SiteChrome config={config}>{children}</SiteChrome>
-      </body>
-      {process.env.NEXT_PUBLIC_GA_ID && (
-        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
-      )}
-    </html>
+    <ClerkProvider>
+      <html lang="es" className={inter.variable}>
+        {/* Preconnect para el backend de imágenes — reduce el tiempo de conexión del LCP */}
+        <link rel="preconnect" href="https://cdn.sanity.io" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://cdn.sanity.io" />
+        <body className="bg-zinc-950 text-zinc-100 antialiased" suppressHydrationWarning>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify(localBusinessJsonLd).replace(/</g, '\\u003c'),
+            }}
+          />
+          <SiteChrome config={config}>{children}</SiteChrome>
+        </body>
+        {process.env.NEXT_PUBLIC_GA_ID && (
+          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
+        )}
+      </html>
+    </ClerkProvider>
   )
 }
