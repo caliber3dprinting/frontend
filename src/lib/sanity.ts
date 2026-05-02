@@ -78,7 +78,7 @@ export async function getProducts(filters: ProductFilters = {}): Promise<{
   const { categorySlug, featured, page = 1, pageSize = 12 } = filters
 
   const all = await sanityFetch<Product[]>(
-    `*[_type == "product" && status == "published"] | order(_createdAt desc) {${PRODUCT_FIELDS}}`,
+    `*[_type == "product" && !(_id in path("drafts.**"))] | order(_createdAt desc) {${PRODUCT_FIELDS}}`,
     {},
     ['products']
   )
@@ -97,7 +97,7 @@ export async function getProducts(filters: ProductFilters = {}): Promise<{
 
 export async function getProductBySlug(slug: string): Promise<Product | null> {
   return sanityFetch<Product | null>(
-    `*[_type == "product" && slug.current == $slug][0] {${PRODUCT_FIELDS}}`,
+    `*[_type == "product" && slug.current == $slug && !(_id in path("drafts.**"))][0] {${PRODUCT_FIELDS}}`,
     { slug },
     [`product-${slug}`]
   )
