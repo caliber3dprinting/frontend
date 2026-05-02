@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
 import type { BlogPost } from '@/lib/types'
-import { getStrapiImageUrl } from '@/lib/sanity'
+import { getSanityImageUrl } from '@/lib/sanity'
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString('es-MX', {
@@ -15,7 +15,7 @@ function formatDate(iso: string) {
 }
 
 function PostCard({ post, index, inView }: { post: BlogPost; index: number; inView: boolean }) {
-  const imageUrl = getStrapiImageUrl(post.cover_image, 'medium')
+  const imageUrl = getSanityImageUrl(post.cover_image, 'medium')
   const categories = post.categories ?? []
 
   return (

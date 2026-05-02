@@ -3,7 +3,7 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
 import Image from 'next/image'
 import type { SanityImage } from '@/lib/types'
-import { getStrapiImageUrl } from '@/lib/sanity'
+import { getSanityImageUrl } from '@/lib/sanity'
 
 interface ProductGalleryProps {
   images: SanityImage[]
@@ -92,7 +92,7 @@ export default function ProductGallery({ images, title }: ProductGalleryProps) {
           />
 
           <Image
-            src={getStrapiImageUrl(current, 'large')}
+            src={getSanityImageUrl(current, 'large')}
             alt={current.alt ?? title}
             fill
             sizes="(max-width: 1024px) 100vw, 50vw"
@@ -166,7 +166,7 @@ export default function ProductGallery({ images, title }: ProductGalleryProps) {
                 }`}
               >
                 <Image
-                  src={getStrapiImageUrl(img, 'thumbnail')}
+                  src={getSanityImageUrl(img, 'thumbnail')}
                   alt={img.alt ?? `${title} ${i + 1}`}
                   fill
                   sizes="80px"
@@ -230,7 +230,7 @@ export default function ProductGallery({ images, title }: ProductGalleryProps) {
             onClick={(e) => e.stopPropagation()}
           >
             <Image
-              src={getStrapiImageUrl(current)}
+              src={getSanityImageUrl(current)}
               alt={current.alt ?? title}
               fill
               sizes="90vw"

@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { getStrapiImageUrl } from '@/lib/sanity'
+import { getSanityImageUrl } from '@/lib/sanity'
 import type { BlogPost } from '@/lib/types'
 
 function formatDate(iso: string) {
@@ -12,12 +12,12 @@ function formatDate(iso: string) {
 }
 
 export default function BlogCard({ post }: { post: BlogPost }) {
-  const imageUrl = getStrapiImageUrl(post.cover_image, 'medium')
+  const imageUrl = getSanityImageUrl(post.cover_image, 'medium')
   const categories = post.categories ?? []
 
   return (
     <article className="group flex flex-col bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden hover:border-zinc-600 transition-all duration-300 hover:-translate-y-0.5">
-      <Link href={`/blog/${post.slug}`} className="block relative aspect-[16/9] overflow-hidden bg-zinc-800">
+      <Link href={`/blog/${post.slug}`} className="block relative aspect-video overflow-hidden bg-zinc-800">
         <Image
           src={imageUrl}
           alt={post.cover_image?.alt ?? post.title}

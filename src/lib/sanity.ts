@@ -284,6 +284,4 @@ export async function updateQuoteStatus(id: string, status: Quote['status']): Pr
 // Re-export image helper (backward compat alias)
 // ─────────────────────────────────────────────
 
-export { sanityImageUrl as getStrapiImageUrl }
-
 export type { SanityImage }

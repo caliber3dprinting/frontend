@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { getBlogPostBySlug, getAllBlogSlugs, getStrapiImageUrl } from '@/lib/sanity'
+import { getBlogPostBySlug, getAllBlogSlugs, getSanityImageUrl } from '@/lib/sanity'
 import RichText from '@/components/ui/RichText'
 import Breadcrumb from '@/components/ui/Breadcrumb'
 
@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
   const ogTitle = post.meta_title ?? post.title
   const description = post.meta_description ?? post.excerpt
   const imageUrl = post.cover_image
-    ? getStrapiImageUrl(post.cover_image, 'large')
+    ? getSanityImageUrl(post.cover_image, 'large')
     : undefined
 
   return {
@@ -77,7 +77,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
   if (!post) notFound()
 
-  const imageUrl = post.cover_image ? getStrapiImageUrl(post.cover_image, 'large') : null
+  const imageUrl = post.cover_image ? getSanityImageUrl(post.cover_image, 'large') : null
   const categories = post.categories ?? []
 
   const jsonLd = {

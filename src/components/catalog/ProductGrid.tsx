@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import type { Product } from '@/lib/types'
-import { getStrapiImageUrl } from '@/lib/sanity'
+import { getSanityImageUrl } from '@/lib/sanity'
 
 // ─── ProductCard ────────────────────────────────
 
@@ -11,7 +11,7 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, priority = false }: ProductCardProps) {
-  const imgUrl = getStrapiImageUrl(product.cover_image, 'medium')
+  const imgUrl = getSanityImageUrl(product.cover_image, 'medium')
 
   return (
     <Link

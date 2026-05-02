@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import RichText from '@/components/ui/RichText'
 import Breadcrumb from '@/components/ui/Breadcrumb'
-import { getProductBySlug, getProducts, getStrapiImageUrl } from '@/lib/sanity'
+import { getProductBySlug, getProducts, getSanityImageUrl } from '@/lib/sanity'
 import ProductGallery from '@/components/catalog/ProductGallery'
 import { ProductCard } from '@/components/catalog/ProductGrid'
 
@@ -40,7 +40,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
     description: desc.length > 160 ? desc.slice(0, 157) + '…' : desc,
     openGraph: {
       images: product.cover_image
-        ? [{ url: getStrapiImageUrl(product.cover_image, 'large') }]
+        ? [{ url: getSanityImageUrl(product.cover_image, 'large') }]
         : [],
     },
   }
@@ -67,7 +67,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
     ...(product.gallery ?? []),
   ]
 
-  const coverUrl = product.cover_image ? getStrapiImageUrl(product.cover_image, 'large') : undefined
+  const coverUrl = product.cover_image ? getSanityImageUrl(product.cover_image, 'large') : undefined
   const materialNote = product.material ? ` en ${product.material}` : ''
 
   const productJsonLd = {
