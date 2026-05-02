@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { sendQuoteEmail } from '@/lib/mailer'
+import { client } from '@/sanity/lib/client'
 
 const MAX_FILE_SIZE = 15 * 1024 * 1024
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif', 'image/gif']
@@ -125,11 +126,17 @@ export async function POST(req: NextRequest) {
       notes: parsed.data.notes || undefined,
     }
 
-    try {
-      await sendQuoteEmail({ ...cleanData, attachment })
-    } catch (err) {
-      console.warn('[/api/quotes] Email notification failed:', err)
-    }
+    await Promise.allSettled([
+      sendQuoteEmail({ ...cleanData, attachment }).catch((err) =>
+        console.warn('[/api/quotes] Email failed:', err)
+      ),
+      client.create({
+        _type: 'quote',
+        ...cleanData,
+        submittedAt: new Date().toISOString(),
+        status: 'new',
+      }).catch((err) => console.warn('[/api/quotes] Sanity write failed:', err)),
+    ])
 
     return NextResponse.json({ success: true }, { status: 201 })
   } catch (err) {

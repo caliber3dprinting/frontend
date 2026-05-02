@@ -5,6 +5,7 @@ import { blogPostType } from './blogPost'
 import { homePageType } from './homePage'
 import { aboutPageType } from './aboutPage'
 import { globalConfigType } from './globalConfig'
+import { quoteType } from './quote'
 
 export const schemaTypes = [
   categoryType,
@@ -14,4 +15,5 @@ export const schemaTypes = [
   homePageType,
   aboutPageType,
   globalConfigType,
+  quoteType,
 ]

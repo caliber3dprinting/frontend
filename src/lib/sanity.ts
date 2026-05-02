@@ -10,6 +10,7 @@ import type {
   ProductFilters,
   BlogPost,
   BlogFilters,
+  Quote,
   SanityImage,
 } from './types'
 
@@ -259,6 +260,24 @@ export async function getAllBlogSlugs(): Promise<string[]> {
     ['blog-posts']
   )
   return results.map((r) => r.slug)
+}
+
+// ─────────────────────────────────────────────
+// Quotes (admin only — no cache, always fresh)
+// ─────────────────────────────────────────────
+
+export async function getQuotes(): Promise<Quote[]> {
+  return client.fetch<Quote[]>(
+    `*[_type == "quote"] | order(submittedAt desc) {
+      _id, name, email, phone, description, category, notes, status, submittedAt
+    }`,
+    {},
+    { cache: 'no-store' }
+  )
+}
+
+export async function updateQuoteStatus(id: string, status: Quote['status']): Promise<void> {
+  await client.patch(id).set({ status }).commit()
 }
 
 // ─────────────────────────────────────────────

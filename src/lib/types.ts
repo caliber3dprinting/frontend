@@ -61,6 +61,18 @@ export interface QuoteRequestPayload {
   notes?: string
 }
 
+export interface Quote {
+  _id: string
+  name: string
+  email: string
+  phone?: string
+  description: string
+  category?: string
+  notes?: string
+  status: 'new' | 'reviewing' | 'quoted' | 'closed'
+  submittedAt: string
+}
+
 // ─────────────────────────────────────────────
 // Single Types
 // ─────────────────────────────────────────────
