@@ -1,4 +1,4 @@
-import { getFeaturedProducts, getTestimonials, getBlogPosts } from '@/lib/sanity'
+import { getFeaturedProducts, getTestimonials, getBlogPosts, getHomePage } from '@/lib/sanity'
 import HeroSection from '@/components/home/HeroSection'
 import FeaturedProducts from '@/components/home/FeaturedProducts'
 import AboutPreview from '@/components/home/AboutPreview'
@@ -8,7 +8,7 @@ import QuoteCTA from '@/components/home/QuoteCTA'
 
 export const revalidate = 60
 
-const HOME_DATA = {
+const HOME_FALLBACK = {
   hero_title: 'Impresión 3D de alta precisión',
   hero_subtitle: 'Enviamos a todo México | Taller físico en la Riviera Maya',
   hero_cta_label: 'Solicitar Presupuesto',
@@ -20,17 +20,20 @@ const HOME_DATA = {
 }
 
 export default async function HomePage() {
-  const [products, testimonials, blogResult] = await Promise.all([
+  const [homePage, products, testimonials, blogResult] = await Promise.all([
+    getHomePage().catch(() => null),
     getFeaturedProducts(6).catch(() => []),
     getTestimonials(4).catch(() => []),
     getBlogPosts({ pageSize: 3 }).catch(() => ({ data: [], meta: { pagination: { page: 1, pageSize: 3, pageCount: 0, total: 0 } } })),
   ])
 
+  const homeData = homePage ?? HOME_FALLBACK
+
   return (
     <>
-      <HeroSection data={HOME_DATA} />
+      <HeroSection data={homeData} />
       <FeaturedProducts products={products} />
-      <AboutPreview data={HOME_DATA} />
+      <AboutPreview data={homeData} />
       <TestimonialsSection testimonials={testimonials} />
       <LatestPosts posts={blogResult.data} />
       <QuoteCTA />
