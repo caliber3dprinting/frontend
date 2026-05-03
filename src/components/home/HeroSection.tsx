@@ -21,15 +21,15 @@ function AnimatedCounter({ value, suffix = '' }: { value: string; suffix?: strin
       return
     }
     const controls = animate(0, numeric, {
-      duration: 1.6,
-      ease: 'easeOut',
+      duration: 2.8,
+      ease: [0.16, 1, 0.3, 1], // ease out expo — arranca rápido, desacelera al final
       onUpdate: (v) => setDisplay(Math.round(v).toString()),
     })
     return controls.stop
   }, [inView, numeric, value])
 
   return (
-    <div ref={ref} className="font-display font-black text-3xl text-orange-500">
+    <div ref={ref} className="font-display font-black text-4xl text-orange-400">
       {isNaN(numeric) ? value : display + suffix}
     </div>
   )
@@ -46,7 +46,7 @@ export default function HeroSection({ data }: HeroSectionProps) {
   const words = data.hero_title.split(' ')
 
   return (
-    <section ref={containerRef} className="relative min-h-screen flex items-center overflow-hidden noise">
+    <section ref={containerRef} className="relative min-h-[85vh] sm:min-h-screen flex items-center overflow-hidden noise">
       {/* Background image with parallax */}
       {data.hero_image && (
         <motion.div className="absolute inset-0" style={{ y: bgY }}>
@@ -90,7 +90,7 @@ export default function HeroSection({ data }: HeroSectionProps) {
 
       {/* Content with scroll fade */}
       <motion.div
-        className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 pt-40"
+        className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 pt-28 sm:py-32 sm:pt-40"
         style={{ y: contentY, opacity }}
       >
         <div className="max-w-3xl">
@@ -135,7 +135,7 @@ export default function HeroSection({ data }: HeroSectionProps) {
 
           {/* Subtitle */}
           <motion.p
-            className="text-zinc-300 text-lg sm:text-xl leading-relaxed mb-10 max-w-xl"
+            className="text-zinc-300 text-lg sm:text-xl leading-relaxed mb-6 sm:mb-10 max-w-xl"
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4, ease: 'easeOut' }}
@@ -169,7 +169,7 @@ export default function HeroSection({ data }: HeroSectionProps) {
 
           {/* Stats strip with animated counters */}
           <motion.div
-            className="flex flex-wrap gap-8 mt-14 pt-10 border-t border-zinc-800/60"
+            className="flex flex-wrap gap-6 sm:gap-8 mt-8 sm:mt-14 pt-6 sm:pt-10 border-t border-zinc-800/60"
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.7, ease: 'easeOut' }}
@@ -181,7 +181,7 @@ export default function HeroSection({ data }: HeroSectionProps) {
             ].map(({ value, label, suffix }) => (
               <div key={label}>
                 <AnimatedCounter value={value} suffix={suffix} />
-                <div className="text-zinc-500 text-sm mt-0.5">{label}</div>
+                <div className="text-zinc-400 text-sm mt-0.5">{label}</div>
               </div>
             ))}
           </motion.div>
