@@ -3,7 +3,7 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import { ClerkProvider } from '@clerk/nextjs'
 import SiteChrome from '@/components/layout/SiteChrome'
-import { getGlobalConfig } from '@/lib/sanity'
+import { getGlobalConfig, getCategories } from '@/lib/sanity'
 import { GoogleAnalytics } from '@next/third-parties/google'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap', preload: true })
@@ -75,7 +75,7 @@ export default async function RootLayout({
 }) {
   // GlobalConfig se carga aquí para que Navbar y Footer tengan
   // datos dinámicos (WhatsApp, redes sociales) sin prop drilling.
-  // Fallback mientras el single type no exista en Strapi.
+  // Fallback mientras el single type no exista en Sanity.
   const FALLBACK_CONFIG = {
     whatsapp_number: process.env.NEXT_PUBLIC_WHATSAPP ?? '529982017863',
     contact_email: 'caliber.3dprinting@gmail.com',
@@ -85,12 +85,16 @@ export default async function RootLayout({
     business_hours: 'Lunes a viernes de 08 a 18 hrs, sábados de 9 a 14 hrs',
     address: 'Playa del Carmen, Quintana Roo',
   }
-  const config = (await getGlobalConfig().catch(() => null)) ?? FALLBACK_CONFIG
+  const [config, categories] = await Promise.all([
+    getGlobalConfig().catch(() => null),
+    getCategories('blog').catch(() => []),
+  ])
+  const resolvedConfig = config ?? FALLBACK_CONFIG
 
   return (
     <ClerkProvider>
       <html lang="es" className={inter.variable}>
-        {/* Preconnect para el backend de imágenes — reduce el tiempo de conexión del LCP */}
+        {/* Preconnect para el CDN de imágenes de Sanity — reduce el tiempo de conexión del LCP */}
         <link rel="preconnect" href="https://cdn.sanity.io" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://cdn.sanity.io" />
         <body className="bg-zinc-950 text-zinc-100 antialiased" suppressHydrationWarning>
@@ -100,7 +104,7 @@ export default async function RootLayout({
               __html: JSON.stringify(localBusinessJsonLd).replace(/</g, '\\u003c'),
             }}
           />
-          <SiteChrome config={config}>{children}</SiteChrome>
+          <SiteChrome config={resolvedConfig} categories={categories}>{children}</SiteChrome>
         </body>
         {process.env.NEXT_PUBLIC_GA_ID && (
           <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />

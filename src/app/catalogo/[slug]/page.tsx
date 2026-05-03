@@ -13,7 +13,7 @@ interface ProductPageProps {
   params: Promise<{ slug: string }>
 }
 
-// Si Strapi no está disponible en build time, retorna [] y las páginas
+// Si Sanity no está disponible en build time, retorna [] y las páginas
 // se generan on-demand en runtime (dynamicParams = true)
 export const dynamicParams = true
 
@@ -159,7 +159,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
           </div>
         </div>
       </div>
-    </div>
 
       {/* Productos relacionados */}
       {related.length > 0 && (
@@ -180,6 +179,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
           </div>
         </div>
       )}
+    </div>
     </>
   )
 }

@@ -5,14 +5,15 @@ import Navbar from './Navbar'
 import Footer from './Footer'
 import PageLoader from '@/components/ui/PageLoader'
 import ScrollProgressBar from '@/components/ui/ScrollProgressBar'
-import type { GlobalConfig } from '@/lib/types'
+import type { GlobalConfig, Category } from '@/lib/types'
 
 interface SiteChromeProps {
   children: React.ReactNode
   config: GlobalConfig
+  categories: Category[]
 }
 
-export default function SiteChrome({ children, config }: SiteChromeProps) {
+export default function SiteChrome({ children, config, categories }: SiteChromeProps) {
   const pathname = usePathname()
   const isStudio = pathname?.startsWith('/studio')
 
@@ -26,7 +27,7 @@ export default function SiteChrome({ children, config }: SiteChromeProps) {
       <ScrollProgressBar />
       <Navbar whatsapp={config.whatsapp_number} />
       <main className="min-h-screen">{children}</main>
-      <Footer config={config} />
+      <Footer config={config} categories={categories} />
     </>
   )
 }
