@@ -5,3 +5,9 @@
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
+
+[[redirects]]
+  from = "/clerk-proxy/*"
+  to = "https://frontend-api.clerk.services/:splat"
+  status = 200
+  force = true
