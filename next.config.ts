@@ -25,6 +25,14 @@ const securityHeaders = [
 ]
 
 const nextConfig: NextConfig = {
+  async rewrites() {
+    return [
+      {
+        source: '/clerk-proxy/:path*',
+        destination: 'https://frontend-api.clerk.services/:path*',
+      },
+    ]
+  },
   async headers() {
     return [
       // El Studio necesita CSP más permisivo (carga recursos de Sanity)
