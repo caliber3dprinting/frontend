@@ -33,6 +33,7 @@ export default defineConfig({
                 S.documentList()
                   .title('Categorías de producto')
                   .schemaType('category')
+                  .apiVersion(apiVersion)
                   .filter('_type == "category" && categoryType == "product"')
               ),
             S.divider(),
@@ -44,6 +45,7 @@ export default defineConfig({
                 S.documentList()
                   .title('Categorías de blog')
                   .schemaType('category')
+                  .apiVersion(apiVersion)
                   .filter('_type == "category" && categoryType == "blog"')
               ),
             S.divider(),

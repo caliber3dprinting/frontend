@@ -93,7 +93,7 @@ export default async function RootLayout({
 
   return (
     <ClerkProvider>
-      <html lang="es" className={inter.variable}>
+      <html lang="es" className={inter.variable} data-scroll-behavior="smooth">
         {/* Preconnect para el CDN de imágenes de Sanity — reduce el tiempo de conexión del LCP */}
         <link rel="preconnect" href="https://cdn.sanity.io" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://cdn.sanity.io" />

@@ -25,6 +25,7 @@ const securityHeaders = [
 ]
 
 const nextConfig: NextConfig = {
+  allowedDevOrigins: ['192.168.1.87'],
   async headers() {
     return [
       // El Studio necesita CSP más permisivo (carga recursos de Sanity)
