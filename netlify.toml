@@ -2,6 +2,7 @@
   base = "."
   command = "npm run build"
   publish = ".next"
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- src/ public/ app/ components/ lib/ styles/ package.json next.config.* netlify.toml"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
