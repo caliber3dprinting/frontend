@@ -12,9 +12,7 @@ type Presupuesto = {
   _id: string
   nombre: string
   cliente?: string
-  pieza?: string
-  cantidad: number
-  totalSinAccesorios: number
+  piezas?: { nombre: string; cantidad: number }[]
   totalConAccesorios: number
   creadoEn: string
 }
@@ -46,8 +44,8 @@ export default async function HistorialPage() {
   const [presupuestos, calculos] = await Promise.all([
     client.fetch<Presupuesto[]>(
       `*[_type == "presupuesto" && userId == $userId] | order(creadoEn desc) {
-        _id, nombre, cliente, pieza, cantidad,
-        totalSinAccesorios, totalConAccesorios, creadoEn
+        _id, nombre, cliente, totalConAccesorios, creadoEn,
+        piezas[]{ nombre, cantidad }
       }`,
       { userId },
       { cache: 'no-store' }
@@ -125,20 +123,18 @@ export default async function HistorialPage() {
                   {p.cliente && (
                     <p className="text-xs text-zinc-500 mb-2">Cliente: {p.cliente}</p>
                   )}
-                  {p.pieza && (
-                    <p className="text-xs text-zinc-500 mb-2">Pieza: {p.pieza}</p>
+
+                  {p.piezas && p.piezas.length > 0 && (
+                    <div className="mb-2 space-y-0.5">
+                      {p.piezas.map((pz, i) => (
+                        <p key={i} className="text-xs text-zinc-600">
+                          {pz.nombre || 'Pieza'} × {pz.cantidad}
+                        </p>
+                      ))}
+                    </div>
                   )}
 
-                  <div className="border-t border-zinc-800 pt-3 mt-3 space-y-1">
-                    <div className="flex justify-between text-xs">
-                      <span className="text-zinc-500">{p.cantidad} {p.cantidad === 1 ? 'pieza' : 'piezas'}</span>
-                    </div>
-                    {p.totalSinAccesorios !== p.totalConAccesorios && (
-                      <div className="flex justify-between text-xs">
-                        <span className="text-zinc-600">Sin accesorios</span>
-                        <span className="font-mono text-zinc-400">${fmt(p.totalSinAccesorios)}</span>
-                      </div>
-                    )}
+                  <div className="border-t border-zinc-800 pt-3 mt-3">
                     <div className="flex justify-between text-sm font-bold">
                       <span className="text-zinc-400">Total</span>
                       <span className="font-mono text-orange-400">${fmt(p.totalConAccesorios)}</span>

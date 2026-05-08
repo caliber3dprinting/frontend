@@ -8,15 +8,19 @@ const accesorioSchema = z.object({
   costo: z.number().min(0),
 })
 
+const piezaSchema = z.object({
+  nombre: z.string().max(200),
+  precioPieza: z.number().min(0),
+  cantidad: z.number().int().min(1),
+  manoDeObra: z.number().min(0),
+  mostrarManoDeObra: z.boolean(),
+})
+
 const presupuestoSchema = z.object({
   nombre: z.string().min(1, 'El nombre es requerido').max(200),
   cliente: z.string().max(200).optional().or(z.literal('')),
-  pieza: z.string().max(200).optional().or(z.literal('')),
-  costoPieza: z.number().min(0),
-  cantidad: z.number().int().min(1),
-  manoDeObra: z.number().min(0),
+  piezas: z.array(piezaSchema).min(1).max(20),
   accesorios: z.array(accesorioSchema).max(20),
-  totalSinAccesorios: z.number().min(0),
   totalConAccesorios: z.number().min(0),
   marcaNegocio: z.string().max(200).optional().or(z.literal('')),
   telefono: z.string().max(50).optional().or(z.literal('')),
@@ -67,8 +71,8 @@ export async function GET() {
   try {
     const data = await client.fetch(
       `*[_type == "presupuesto" && userId == $userId] | order(creadoEn desc) {
-        _id, nombre, cliente, pieza, cantidad,
-        totalSinAccesorios, totalConAccesorios, creadoEn
+        _id, nombre, cliente, totalConAccesorios, creadoEn,
+        piezas[]{ nombre, cantidad }
       }`,
       { userId },
       { cache: 'no-store' }

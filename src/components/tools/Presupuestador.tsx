@@ -5,13 +5,19 @@ import { useUser } from '@clerk/nextjs'
 
 type Accesorio = { id: string; nombre: string; costo: number }
 
+type PiezaItem = {
+  id: string
+  nombre: string
+  precioPieza: number
+  cantidad: number
+  manoDeObra: number
+  mostrarManoDeObra: boolean
+}
+
 type BudgetState = {
   nombre: string
   cliente: string
-  pieza: string
-  costoPieza: number
-  cantidad: number
-  manoDeObra: number
+  piezas: PiezaItem[]
   accesorios: Accesorio[]
 }
 
@@ -22,14 +28,15 @@ type BrandState = {
   logoBase64: string
 }
 
-const BUDGET_DEFAULTS: BudgetState = {
-  nombre: '',
-  cliente: '',
-  pieza: '',
-  costoPieza: 0,
-  cantidad: 1,
-  manoDeObra: 0,
-  accesorios: [],
+function newPieza(): PiezaItem {
+  return {
+    id: crypto.randomUUID(),
+    nombre: '',
+    precioPieza: 0,
+    cantidad: 0,
+    manoDeObra: 0,
+    mostrarManoDeObra: true,
+  }
 }
 
 function fmt(n: number) {
@@ -42,6 +49,11 @@ function escHtml(s: string) {
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
+}
+
+function calcPieza(p: PiezaItem) {
+  const precioConMdo = p.precioPieza + p.manoDeObra
+  return { precioConMdo, subtotal: precioConMdo * p.cantidad }
 }
 
 function SectionHeader({ label }: { label: string }) {
@@ -73,7 +85,9 @@ function TextField({
       <label className="block text-xs font-medium text-zinc-400 uppercase tracking-wide mb-1.5">
         {label}
         {hint && (
-          <span className="ml-1 text-zinc-600 normal-case tracking-normal font-normal">({hint})</span>
+          <span className="ml-1 text-zinc-600 normal-case tracking-normal font-normal">
+            ({hint})
+          </span>
         )}
       </label>
       <input
@@ -87,41 +101,14 @@ function TextField({
   )
 }
 
-function NumberField({
-  label,
-  hint,
-  value,
-  onChange,
-  className = '',
-}: {
-  label: string
-  hint?: string
-  value: number
-  onChange: (v: number) => void
-  className?: string
-}) {
-  return (
-    <div className={className}>
-      <label className="block text-xs font-medium text-zinc-400 uppercase tracking-wide mb-1.5">
-        {label}
-        {hint && (
-          <span className="ml-1 text-zinc-600 normal-case tracking-normal font-normal">({hint})</span>
-        )}
-      </label>
-      <input
-        type="number"
-        value={value}
-        min="0"
-        onChange={(e) => onChange(parseFloat(e.target.value) || 0)}
-        className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-      />
-    </div>
-  )
-}
-
 export default function Presupuestador() {
   const { user } = useUser()
-  const [budget, setBudget] = useState<BudgetState>(BUDGET_DEFAULTS)
+  const [budget, setBudget] = useState<BudgetState>({
+    nombre: '',
+    cliente: '',
+    piezas: [newPieza()],
+    accesorios: [],
+  })
   const [brand, setBrand] = useState<BrandState>({
     marcaNegocio: '',
     telefono: '',
@@ -132,7 +119,6 @@ export default function Presupuestador() {
   const [saveStatus, setSaveStatus] = useState<'idle' | 'ok' | 'error'>('idle')
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  // Load brand from localStorage; if first time, prefill from Clerk
   useEffect(() => {
     const stored = localStorage.getItem('presupuestador_brand')
     if (stored) {
@@ -154,43 +140,52 @@ export default function Presupuestador() {
     })
   }, [user])
 
-  // Persist brand info to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem('presupuestador_brand', JSON.stringify(brand))
   }, [brand])
 
-  // Calculations
-  const costoPorPiezaSinAcc = budget.costoPieza + budget.manoDeObra
-  const totalAccesorios = budget.accesorios.reduce((sum, a) => sum + a.costo, 0)
-  const costoPorPiezaConAcc = costoPorPiezaSinAcc + totalAccesorios
-  const totalSinAcc = costoPorPiezaSinAcc * budget.cantidad
-  const totalConAcc = costoPorPiezaConAcc * budget.cantidad
-  const accesoriosValidos = budget.accesorios.filter((a) => a.nombre && a.costo > 0)
-
-  function setBudgetField<K extends keyof BudgetState>(key: K, val: BudgetState[K]) {
-    setBudget((prev) => ({ ...prev, [key]: val }))
-  }
+  // Totals
+  const totalUnidades = budget.piezas.reduce((sum, p) => sum + p.cantidad, 0)
+  const totalPiezas = budget.piezas.reduce((sum, p) => sum + calcPieza(p).subtotal, 0)
+  const accsValidos = budget.accesorios.filter((a) => a.nombre && a.costo > 0)
+  const totalAccesorios = accsValidos.reduce((sum, a) => sum + a.costo * totalUnidades, 0)
+  const totalGeneral = totalPiezas + totalAccesorios
 
   function setBrandField<K extends keyof BrandState>(key: K, val: BrandState[K]) {
     setBrand((prev) => ({ ...prev, [key]: val }))
   }
 
-  function addAccesorio() {
+  // Piece CRUD
+  function addPieza() {
+    setBudget((prev) => ({ ...prev, piezas: [...prev.piezas, newPieza()] }))
+  }
+
+  function removePieza(id: string) {
     setBudget((prev) => ({
       ...prev,
-      accesorios: [
-        ...prev.accesorios,
-        { id: crypto.randomUUID(), nombre: '', costo: 0 },
-      ],
+      piezas: prev.piezas.length > 1 ? prev.piezas.filter((p) => p.id !== id) : prev.piezas,
     }))
   }
 
-  function updateAccesorio(id: string, field: 'nombre' | 'costo', value: string | number) {
+  function updatePieza(id: string, patch: Partial<PiezaItem>) {
     setBudget((prev) => ({
       ...prev,
-      accesorios: prev.accesorios.map((a) =>
-        a.id === id ? { ...a, [field]: value } : a
-      ),
+      piezas: prev.piezas.map((p) => (p.id === id ? { ...p, ...patch } : p)),
+    }))
+  }
+
+  // Accessory CRUD (global)
+  function addAccesorio() {
+    setBudget((prev) => ({
+      ...prev,
+      accesorios: [...prev.accesorios, { id: crypto.randomUUID(), nombre: '', costo: 0 }],
+    }))
+  }
+
+  function updateAccesorio(id: string, field: 'nombre' | 'costo', val: string | number) {
+    setBudget((prev) => ({
+      ...prev,
+      accesorios: prev.accesorios.map((a) => (a.id === id ? { ...a, [field]: val } : a)),
     }))
   }
 
@@ -222,23 +217,78 @@ export default function Presupuestador() {
       ? `<img src="${brand.logoBase64}" style="max-height:55px;max-width:110px;object-fit:contain;display:block;" />`
       : ''
 
-    const accesoriosRows = accesoriosValidos
-      .map(
-        (a) => `
-      <tr>
-        <td>${e(a.nombre)}</td>
-        <td>$${fmt(a.costo)}</td>
-        <td>${budget.cantidad}</td>
-        <td>$${fmt(a.costo * budget.cantidad)}</td>
-      </tr>`
-      )
+    const multiPieza = budget.piezas.length > 1
+
+    const piezasRows = budget.piezas
+      .map((p) => {
+        const { precioConMdo, subtotal } = calcPieza(p)
+        const nombre = p.nombre || 'Pieza'
+
+        let rows = `
+        <tr class="pieza-header-row">
+          <td colspan="4">${e(nombre)}</td>
+        </tr>`
+
+        if (p.mostrarManoDeObra && p.manoDeObra > 0) {
+          rows += `
+        <tr>
+          <td>Impresión 3D</td>
+          <td>$${fmt(p.precioPieza)}</td>
+          <td>${p.cantidad}</td>
+          <td>$${fmt(p.precioPieza * p.cantidad)}</td>
+        </tr>
+        <tr>
+          <td>Mano de obra / terminado</td>
+          <td>$${fmt(p.manoDeObra)}</td>
+          <td>${p.cantidad}</td>
+          <td>$${fmt(p.manoDeObra * p.cantidad)}</td>
+        </tr>`
+        } else {
+          rows += `
+        <tr>
+          <td>Precio por pieza</td>
+          <td>$${fmt(precioConMdo)}</td>
+          <td>${p.cantidad}</td>
+          <td>$${fmt(precioConMdo * p.cantidad)}</td>
+        </tr>`
+        }
+
+        rows += `
+        <tr class="subtotal-row">
+          <td>${multiPieza ? `Subtotal — ${e(nombre)}` : 'Subtotal'}</td>
+          <td>$${fmt(precioConMdo)}</td>
+          <td>${p.cantidad}</td>
+          <td>$${fmt(subtotal)}</td>
+        </tr>`
+
+        return rows
+      })
       .join('')
+
+    const accesoriosRows =
+      accsValidos.length > 0
+        ? `
+        <tr class="acc-section-row">
+          <td colspan="4">Accesorios</td>
+        </tr>
+        ${accsValidos
+          .map(
+            (a) => `
+        <tr>
+          <td>${e(a.nombre)}</td>
+          <td>$${fmt(a.costo)}</td>
+          <td>${totalUnidades}</td>
+          <td>$${fmt(a.costo * totalUnidades)}</td>
+        </tr>`
+          )
+          .join('')}`
+        : ''
 
     const html = `<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Presupuesto — ${e(budget.nombre || 'Sin título')}</title>
+<title>Cotización — ${e(budget.nombre || 'Sin título')}</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #111827; padding: 32px 38px; max-width: 820px; margin: 0 auto; }
@@ -257,9 +307,10 @@ export default function Presupuestador() {
   thead th:not(:first-child) { text-align: right; }
   tbody td { padding: 8px 11px; border-bottom: 1px solid #e5e7eb; font-size: 12px; }
   tbody td:not(:first-child) { text-align: right; }
+  .pieza-header-row td { background: #fff7ed; color: #c2410c; font-weight: 800; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; border-top: 2px solid #fed7aa; border-bottom: 1px solid #fed7aa; padding: 7px 11px; }
   .subtotal-row td { background: #f4f4f5; font-weight: 700; }
-  .acc-header-row td { background: #fff7ed; color: #c2410c; font-weight: 700; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; border-top: 2px solid #fed7aa; border-bottom: 1px solid #fed7aa; }
-  .total-row td { background: #18181b; color: white; font-weight: 800; font-size: 14px; padding: 11px 11px; border: none; }
+  .acc-section-row td { background: #18181b; color: #d4d4d8; font-weight: 700; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; border-top: 3px solid #3f3f46; padding: 8px 11px; }
+  .total-row td { background: #111; color: white; font-weight: 800; font-size: 15px; padding: 13px 11px; border: none; }
   .footer { margin-top: 30px; padding-top: 13px; border-top: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: flex-end; }
   .footer .note { font-size: 9px; color: #9ca3af; max-width: 260px; line-height: 1.6; }
   .footer .caliber-brand { text-align: right; }
@@ -283,13 +334,13 @@ export default function Presupuestador() {
     </div>
   </div>
   <div class="doc-info">
-    <div class="doc-title">Presupuesto</div>
+    <div class="doc-title">Cotización</div>
     <div class="doc-date">${fecha}</div>
   </div>
 </div>
 
 <div class="presupuesto-header">
-  <h2>${e(budget.nombre || 'Presupuesto sin título')}</h2>
+  <h2>${e(budget.nombre || 'Cotización sin título')}</h2>
   ${budget.cliente ? `<div class="cliente">Cliente: ${e(budget.cliente)}</div>` : ''}
 </div>
 
@@ -303,41 +354,17 @@ export default function Presupuestador() {
     </tr>
   </thead>
   <tbody>
-    <tr>
-      <td>${budget.pieza ? `Impresión 3D — ${e(budget.pieza)}` : 'Impresión 3D'}</td>
-      <td>$${fmt(budget.costoPieza)}</td>
-      <td>${budget.cantidad}</td>
-      <td>$${fmt(budget.costoPieza * budget.cantidad)}</td>
-    </tr>
-    ${budget.manoDeObra > 0 ? `
-    <tr>
-      <td>Mano de obra / terminado</td>
-      <td>$${fmt(budget.manoDeObra)}</td>
-      <td>${budget.cantidad}</td>
-      <td>$${fmt(budget.manoDeObra * budget.cantidad)}</td>
-    </tr>` : ''}
-    <tr class="subtotal-row">
-      <td>Subtotal sin accesorios</td>
-      <td>$${fmt(costoPorPiezaSinAcc)}</td>
-      <td>${budget.cantidad}</td>
-      <td>$${fmt(totalSinAcc)}</td>
-    </tr>
-    ${accesoriosRows ? `
-    <tr class="acc-header-row">
-      <td colspan="4">Accesorios</td>
-    </tr>
-    ${accesoriosRows}` : ''}
+    ${piezasRows}
+    ${accesoriosRows}
     <tr class="total-row">
-      <td>TOTAL GENERAL</td>
-      <td>$${fmt(costoPorPiezaConAcc)}</td>
-      <td>${budget.cantidad}</td>
-      <td>$${fmt(totalConAcc)}</td>
+      <td colspan="3">TOTAL GENERAL</td>
+      <td>$${fmt(totalGeneral)}</td>
     </tr>
   </tbody>
 </table>
 
 <div class="footer">
-  <div class="note">Presupuesto válido por 7 días hábiles. Los valores pueden variar según disponibilidad de materiales.</div>
+  <div class="note">Cotización válida por 7 días hábiles. Los precios pueden variar según disponibilidad de materiales.</div>
   <div class="caliber-brand">
     <div class="name">CALIBER 3D PRINTING</div>
     <div class="url">caliber3d.com.ar</div>
@@ -362,7 +389,7 @@ export default function Presupuestador() {
 
   async function handleSave() {
     if (!budget.nombre.trim()) {
-      alert('Ingresá un nombre para el presupuesto antes de guardar.')
+      alert('Ingresá un nombre para la cotización antes de guardar.')
       return
     }
     setSaving(true)
@@ -374,13 +401,9 @@ export default function Presupuestador() {
         body: JSON.stringify({
           nombre: budget.nombre,
           cliente: budget.cliente,
-          pieza: budget.pieza,
-          costoPieza: budget.costoPieza,
-          cantidad: budget.cantidad,
-          manoDeObra: budget.manoDeObra,
-          accesorios: budget.accesorios.map(({ nombre, costo }) => ({ nombre, costo })),
-          totalSinAccesorios: totalSinAcc,
-          totalConAccesorios: totalConAcc,
+          piezas: budget.piezas.map(({ id: _id, ...p }) => p),
+          accesorios: budget.accesorios.map(({ id: _id, ...a }) => a),
+          totalConAccesorios: totalGeneral,
           marcaNegocio: brand.marcaNegocio,
           telefono: brand.telefono,
           emailContacto: brand.emailContacto,
@@ -429,14 +452,10 @@ export default function Presupuestador() {
               onChange={(v) => setBrandField('emailContacto', v)}
               placeholder="tu@email.com"
             />
-
-            {/* Logo upload */}
             <div className="col-span-2">
               <label className="block text-xs font-medium text-zinc-400 uppercase tracking-wide mb-1.5">
                 Logo{' '}
-                <span className="text-zinc-600 normal-case tracking-normal font-normal">
-                  (opcional)
-                </span>
+                <span className="text-zinc-600 normal-case tracking-normal font-normal">(opcional)</span>
               </label>
               <div className="flex items-center gap-3 flex-wrap">
                 <input
@@ -485,15 +504,15 @@ export default function Presupuestador() {
           </p>
         </div>
 
-        {/* Budget data */}
+        {/* Budget header */}
         <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
           <SectionHeader label="El pedido" />
           <div className="grid grid-cols-2 gap-4">
             <TextField
-              label="Nombre del presupuesto"
+              label="Nombre de la cotización"
               hint="ej: Medallas Torneo 2025"
               value={budget.nombre}
-              onChange={(v) => setBudgetField('nombre', v)}
+              onChange={(v) => setBudget((prev) => ({ ...prev, nombre: v }))}
               placeholder="Nombre o referencia del trabajo"
               className="col-span-2"
             />
@@ -501,49 +520,59 @@ export default function Presupuestador() {
               label="Cliente"
               hint="opcional"
               value={budget.cliente}
-              onChange={(v) => setBudgetField('cliente', v)}
+              onChange={(v) => setBudget((prev) => ({ ...prev, cliente: v }))}
               placeholder="Nombre del cliente"
-            />
-            <TextField
-              label="Nombre de la pieza"
-              hint="ej: Medalla 5cm"
-              value={budget.pieza}
-              onChange={(v) => setBudgetField('pieza', v)}
-              placeholder="Descripción de la pieza"
-            />
-            <NumberField
-              label="Costo impresión por pieza"
-              hint="$"
-              value={budget.costoPieza}
-              onChange={(v) => setBudgetField('costoPieza', v)}
-            />
-            <NumberField
-              label="Cantidad"
-              hint="unidades"
-              value={budget.cantidad}
-              onChange={(v) => setBudgetField('cantidad', Math.max(1, Math.round(v)))}
-            />
-            <NumberField
-              label="Mano de obra por pieza"
-              hint="$ armado / terminado"
-              value={budget.manoDeObra}
-              onChange={(v) => setBudgetField('manoDeObra', v)}
-              className="col-span-2 sm:col-span-1"
+              className="col-span-2"
             />
           </div>
         </div>
 
-        {/* Accessories */}
+        {/* Piece cards */}
+        {budget.piezas.map((pieza, idx) => (
+          <PiezaCard
+            key={pieza.id}
+            pieza={pieza}
+            index={idx}
+            canRemove={budget.piezas.length > 1}
+            onRemove={() => removePieza(pieza.id)}
+            onUpdate={(patch) => updatePieza(pieza.id, patch)}
+          />
+        ))}
+
+        {/* Add piece */}
+        <button
+          type="button"
+          onClick={addPieza}
+          className="w-full flex items-center justify-center gap-2 border-2 border-dashed border-zinc-700 hover:border-orange-500/50 text-zinc-500 hover:text-orange-400 text-sm font-medium py-3.5 rounded-2xl transition-all"
+        >
+          <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+            <path
+              fillRule="evenodd"
+              d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+              clipRule="evenodd"
+            />
+          </svg>
+          Agregar tipo de pieza
+        </button>
+
+        {/* Global accessories */}
         <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
           <div className="flex items-center justify-between mb-5">
-            <h2 className="text-xs font-bold text-zinc-400 uppercase tracking-widest flex items-center gap-2">
-              <span className="w-1.5 h-4 bg-orange-500 rounded-full shrink-0" />
-              Accesorios
-            </h2>
+            <div>
+              <h2 className="text-xs font-bold text-zinc-400 uppercase tracking-widest flex items-center gap-2">
+                <span className="w-1.5 h-4 bg-zinc-500 rounded-full shrink-0" />
+                Accesorios
+              </h2>
+              {totalUnidades > 0 && (
+                <p className="text-xs text-zinc-600 mt-1 ml-3.5">
+                  Se aplican a las {totalUnidades} unidades totales
+                </p>
+              )}
+            </div>
             <button
               type="button"
               onClick={addAccesorio}
-              className="flex items-center gap-1.5 text-xs font-semibold text-orange-400 hover:text-orange-300 border border-orange-500/30 hover:border-orange-400/50 px-3 py-1.5 rounded-lg transition-all"
+              className="flex items-center gap-1.5 text-xs font-semibold text-zinc-400 hover:text-white border border-zinc-700 hover:border-zinc-500 px-3 py-1.5 rounded-lg transition-all"
             >
               <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor">
                 <path
@@ -552,13 +581,13 @@ export default function Presupuestador() {
                   clipRule="evenodd"
                 />
               </svg>
-              Agregar accesorio
+              Agregar
             </button>
           </div>
 
           {budget.accesorios.length === 0 ? (
             <p className="text-sm text-zinc-600 text-center py-4">
-              Nada todavía. Ej: listón, base, envasado, pintura, soporte...
+              Listón, base, envasado, pintura... Se muestran al final de la cotización.
             </p>
           ) : (
             <div className="space-y-3">
@@ -578,7 +607,7 @@ export default function Presupuestador() {
                     </span>
                     <input
                       type="number"
-                      placeholder="0"
+                      placeholder="Ej: 13.00"
                       value={acc.costo || ''}
                       min="0"
                       onChange={(e) =>
@@ -587,7 +616,12 @@ export default function Presupuestador() {
                       className="w-full bg-zinc-800 border border-zinc-700 rounded-lg pl-7 pr-3 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                     />
                   </div>
-                  <span className="text-xs text-zinc-600 shrink-0">/pieza</span>
+                  <span className="text-xs text-zinc-600 shrink-0">/u</span>
+                  {totalUnidades > 0 && acc.costo > 0 && (
+                    <span className="text-xs text-zinc-500 shrink-0 font-mono w-20 text-right">
+                      ${fmt(acc.costo * totalUnidades)}
+                    </span>
+                  )}
                   <button
                     type="button"
                     onClick={() => removeAccesorio(acc.id)}
@@ -610,10 +644,12 @@ export default function Presupuestador() {
 
         <button
           type="button"
-          onClick={() => setBudget(BUDGET_DEFAULTS)}
+          onClick={() =>
+            setBudget({ nombre: '', cliente: '', piezas: [newPieza()], accesorios: [] })
+          }
           className="text-xs text-zinc-600 hover:text-zinc-400 transition-colors underline underline-offset-2"
         >
-          Nuevo presupuesto (limpiar todo)
+          Nueva cotización (limpiar todo)
         </button>
       </div>
 
@@ -623,58 +659,54 @@ export default function Presupuestador() {
           <h3 className="text-xs font-bold text-zinc-500 uppercase tracking-widest">Resumen</h3>
 
           {/* Per-piece breakdown */}
-          <div className="space-y-2.5">
-            <div className="flex justify-between text-sm">
-              <span className="text-zinc-400">Impresión 3D</span>
-              <span className="font-mono text-zinc-200">${fmt(budget.costoPieza)}</span>
-            </div>
-            {budget.manoDeObra > 0 && (
-              <div className="flex justify-between text-sm">
-                <span className="text-zinc-400">Mano de obra</span>
-                <span className="font-mono text-zinc-200">${fmt(budget.manoDeObra)}</span>
-              </div>
-            )}
-            {budget.accesorios
-              .filter((a) => a.costo > 0)
-              .map((a) => (
-                <div key={a.id} className="flex justify-between text-sm">
-                  <span className="text-zinc-500 italic truncate max-w-[60%]">
-                    {a.nombre || 'Accesorio'}
-                  </span>
-                  <span className="font-mono text-zinc-400">${fmt(a.costo)}</span>
+          <div className="space-y-3">
+            {budget.piezas.map((p, idx) => {
+              const { precioConMdo, subtotal } = calcPieza(p)
+              const label = p.nombre || `Pieza ${idx + 1}`
+              return (
+                <div key={p.id}>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs font-bold text-orange-400 uppercase tracking-wide truncate max-w-[65%]">
+                      {label}
+                    </span>
+                    <span className="text-xs text-zinc-600 shrink-0">{p.cantidad} u.</span>
+                  </div>
+                  <div className="flex justify-between text-xs mb-0.5">
+                    <span className="text-zinc-500">Precio/pieza</span>
+                    <span className="font-mono text-zinc-300">${fmt(precioConMdo)}</span>
+                  </div>
+                  <div className="flex justify-between text-sm border-b border-zinc-800 pb-3">
+                    <span className="text-zinc-500 text-xs">Subtotal</span>
+                    <span className="font-mono text-zinc-200 font-medium">${fmt(subtotal)}</span>
+                  </div>
                 </div>
-              ))}
+              )
+            })}
           </div>
 
-          {/* Sub-totals per piece */}
-          <div className="border-t border-zinc-800 pt-4 space-y-2">
-            <div className="flex justify-between text-sm">
-              <span className="text-zinc-500">Pieza sin accesorios</span>
-              <span className="font-mono text-zinc-300">${fmt(costoPorPiezaSinAcc)}</span>
+          {/* Global accessories summary */}
+          {accsValidos.length > 0 && (
+            <div className="space-y-1.5">
+              <p className="text-xs font-bold text-zinc-500 uppercase tracking-widest">
+                Accesorios ({totalUnidades} u.)
+              </p>
+              {accsValidos.map((a) => (
+                <div key={a.id} className="flex justify-between text-sm border-b border-zinc-800 pb-1.5">
+                  <span className="text-zinc-500 text-xs truncate max-w-[60%]">{a.nombre}</span>
+                  <span className="font-mono text-zinc-300 text-xs">${fmt(a.costo * totalUnidades)}</span>
+                </div>
+              ))}
             </div>
-            {accesoriosValidos.length > 0 && (
-              <div className="flex justify-between text-sm">
-                <span className="text-zinc-500">Pieza con accesorios</span>
-                <span className="font-mono text-zinc-300">${fmt(costoPorPiezaConAcc)}</span>
-              </div>
-            )}
-          </div>
+          )}
 
           {/* Grand total */}
           <div className="border-t-2 border-dashed border-zinc-700 pt-5 text-center">
             <span className="text-xs font-bold text-orange-500 uppercase tracking-widest block mb-2">
               Total general
             </span>
-            <div className="text-4xl font-black text-white font-mono">${fmt(totalConAcc)}</div>
-            {accesoriosValidos.length > 0 && (
-              <div className="text-sm text-zinc-500 mt-1.5">
-                Sin accesorios:{' '}
-                <span className="font-mono">${fmt(totalSinAcc)}</span>
-              </div>
-            )}
+            <div className="text-4xl font-black text-white font-mono">${fmt(totalGeneral)}</div>
             <div className="text-xs text-zinc-600 mt-1">
-              {budget.cantidad} {budget.cantidad === 1 ? 'unidad' : 'unidades'} ×{' '}
-              ${fmt(costoPorPiezaConAcc)} c/u
+              {totalUnidades} {totalUnidades === 1 ? 'unidad' : 'unidades'} en total
             </div>
           </div>
 
@@ -710,30 +742,15 @@ export default function Presupuestador() {
               {saving ? (
                 <>
                   <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                    />
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                   </svg>
                   Guardando...
                 </>
               ) : saveStatus === 'ok' ? (
                 <>
                   <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-                    <path
-                      fillRule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clipRule="evenodd"
-                    />
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                   </svg>
                   Guardado en tu cuenta
                 </>
@@ -754,11 +771,128 @@ export default function Presupuestador() {
             href="/presupuestador/historial"
             className="block text-center text-xs text-zinc-600 hover:text-zinc-400 transition-colors underline underline-offset-2 pt-1"
           >
-            Ver mis presupuestos guardados →
+            Ver mis cotizaciones guardadas →
           </a>
         </div>
       </div>
 
+    </div>
+  )
+}
+
+function PiezaCard({
+  pieza,
+  index,
+  canRemove,
+  onRemove,
+  onUpdate,
+}: {
+  pieza: PiezaItem
+  index: number
+  canRemove: boolean
+  onRemove: () => void
+  onUpdate: (patch: Partial<PiezaItem>) => void
+}) {
+  return (
+    <div className="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden">
+      <div className="flex items-center justify-between px-6 py-3.5 border-b border-zinc-800">
+        <h3 className="text-xs font-bold text-orange-400 uppercase tracking-widest flex items-center gap-2">
+          <span className="w-1.5 h-4 bg-orange-500 rounded-full shrink-0" />
+          Pieza {index + 1}
+          {pieza.nombre && (
+            <span className="text-zinc-500 font-normal normal-case tracking-normal">
+              — {pieza.nombre}
+            </span>
+          )}
+        </h3>
+        {canRemove && (
+          <button
+            type="button"
+            onClick={onRemove}
+            className="text-zinc-600 hover:text-red-400 hover:bg-red-500/10 p-1.5 rounded-lg transition-all"
+            aria-label="Quitar pieza"
+          >
+            <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+              <path
+                fillRule="evenodd"
+                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </button>
+        )}
+      </div>
+
+      <div className="p-6">
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-xs font-medium text-zinc-400 uppercase tracking-wide mb-1.5">
+              Nombre de la pieza{' '}
+              <span className="text-zinc-600 normal-case tracking-normal font-normal">(ej: Medalla Oro)</span>
+            </label>
+            <input
+              type="text"
+              value={pieza.nombre}
+              placeholder="Descripción de la pieza"
+              onChange={(e) => onUpdate({ nombre: e.target.value })}
+              className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-zinc-400 uppercase tracking-wide mb-1.5">
+              Precio por pieza{' '}
+              <span className="text-zinc-600 normal-case tracking-normal font-normal">($)</span>
+            </label>
+            <input
+              type="number"
+              value={pieza.precioPieza || ''}
+              min="0"
+              placeholder="Ej: 25.00"
+              onChange={(e) => onUpdate({ precioPieza: parseFloat(e.target.value) || 0 })}
+              className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-zinc-400 uppercase tracking-wide mb-1.5">
+              Cantidad{' '}
+              <span className="text-zinc-600 normal-case tracking-normal font-normal">(unidades)</span>
+            </label>
+            <input
+              type="number"
+              value={pieza.cantidad || ''}
+              min="1"
+              placeholder="Ej: 25"
+              onChange={(e) => onUpdate({ cantidad: Math.max(1, Math.round(parseFloat(e.target.value) || 1)) })}
+              className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            />
+          </div>
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-xs font-medium text-zinc-400 uppercase tracking-wide">
+                Mano de obra{' '}
+                <span className="text-zinc-600 normal-case tracking-normal font-normal">($/pieza)</span>
+              </label>
+              <label className="flex items-center gap-1.5 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={pieza.mostrarManoDeObra}
+                  onChange={(e) => onUpdate({ mostrarManoDeObra: e.target.checked })}
+                  className="w-3.5 h-3.5 accent-orange-500 cursor-pointer"
+                />
+                <span className="text-xs text-zinc-500">En PDF</span>
+              </label>
+            </div>
+            <input
+              type="number"
+              value={pieza.manoDeObra || ''}
+              min="0"
+              placeholder="Ej: 15.00"
+              onChange={(e) => onUpdate({ manoDeObra: parseFloat(e.target.value) || 0 })}
+              className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            />
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
