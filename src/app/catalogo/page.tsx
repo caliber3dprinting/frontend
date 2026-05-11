@@ -7,10 +7,15 @@ import Breadcrumb from '@/components/ui/Breadcrumb'
 
 export const revalidate = 60
 
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://caliber3d.mx'
+
 export const metadata: Metadata = {
   title: 'Catálogo de Impresión 3D a Medida',
   description:
     'Catálogo de repuestos 3D, figuras personalizadas y piezas técnicas de Caliber 3D Printing. Impresión 3D a medida con alta precisión en Playa del Carmen.',
+  alternates: {
+    canonical: `${BASE_URL}/catalogo`,
+  },
 }
 
 interface CatalogPageProps {

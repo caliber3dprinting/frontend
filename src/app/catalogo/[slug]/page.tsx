@@ -16,6 +16,7 @@ interface ProductPageProps {
 // Si Sanity no está disponible en build time, retorna [] y las páginas
 // se generan on-demand en runtime (dynamicParams = true)
 export const dynamicParams = true
+export const revalidate = 3600
 
 export async function generateStaticParams() {
   try {
@@ -35,10 +36,16 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   const materialNote = product.material ? ` en ${product.material}` : ''
   const desc = `${product.title}${materialNote}. Impresión 3D a medida en Playa del Carmen. Cotización personalizada en menos de 24h.`
 
+  const canonicalUrl = `${BASE_URL}/catalogo/${slug}`
+
   return {
     title: `${product.title} — Impresión 3D a Medida`,
     description: desc.length > 160 ? desc.slice(0, 157) + '…' : desc,
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
+      url: canonicalUrl,
       images: product.cover_image
         ? [{ url: getSanityImageUrl(product.cover_image, 'large') }]
         : [],
@@ -92,11 +99,32 @@ export default async function ProductPage({ params }: ProductPageProps) {
     },
   }
 
+  const breadcrumbItems: Array<{ '@type': string; position: number; name: string; item?: string }> = [
+    { '@type': 'ListItem', position: 1, name: 'Inicio', item: BASE_URL },
+    { '@type': 'ListItem', position: 2, name: 'Catálogo', item: `${BASE_URL}/catalogo` },
+  ]
+  if (product.categories?.[0]) {
+    breadcrumbItems.push({ '@type': 'ListItem', position: 3, name: product.categories[0].name, item: `${BASE_URL}/catalogo?categoria=${product.categories[0].slug}` })
+    breadcrumbItems.push({ '@type': 'ListItem', position: 4, name: product.title })
+  } else {
+    breadcrumbItems.push({ '@type': 'ListItem', position: 3, name: product.title })
+  }
+
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: breadcrumbItems,
+  }
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-30">
       {/* Breadcrumb */}
