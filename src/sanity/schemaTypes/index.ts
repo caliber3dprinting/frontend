@@ -6,6 +6,8 @@ import { homePageType } from './homePage'
 import { aboutPageType } from './aboutPage'
 import { globalConfigType } from './globalConfig'
 import { quoteType } from './quote'
+import { presupuestoType } from './presupuesto'
+import { calculoType } from './calculo'
 
 export const schemaTypes = [
   categoryType,
@@ -16,4 +18,6 @@ export const schemaTypes = [
   aboutPageType,
   globalConfigType,
   quoteType,
+  presupuestoType,
+  calculoType,
 ]

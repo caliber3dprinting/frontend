@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import CalculadoraCostos from '@/components/tools/CalculadoraCostos'
+import Presupuestador from '@/components/tools/Presupuestador'
 import Link from 'next/link'
 
 type Tab = 'calculadora' | 'presupuestador'
@@ -73,23 +74,7 @@ export default function EspacioMakersContent() {
       )}
 
       {activeTab === 'presupuestador' && (
-        <div className="flex flex-col items-center justify-center py-20 text-center max-w-lg mx-auto">
-          <div className="w-16 h-16 rounded-2xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center mb-6">
-            <svg className="w-8 h-8 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-          </div>
-          <span className="text-orange-500 text-xs font-bold uppercase tracking-widest mb-3">
-            Próximamente
-          </span>
-          <h2 className="text-2xl font-bold text-white mb-3">
-            Presupuestador en construcción
-          </h2>
-          <p className="text-zinc-400 text-sm leading-relaxed">
-            Estamos terminando el presupuestador para que puedas generar documentos profesionales
-            para tus clientes en segundos. Va a estar disponible muy pronto.
-          </p>
-        </div>
+        <Presupuestador />
       )}
     </div>
   )

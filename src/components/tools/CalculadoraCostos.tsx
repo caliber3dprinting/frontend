@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 
 type Vals = {
   peso: number
@@ -97,6 +97,10 @@ function BreakdownBar({
 export default function CalculadoraCostos() {
   const [vals, setVals] = useState<Vals>(DEFAULTS)
   const [copied, setCopied] = useState(false)
+  const [showSaveModal, setShowSaveModal] = useState(false)
+  const [nombrePieza, setNombrePieza] = useState('')
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'ok' | 'error'>('idle')
+  const nombreRef = useRef<HTMLInputElement>(null)
 
   function set(id: keyof Vals, val: number) {
     setVals(prev => ({ ...prev, [id]: val }))
@@ -108,6 +112,35 @@ export default function CalculadoraCostos() {
   const man = (vals.postProcesado / 60) * vals.valorHora
   const costoBase = mat + ene + amo + man
   const costoReal = costoBase * (1 + vals.tasaFallos / 100)
+
+  function openSaveModal() {
+    setNombrePieza('')
+    setSaveStatus('idle')
+    setShowSaveModal(true)
+    setTimeout(() => nombreRef.current?.focus(), 50)
+  }
+
+  async function handleSaveCalculo() {
+    if (!nombrePieza.trim()) return
+    setSaveStatus('saving')
+    try {
+      const res = await fetch('/api/calculos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nombrePieza: nombrePieza.trim(),
+          resultado: costoReal,
+          costoBase,
+          ...vals,
+        }),
+      })
+      if (!res.ok) throw new Error()
+      setSaveStatus('ok')
+      setTimeout(() => setShowSaveModal(false), 1500)
+    } catch {
+      setSaveStatus('error')
+    }
+  }
 
   async function handleCopy() {
     const lines = [
@@ -125,6 +158,16 @@ export default function CalculadoraCostos() {
   }
 
   return (
+    <>
+    <SaveModal
+      open={showSaveModal}
+      nombrePieza={nombrePieza}
+      onChange={setNombrePieza}
+      onSave={handleSaveCalculo}
+      onClose={() => setShowSaveModal(false)}
+      status={saveStatus}
+      nombreRef={nombreRef}
+    />
     <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
 
       {/* Inputs */}
@@ -208,30 +251,118 @@ export default function CalculadoraCostos() {
             </div>
           </div>
 
+          <div className="mt-6 space-y-3">
+            <button
+              onClick={handleCopy}
+              className="w-full flex items-center justify-center gap-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-300 hover:text-white text-sm font-medium py-2.5 rounded-xl transition-all"
+            >
+              {copied ? (
+                <>
+                  <svg className="w-4 h-4 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                  <span className="text-green-400">Copiado al portapapeles</span>
+                </>
+              ) : (
+                <>
+                  <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
+                    <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z" />
+                  </svg>
+                  Copiar desglose
+                </>
+              )}
+            </button>
+
+            <button
+              onClick={openSaveModal}
+              className="w-full flex items-center justify-center gap-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-300 hover:text-white text-sm font-medium py-2.5 rounded-xl transition-all"
+            >
+              <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6h5a2 2 0 012 2v7a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2h5v5.586l-1.293-1.293zM9 4a1 1 0 012 0v2H9V4z" />
+              </svg>
+              Guardar cálculo
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    </>
+  )
+}
+
+function SaveModal({
+  open,
+  nombrePieza,
+  onChange,
+  onSave,
+  onClose,
+  status,
+  nombreRef,
+}: {
+  open: boolean
+  nombrePieza: string
+  onChange: (v: string) => void
+  onSave: () => void
+  onClose: () => void
+  status: 'idle' | 'saving' | 'ok' | 'error'
+  nombreRef: React.RefObject<HTMLInputElement | null>
+}) {
+  if (!open) return null
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+      <div className="bg-zinc-900 border border-zinc-700 rounded-2xl p-6 w-full max-w-sm shadow-2xl">
+        <h3 className="text-white font-bold text-base mb-1">Guardar cálculo</h3>
+        <p className="text-zinc-400 text-sm mb-4">¿Cómo se llama la pieza que calculaste?</p>
+
+        <input
+          ref={nombreRef}
+          type="text"
+          value={nombrePieza}
+          onChange={e => onChange(e.target.value)}
+          onKeyDown={e => e.key === 'Enter' && onSave()}
+          placeholder="Ej: Medalla 5cm, soporte escritorio..."
+          className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all mb-4"
+        />
+
+        {status === 'error' && (
+          <p className="text-red-400 text-xs mb-3">Error al guardar. Intentá de nuevo.</p>
+        )}
+
+        <div className="flex gap-3">
           <button
-            onClick={handleCopy}
-            className="mt-6 w-full flex items-center justify-center gap-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-300 hover:text-white text-sm font-medium py-2.5 rounded-xl transition-all"
+            onClick={onClose}
+            className="flex-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-sm font-medium py-2.5 rounded-xl transition-all"
           >
-            {copied ? (
+            Cancelar
+          </button>
+          <button
+            onClick={onSave}
+            disabled={status === 'saving' || !nombrePieza.trim()}
+            className="flex-1 flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-400 disabled:opacity-50 text-white text-sm font-bold py-2.5 rounded-xl transition-all"
+          >
+            {status === 'saving' ? (
               <>
-                <svg className="w-4 h-4 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                </svg>
+                Guardando...
+              </>
+            ) : status === 'ok' ? (
+              <>
+                <svg className="w-4 h-4 text-green-300" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
-                <span className="text-green-400">Copiado al portapapeles</span>
+                Guardado
               </>
             ) : (
-              <>
-                <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-                  <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
-                  <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z" />
-                </svg>
-                Copiar desglose
-              </>
+              'Guardar'
             )}
           </button>
         </div>
       </div>
-
     </div>
   )
 }
