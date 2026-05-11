@@ -10,8 +10,8 @@ import { useAuth, SignInButton, UserButton } from '@clerk/nextjs'
 const NAV_LINKS = [
   { href: '/catalogo', label: 'Catálogo' },
   { href: '/blog', label: 'Blog' },
-  { href: '/calculadora', label: 'Calculadora' },
   { href: '/nosotros', label: 'Nosotros' },
+  { href: '/espacio-makers', label: 'Espacio Makers', outline: true },
   { href: '/cotizar', label: 'Cotizar', accent: true },
 ]
 
@@ -67,12 +67,20 @@ export default function Navbar({ whatsapp }: NavbarProps) {
 
           {/* Desktop nav */}
           <nav aria-label="Navegación principal" className="hidden md:flex items-center gap-3">
-            {NAV_LINKS.map(({ href, label, accent }) =>
+            {NAV_LINKS.map(({ href, label, accent, outline }) =>
               accent ? (
                 <Link
                   key={href}
                   href={href}
                   className="ml-4 bg-orange-500 hover:bg-orange-400 text-white font-semibold px-5 py-2 rounded-xl text-sm transition-colors"
+                >
+                  {label}
+                </Link>
+              ) : outline ? (
+                <Link
+                  key={href}
+                  href={href}
+                  className="border border-orange-500 text-orange-500 hover:bg-orange-500/10 font-semibold px-5 py-2 rounded-xl text-sm transition-colors"
                 >
                   {label}
                 </Link>
@@ -167,7 +175,7 @@ export default function Navbar({ whatsapp }: NavbarProps) {
 
             {/* Nav links */}
             <nav aria-label="Menú móvil" className="flex flex-col flex-1 px-5 pt-6 gap-1">
-              {NAV_LINKS.map(({ href, label, accent }, i) => (
+              {NAV_LINKS.map(({ href, label, accent, outline }, i) => (
                 <motion.div
                   key={href}
                   initial={{ opacity: 0, y: 10 }}
@@ -179,6 +187,8 @@ export default function Navbar({ whatsapp }: NavbarProps) {
                     className={`flex items-center font-semibold text-base transition-colors rounded-xl px-4 py-3 ${
                       accent
                         ? 'bg-orange-500 hover:bg-orange-400 text-white justify-center mt-2'
+                        : outline
+                        ? 'border border-orange-500 text-orange-500 hover:bg-orange-500/10 justify-center mt-2'
                         : pathname.startsWith(href)
                         ? 'text-white bg-zinc-800/60'
                         : 'text-zinc-400 hover:text-white hover:bg-zinc-800/40'
