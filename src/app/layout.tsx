@@ -9,6 +9,7 @@ import { GoogleAnalytics } from '@next/third-parties/google'
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap', preload: true })
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://caliber3d.mx'),
   title: {
     default: 'Caliber 3D Printing — Impresión 3D, Playa del Carmen',
     template: '%s | Caliber 3D Printing',
@@ -19,6 +20,16 @@ export const metadata: Metadata = {
     siteName: 'Caliber 3D Printing',
     locale: 'es_MX',
     type: 'website',
+    url: 'https://caliber3d.mx',
+    title: 'Caliber 3D Printing — Impresión 3D, Playa del Carmen',
+    description:
+      'Impresión 3D a medida en Playa del Carmen. Fabricamos repuestos 3D, piezas técnicas y figuras personalizadas con precisión profesional.',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Caliber 3D Printing — Impresión 3D, Playa del Carmen',
+    description:
+      'Impresión 3D a medida en Playa del Carmen. Fabricamos repuestos 3D, piezas técnicas y figuras personalizadas con precisión profesional.',
   },
 }
 
