@@ -1,15 +1,10 @@
 import { ImageResponse } from 'next/og'
-import { readFile } from 'node:fs/promises'
-import { join } from 'node:path'
 
 export const alt = 'Caliber 3D Printing — Impresión 3D profesional en Playa del Carmen'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
-export default async function Image() {
-  const logoData = await readFile(join(process.cwd(), 'public/logo-en-3d.webp'), 'base64')
-  const logoSrc = `data:image/webp;base64,${logoData}`
-
+export default function Image() {
   return new ImageResponse(
     (
       <div
@@ -19,8 +14,9 @@ export default async function Image() {
           height: '100%',
           background: '#09090b',
           alignItems: 'center',
-          position: 'relative',
+          justifyContent: 'space-between',
           padding: '70px 80px',
+          position: 'relative',
         }}
       >
         {/* Barra naranja izquierda */}
@@ -32,26 +28,28 @@ export default async function Image() {
             bottom: 0,
             width: '10px',
             background: '#f97316',
+            display: 'flex',
           }}
         />
 
-        {/* Texto */}
+        {/* Texto principal */}
         <div
           style={{
             display: 'flex',
             flexDirection: 'column',
             flex: 1,
-            paddingRight: '60px',
+            paddingRight: '80px',
           }}
         >
           <span
             style={{
               color: '#f97316',
-              fontSize: 26,
+              fontSize: 24,
               fontWeight: 600,
-              marginBottom: 20,
-              letterSpacing: '0.05em',
+              marginBottom: 24,
+              letterSpacing: '0.08em',
               textTransform: 'uppercase',
+              display: 'flex',
             }}
           >
             caliber3d.mx
@@ -59,10 +57,12 @@ export default async function Image() {
           <span
             style={{
               color: '#ffffff',
-              fontSize: 58,
+              fontSize: 60,
               fontWeight: 700,
               lineHeight: 1.1,
-              marginBottom: 28,
+              marginBottom: 32,
+              display: 'flex',
+              flexWrap: 'wrap',
             }}
           >
             Impresión 3D de alta precisión
@@ -71,20 +71,50 @@ export default async function Image() {
             style={{
               color: '#a1a1aa',
               fontSize: 28,
-              lineHeight: 1.4,
+              display: 'flex',
             }}
           >
             Playa del Carmen · Enviamos a todo México
           </span>
         </div>
 
-        {/* Logo */}
-        <img
-          src={logoSrc}
-          width={280}
-          height={280}
-          style={{ objectFit: 'contain' }}
-        />
+        {/* Ícono decorativo */}
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: 220,
+            height: 220,
+            borderRadius: '50%',
+            border: '4px solid #f97316',
+            flexShrink: 0,
+          }}
+        >
+          <span
+            style={{
+              color: '#f97316',
+              fontSize: 52,
+              fontWeight: 800,
+              letterSpacing: '-0.02em',
+              display: 'flex',
+            }}
+          >
+            C3D
+          </span>
+          <span
+            style={{
+              color: '#52525b',
+              fontSize: 16,
+              letterSpacing: '0.15em',
+              marginTop: 8,
+              display: 'flex',
+            }}
+          >
+            PRINTING
+          </span>
+        </div>
       </div>
     ),
     { ...size }
