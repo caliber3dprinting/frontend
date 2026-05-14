@@ -7,8 +7,8 @@ export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
 export default async function Image() {
-  const bannerData = await readFile(join(process.cwd(), 'public/og-banner.jpg'), 'base64')
-  const bannerSrc = `data:image/jpeg;base64,${bannerData}`
+  const logoData = await readFile(join(process.cwd(), 'public/logo-en-3d.webp'), 'base64')
+  const logoSrc = `data:image/webp;base64,${logoData}`
 
   return new ImageResponse(
     (
@@ -17,36 +17,9 @@ export default async function Image() {
           display: 'flex',
           width: '100%',
           height: '100%',
-          position: 'relative',
+          background: '#09090b',
         }}
       >
-        {/* Imagen de fondo */}
-        <img
-          src={bannerSrc}
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            objectPosition: 'right center',
-          }}
-        />
-
-        {/* Overlay oscuro degradado */}
-        <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            background: 'linear-gradient(to right, rgba(9,9,11,0.97) 50%, rgba(9,9,11,0.65) 100%)',
-            display: 'flex',
-          }}
-        />
-
         {/* Barra naranja izquierda */}
         <div
           style={{
@@ -60,18 +33,14 @@ export default async function Image() {
           }}
         />
 
-        {/* Contenido */}
+        {/* Panel izquierdo: texto */}
         <div
           style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
-            padding: '70px 90px',
+            padding: '70px 60px 70px 90px',
+            flex: 1,
           }}
         >
           <span
@@ -81,7 +50,7 @@ export default async function Image() {
               fontWeight: 600,
               letterSpacing: '0.1em',
               textTransform: 'uppercase',
-              marginBottom: 20,
+              marginBottom: 24,
               display: 'flex',
             }}
           >
@@ -90,26 +59,44 @@ export default async function Image() {
           <span
             style={{
               color: '#ffffff',
-              fontSize: 62,
+              fontSize: 58,
               fontWeight: 700,
               lineHeight: 1.1,
-              marginBottom: 28,
+              marginBottom: 32,
               display: 'flex',
               flexWrap: 'wrap',
-              maxWidth: '620px',
             }}
           >
             Impresión 3D de alta precisión
           </span>
           <span
             style={{
-              color: '#d4d4d8',
+              color: '#a1a1aa',
               fontSize: 26,
               display: 'flex',
             }}
           >
             Playa del Carmen · Enviamos a todo México
           </span>
+        </div>
+
+        {/* Panel derecho: imagen */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '380px',
+            flexShrink: 0,
+            background: '#111113',
+          }}
+        >
+          <img
+            src={logoSrc}
+            width={320}
+            height={320}
+            style={{ objectFit: 'contain' }}
+          />
         </div>
       </div>
     ),
