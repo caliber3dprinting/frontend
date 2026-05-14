@@ -30,7 +30,7 @@ export default async function Image() {
             width: '100%',
             height: '100%',
             objectFit: 'cover',
-            objectPosition: 'center top',
+            objectPosition: 'right center',
           }}
         />
 
@@ -42,7 +42,7 @@ export default async function Image() {
             left: 0,
             width: '100%',
             height: '100%',
-            background: 'linear-gradient(to right, rgba(9,9,11,0.88) 55%, rgba(9,9,11,0.45) 100%)',
+            background: 'linear-gradient(to right, rgba(9,9,11,0.97) 50%, rgba(9,9,11,0.65) 100%)',
             display: 'flex',
           }}
         />
