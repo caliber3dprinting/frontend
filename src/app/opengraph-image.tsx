@@ -1,10 +1,15 @@
 import { ImageResponse } from 'next/og'
+import { readFile } from 'node:fs/promises'
+import { join } from 'node:path'
 
 export const alt = 'Caliber 3D Printing — Impresión 3D profesional en Playa del Carmen'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
-export default function Image() {
+export default async function Image() {
+  const bannerData = await readFile(join(process.cwd(), 'public/og-banner.jpg'), 'base64')
+  const bannerSrc = `data:image/jpeg;base64,${bannerData}`
+
   return new ImageResponse(
     (
       <div
@@ -12,13 +17,36 @@ export default function Image() {
           display: 'flex',
           width: '100%',
           height: '100%',
-          background: '#09090b',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '70px 80px',
           position: 'relative',
         }}
       >
+        {/* Imagen de fondo */}
+        <img
+          src={bannerSrc}
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            objectPosition: 'center top',
+          }}
+        />
+
+        {/* Overlay oscuro degradado */}
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            background: 'linear-gradient(to right, rgba(9,9,11,0.88) 55%, rgba(9,9,11,0.45) 100%)',
+            display: 'flex',
+          }}
+        />
+
         {/* Barra naranja izquierda */}
         <div
           style={{
@@ -32,23 +60,28 @@ export default function Image() {
           }}
         />
 
-        {/* Texto principal */}
+        {/* Contenido */}
         <div
           style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
             display: 'flex',
             flexDirection: 'column',
-            flex: 1,
-            paddingRight: '80px',
+            justifyContent: 'center',
+            padding: '70px 90px',
           }}
         >
           <span
             style={{
               color: '#f97316',
-              fontSize: 24,
+              fontSize: 22,
               fontWeight: 600,
-              marginBottom: 24,
-              letterSpacing: '0.08em',
+              letterSpacing: '0.1em',
               textTransform: 'uppercase',
+              marginBottom: 20,
               display: 'flex',
             }}
           >
@@ -57,62 +90,25 @@ export default function Image() {
           <span
             style={{
               color: '#ffffff',
-              fontSize: 60,
+              fontSize: 62,
               fontWeight: 700,
               lineHeight: 1.1,
-              marginBottom: 32,
+              marginBottom: 28,
               display: 'flex',
               flexWrap: 'wrap',
+              maxWidth: '620px',
             }}
           >
             Impresión 3D de alta precisión
           </span>
           <span
             style={{
-              color: '#a1a1aa',
-              fontSize: 28,
+              color: '#d4d4d8',
+              fontSize: 26,
               display: 'flex',
             }}
           >
             Playa del Carmen · Enviamos a todo México
-          </span>
-        </div>
-
-        {/* Ícono decorativo */}
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: 220,
-            height: 220,
-            borderRadius: '50%',
-            border: '4px solid #f97316',
-            flexShrink: 0,
-          }}
-        >
-          <span
-            style={{
-              color: '#f97316',
-              fontSize: 52,
-              fontWeight: 800,
-              letterSpacing: '-0.02em',
-              display: 'flex',
-            }}
-          >
-            C3D
-          </span>
-          <span
-            style={{
-              color: '#52525b',
-              fontSize: 16,
-              letterSpacing: '0.15em',
-              marginTop: 8,
-              display: 'flex',
-            }}
-          >
-            PRINTING
           </span>
         </div>
       </div>
