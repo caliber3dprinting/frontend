@@ -1,5 +1,3 @@
-import nodemailer from 'nodemailer'
-
 function h(text: string): string {
   return text
     .replace(/&/g, '&amp;')
@@ -8,14 +6,6 @@ function h(text: string): string {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;')
 }
-
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.GMAIL_USER,
-    pass: process.env.GMAIL_APP_PASSWORD,
-  },
-})
 
 export interface QuoteEmailData {
   name: string
@@ -29,6 +19,9 @@ export interface QuoteEmailData {
 
 export async function sendQuoteEmail(data: QuoteEmailData) {
   const { name, email, phone, category, description, notes, attachment } = data
+
+  const apiKey = process.env.RESEND_API_KEY
+  if (!apiKey) throw new Error('RESEND_API_KEY no configurado')
 
   const safePhone = phone ? phone.replace(/\D/g, '') : ''
 
@@ -101,14 +94,35 @@ export async function sendQuoteEmail(data: QuoteEmailData) {
     </div>
   `
 
-  await transporter.sendMail({
-    from: `"Caliber 3D" <${process.env.GMAIL_USER}>`,
-    to: process.env.QUOTE_RECIPIENT ?? 'caliber3dprinting@gmail.com',
-    replyTo: email,
+  const payload: Record<string, unknown> = {
+    from: process.env.RESEND_FROM ?? 'Caliber 3D <onboarding@resend.dev>',
+    to: [process.env.QUOTE_RECIPIENT ?? 'caliber.3dprinting@gmail.com'],
+    reply_to: email,
     subject: `Nueva cotización de ${name}${category ? ` — ${category}` : ''}`,
     html,
-    ...(attachment
-      ? { attachments: [{ filename: attachment.filename, content: attachment.content, contentType: attachment.contentType }] }
-      : {}),
+  }
+
+  if (attachment) {
+    payload.attachments = [
+      {
+        filename: attachment.filename,
+        content: attachment.content.toString('base64'),
+        content_type: attachment.contentType,
+      },
+    ]
+  }
+
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload),
   })
+
+  if (!res.ok) {
+    const err = await res.text()
+    throw new Error(`Resend error ${res.status}: ${err}`)
+  }
 }

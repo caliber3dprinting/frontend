@@ -1,14 +1,16 @@
 import { ImageResponse } from 'next/og'
-import { readFile } from 'node:fs/promises'
-import { join } from 'node:path'
 
 export const alt = 'Caliber 3D Printing — Impresión 3D profesional en Playa del Carmen'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://caliber3d.mx'
+
 export default async function Image() {
-  const logoData = await readFile(join(process.cwd(), 'public/logo-en-3d.jpg'), 'base64')
-  const logoSrc = `data:image/jpeg;base64,${logoData}`
+  const logoRes = await fetch(`${BASE_URL}/logo-en-3d.jpg`)
+  const logoBuffer = await logoRes.arrayBuffer()
+  const logoBase64 = Buffer.from(logoBuffer).toString('base64')
+  const logoSrc = `data:image/jpeg;base64,${logoBase64}`
 
   return new ImageResponse(
     (
