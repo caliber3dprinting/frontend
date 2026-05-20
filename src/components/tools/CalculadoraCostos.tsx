@@ -2,30 +2,16 @@
 
 import { useState, useRef } from 'react'
 
-type Vals = {
-  peso: number
-  costoFilamento: number
-  tiempo: number
-  consumo: number
-  costoKwh: number
-  costoMaquina: number
-  vidaUtil: number
-  postProcesado: number
-  valorHora: number
-  tasaFallos: number
-}
+const PRINTER_PRESETS = [
+  { label: 'Ender 3', watts: 120 },
+  { label: 'Prusa MK4', watts: 100 },
+  { label: 'Bambu X1', watts: 280 },
+  { label: 'CR-10', watts: 180 },
+]
 
-const DEFAULTS: Vals = {
-  peso: 50,
-  costoFilamento: 400,
-  tiempo: 4,
-  consumo: 150,
-  costoKwh: 1.5,
-  costoMaquina: 5000,
-  vidaUtil: 3000,
-  postProcesado: 15,
-  valorHora: 150,
-  tasaFallos: 10,
+function num(s: string) {
+  const v = parseFloat(s.replace(',', '.'))
+  return isNaN(v) || v < 0 ? 0 : v
 }
 
 function fmt(n: number) {
@@ -35,33 +21,64 @@ function fmt(n: number) {
 function Field({
   label,
   hint,
-  id,
   value,
   onChange,
+  placeholder,
 }: {
   label: string
   hint: string
-  id: keyof Vals
-  value: number
-  onChange: (id: keyof Vals, val: number) => void
+  value: string
+  onChange: (v: string) => void
+  placeholder: string
 }) {
   return (
     <div>
-      <label
-        htmlFor={id}
-        className="block text-xs font-medium text-zinc-400 uppercase tracking-wide mb-1.5"
-      >
+      <label className="block text-xs font-medium text-zinc-400 uppercase tracking-wide mb-1.5">
         {label}
         <span className="ml-1 text-zinc-600 normal-case tracking-normal font-normal">({hint})</span>
       </label>
       <input
         type="number"
-        id={id}
         value={value}
         min="0"
-        onChange={e => onChange(id, parseFloat(e.target.value) || 0)}
-        className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+        placeholder={placeholder}
+        onChange={e => onChange(e.target.value)}
+        className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2.5 text-white text-sm placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
       />
+    </div>
+  )
+}
+
+function OptionalSection({
+  label,
+  enabled,
+  onToggle,
+  children,
+  hint,
+}: {
+  label: string
+  enabled: boolean
+  onToggle: () => void
+  children: React.ReactNode
+  hint: string
+}) {
+  return (
+    <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
+      <button
+        onClick={onToggle}
+        className="w-full flex items-center gap-2 text-xs font-bold text-zinc-400 uppercase tracking-widest group"
+      >
+        <span className={`w-1.5 h-4 rounded-full shrink-0 transition-colors ${enabled ? 'bg-orange-500' : 'bg-zinc-700'}`} />
+        {label}
+        <span className={`ml-auto text-xs font-normal normal-case tracking-normal transition-colors ${enabled ? 'text-orange-400' : 'text-zinc-600 group-hover:text-zinc-400'}`}>
+          {enabled ? '— quitar' : '+ agregar'}
+        </span>
+      </button>
+      {enabled ? (
+        <div className="mt-5">{children}</div>
+      ) : (
+        <p className="text-xs text-zinc-700 mt-3 leading-relaxed">{hint}</p>
+      )}
     </div>
   )
 }
@@ -95,23 +112,37 @@ function BreakdownBar({
 }
 
 export default function CalculadoraCostos() {
-  const [vals, setVals] = useState<Vals>(DEFAULTS)
+  const [peso, setPeso] = useState('')
+  const [costoFilamento, setCostoFilamento] = useState('')
+  const [tiempo, setTiempo] = useState('')
+  const [consumo, setConsumo] = useState('')
+  const [costoKwh, setCostoKwh] = useState('')
+  const [machineEnabled, setMachineEnabled] = useState(false)
+  const [costoMaquina, setCostoMaquina] = useState('')
+  const [vidaUtil, setVidaUtil] = useState('')
+  const [laborEnabled, setLaborEnabled] = useState(false)
+  const [postProcesado, setPostProcesado] = useState('')
+  const [valorHora, setValorHora] = useState('')
+  const [tasaFallos, setTasaFallos] = useState('')
+  const [cantidad, setCantidad] = useState('')
+
   const [copied, setCopied] = useState(false)
   const [showSaveModal, setShowSaveModal] = useState(false)
   const [nombrePieza, setNombrePieza] = useState('')
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'ok' | 'error'>('idle')
   const nombreRef = useRef<HTMLInputElement>(null)
 
-  function set(id: keyof Vals, val: number) {
-    setVals(prev => ({ ...prev, [id]: val }))
-  }
-
-  const mat = (vals.peso / 1000) * vals.costoFilamento
-  const ene = (vals.consumo / 1000) * vals.tiempo * vals.costoKwh
-  const amo = vals.vidaUtil > 0 ? (vals.costoMaquina / vals.vidaUtil) * vals.tiempo : 0
-  const man = (vals.postProcesado / 60) * vals.valorHora
+  const mat = (num(peso) / 1000) * num(costoFilamento)
+  const ene = (num(consumo) / 1000) * num(tiempo) * num(costoKwh)
+  const amo = machineEnabled && num(vidaUtil) > 0
+    ? (num(costoMaquina) / num(vidaUtil)) * num(tiempo)
+    : 0
+  const man = laborEnabled ? (num(postProcesado) / 60) * num(valorHora) : 0
   const costoBase = mat + ene + amo + man
-  const costoReal = costoBase * (1 + vals.tasaFallos / 100)
+  const tasaFallosNum = num(tasaFallos) || 0
+  const costoUnidad = costoBase * (1 + tasaFallosNum / 100)
+  const cantidadNum = Math.max(1, Math.round(num(cantidad)) || 1)
+  const costoTotal = costoUnidad * cantidadNum
 
   function openSaveModal() {
     setNombrePieza('')
@@ -129,9 +160,18 @@ export default function CalculadoraCostos() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           nombrePieza: nombrePieza.trim(),
-          resultado: costoReal,
+          resultado: costoUnidad,
           costoBase,
-          ...vals,
+          peso: num(peso),
+          costoFilamento: num(costoFilamento),
+          tiempo: num(tiempo),
+          consumo: num(consumo),
+          costoKwh: num(costoKwh),
+          costoMaquina: machineEnabled ? num(costoMaquina) : 0,
+          vidaUtil: machineEnabled ? num(vidaUtil) : 0,
+          postProcesado: laborEnabled ? num(postProcesado) : 0,
+          valorHora: laborEnabled ? num(valorHora) : 0,
+          tasaFallos: tasaFallosNum,
         }),
       })
       if (!res.ok) throw new Error()
@@ -147,10 +187,11 @@ export default function CalculadoraCostos() {
       'Calculadora 3D — Caliber 3D Printing',
       `Material:              $${fmt(mat)}`,
       `Energía eléctrica:     $${fmt(ene)}`,
-      `Amortización:          $${fmt(amo)}`,
-      `Mano de obra:          $${fmt(man)}`,
-      `Costo base:            $${fmt(costoBase)}`,
-      `Costo total (con fallos ${vals.tasaFallos}%): $${fmt(costoReal)}`,
+      ...(machineEnabled ? [`Amortización máq.:     $${fmt(amo)}`] : []),
+      ...(laborEnabled ? [`Mano de obra:          $${fmt(man)}`] : []),
+      `Subtotal (sin riesgo): $${fmt(costoBase)}`,
+      `Costo por pieza${tasaFallosNum > 0 ? ` (+${tasaFallosNum}% fallos)` : ''}:  $${fmt(costoUnidad)}`,
+      ...(cantidadNum > 1 ? [`Total × ${cantidadNum} piezas:   $${fmt(costoTotal)}`] : []),
     ]
     await navigator.clipboard.writeText(lines.join('\n'))
     setCopied(true)
@@ -159,135 +200,212 @@ export default function CalculadoraCostos() {
 
   return (
     <>
-    <SaveModal
-      open={showSaveModal}
-      nombrePieza={nombrePieza}
-      onChange={setNombrePieza}
-      onSave={handleSaveCalculo}
-      onClose={() => setShowSaveModal(false)}
-      status={saveStatus}
-      nombreRef={nombreRef}
-    />
-    <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+      <SaveModal
+        open={showSaveModal}
+        nombrePieza={nombrePieza}
+        onChange={setNombrePieza}
+        onSave={handleSaveCalculo}
+        onClose={() => setShowSaveModal(false)}
+        status={saveStatus}
+        nombreRef={nombreRef}
+      />
 
-      {/* Inputs */}
-      <div className="lg:col-span-3 space-y-4">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
 
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
-          <h2 className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-5 flex items-center gap-2">
-            <span className="w-1.5 h-4 bg-orange-500 rounded-full shrink-0" />
-            Material y Energía
-          </h2>
-          <div className="grid grid-cols-2 gap-4">
-            <Field label="Peso pieza" hint="gramos" id="peso" value={vals.peso} onChange={set} />
-            <Field label="Costo filamento" hint="$/kg" id="costoFilamento" value={vals.costoFilamento} onChange={set} />
-            <Field label="Tiempo impresión" hint="horas" id="tiempo" value={vals.tiempo} onChange={set} />
-            <Field label="Consumo impresora" hint="watts" id="consumo" value={vals.consumo} onChange={set} />
-            <Field label="Costo electricidad" hint="$/kWh" id="costoKwh" value={vals.costoKwh} onChange={set} />
-          </div>
-        </div>
+        {/* Inputs */}
+        <div className="lg:col-span-3 space-y-4">
 
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
-          <h2 className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-5 flex items-center gap-2">
-            <span className="w-1.5 h-4 bg-orange-500 rounded-full shrink-0" />
-            Máquina y Mano de Obra
-          </h2>
-          <div className="grid grid-cols-2 gap-4">
-            <Field label="Costo máquina" hint="$" id="costoMaquina" value={vals.costoMaquina} onChange={set} />
-            <Field label="Vida útil" hint="horas" id="vidaUtil" value={vals.vidaUtil} onChange={set} />
-            <Field label="Post-procesado" hint="minutos" id="postProcesado" value={vals.postProcesado} onChange={set} />
-            <Field label="Valor hora trabajo" hint="$/h" id="valorHora" value={vals.valorHora} onChange={set} />
-          </div>
-        </div>
-
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
-          <h2 className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-5 flex items-center gap-2">
-            <span className="w-1.5 h-4 bg-orange-500 rounded-full shrink-0" />
-            Factor de riesgo
-          </h2>
-          <div className="grid grid-cols-2 gap-4">
-            <Field label="Tasa de fallos" hint="%" id="tasaFallos" value={vals.tasaFallos} onChange={set} />
-          </div>
-        </div>
-
-        <button
-          onClick={() => setVals(DEFAULTS)}
-          className="text-xs text-zinc-600 hover:text-zinc-400 transition-colors underline underline-offset-2"
-        >
-          Restaurar valores por defecto
-        </button>
-      </div>
-
-      {/* Results */}
-      <div className="lg:col-span-2">
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 lg:sticky lg:top-24">
-          <h3 className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-6">
-            Desglose operativo
-          </h3>
-
-          <div className="space-y-4 mb-6">
-            <BreakdownBar label="Material" amount={mat} total={costoBase} color="bg-orange-500" />
-            <BreakdownBar label="Energía eléctrica" amount={ene} total={costoBase} color="bg-blue-500" />
-            <BreakdownBar label="Amortización máquina" amount={amo} total={costoBase} color="bg-purple-500" />
-            <BreakdownBar label="Mano de obra" amount={man} total={costoBase} color="bg-teal-500" />
-          </div>
-
-          <div className="border-t border-zinc-800 pt-4 mb-6">
-            <div className="flex justify-between text-sm">
-              <span className="text-zinc-500">Subtotal sin riesgo</span>
-              <span className="font-mono text-zinc-300">${fmt(costoBase)}</span>
+          {/* Material */}
+          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
+            <h2 className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-5 flex items-center gap-2">
+              <span className="w-1.5 h-4 bg-orange-500 rounded-full shrink-0" />
+              Material
+            </h2>
+            <div className="grid grid-cols-2 gap-4">
+              <Field label="Peso pieza" hint="gramos" value={peso} onChange={setPeso} placeholder="ej: 25" />
+              <Field label="Costo filamento" hint="$/kg" value={costoFilamento} onChange={setCostoFilamento} placeholder="ej: 400" />
             </div>
           </div>
 
-          <div className="border-t-2 border-dashed border-zinc-700 pt-5 text-center">
-            <span className="text-xs font-bold text-orange-500 uppercase tracking-widest block mb-2">
-              Costo real de producción
-            </span>
-            <div className="text-4xl font-black text-white font-mono">
-              ${fmt(costoReal)}
+          {/* Energía */}
+          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
+            <h2 className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-5 flex items-center gap-2">
+              <span className="w-1.5 h-4 bg-blue-500 rounded-full shrink-0" />
+              Energía eléctrica
+            </h2>
+            <div className="grid grid-cols-2 gap-4 mb-4">
+              <Field label="Tiempo impresión" hint="horas" value={tiempo} onChange={setTiempo} placeholder="ej: 4" />
+              <Field label="Costo electricidad" hint="$/kWh" value={costoKwh} onChange={setCostoKwh} placeholder="ej: 1.5" />
+              <div className="col-span-2">
+                <Field label="Consumo impresora" hint="watts" value={consumo} onChange={setConsumo} placeholder="ej: 150" />
+              </div>
             </div>
-            <div className="text-xs text-zinc-600 mt-1">
-              incluye {vals.tasaFallos}% de tasa de fallos
+            <div className="space-y-2">
+              <p className="text-xs text-zinc-600">Referencia por modelo de impresora:</p>
+              <div className="flex flex-wrap gap-2">
+                {PRINTER_PRESETS.map(p => (
+                  <button
+                    key={p.label}
+                    onClick={() => setConsumo(String(p.watts))}
+                    className={`text-xs px-2.5 py-1 rounded-lg border transition-all ${
+                      consumo === String(p.watts)
+                        ? 'border-blue-500 text-blue-400 bg-blue-500/10'
+                        : 'border-zinc-700 text-zinc-500 hover:border-zinc-500 hover:text-zinc-300'
+                    }`}
+                  >
+                    {p.label} · {p.watts}W
+                  </button>
+                ))}
+              </div>
+              <p className="text-xs text-zinc-700 leading-relaxed">
+                El consumo varía con la temperatura de cama, ambiente y velocidad. Consultá la ficha técnica de tu impresora para el valor exacto.
+              </p>
             </div>
           </div>
 
-          <div className="mt-6 space-y-3">
-            <button
-              onClick={handleCopy}
-              className="w-full flex items-center justify-center gap-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-300 hover:text-white text-sm font-medium py-2.5 rounded-xl transition-all"
-            >
-              {copied ? (
-                <>
-                  <svg className="w-4 h-4 text-green-400" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                  <span className="text-green-400">Copiado al portapapeles</span>
-                </>
-              ) : (
-                <>
-                  <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-                    <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
-                    <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z" />
-                  </svg>
-                  Copiar desglose
-                </>
+          {/* Amortización (opcional) */}
+          <OptionalSection
+            label="Amortización de máquina"
+            enabled={machineEnabled}
+            onToggle={() => setMachineEnabled(v => !v)}
+            hint="Distribuye el costo de tu impresora en horas de vida útil. Activalo si querés reflejar el desgaste real del equipo."
+          >
+            <div className="grid grid-cols-2 gap-4">
+              <Field label="Costo máquina" hint="$" value={costoMaquina} onChange={setCostoMaquina} placeholder="ej: 5000" />
+              <Field label="Vida útil" hint="horas" value={vidaUtil} onChange={setVidaUtil} placeholder="ej: 3000" />
+            </div>
+          </OptionalSection>
+
+          {/* Mano de obra (opcional) */}
+          <OptionalSection
+            label="Mano de obra"
+            enabled={laborEnabled}
+            onToggle={() => setLaborEnabled(v => !v)}
+            hint="Lijado, soporte, pintura y armado. Activalo si tu tiempo tiene valor en el precio final."
+          >
+            <div className="grid grid-cols-2 gap-4">
+              <Field label="Post-procesado" hint="minutos" value={postProcesado} onChange={setPostProcesado} placeholder="ej: 15" />
+              <Field label="Valor hora trabajo" hint="$/h" value={valorHora} onChange={setValorHora} placeholder="ej: 150" />
+            </div>
+          </OptionalSection>
+
+          {/* Factor de riesgo */}
+          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
+            <h2 className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-5 flex items-center gap-2">
+              <span className="w-1.5 h-4 bg-red-500 rounded-full shrink-0" />
+              Factor de riesgo
+            </h2>
+            <div className="grid grid-cols-2 gap-4">
+              <Field label="Tasa de fallos" hint="%" value={tasaFallos} onChange={setTasaFallos} placeholder="ej: 10" />
+            </div>
+            <p className="text-xs text-zinc-700 mt-3">
+              Porcentaje de impresiones fallidas que absorbés como costo. Dejalo vacío para no aplicar factor.
+            </p>
+          </div>
+
+          {/* Multiplicador */}
+          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
+            <h2 className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-5 flex items-center gap-2">
+              <span className="w-1.5 h-4 bg-teal-500 rounded-full shrink-0" />
+              Cantidad de piezas
+            </h2>
+            <div className="grid grid-cols-2 gap-4">
+              <Field label="Piezas" hint="unidades" value={cantidad} onChange={setCantidad} placeholder="1" />
+            </div>
+            <p className="text-xs text-zinc-700 mt-3">
+              Multiplicá el costo unitario para cotizar pedidos con varias unidades iguales.
+            </p>
+          </div>
+
+        </div>
+
+        {/* Results */}
+        <div className="lg:col-span-2">
+          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 lg:sticky lg:top-24">
+            <h3 className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-6">
+              Desglose por pieza
+            </h3>
+
+            <div className="space-y-4 mb-6">
+              <BreakdownBar label="Material" amount={mat} total={costoBase} color="bg-orange-500" />
+              <BreakdownBar label="Energía eléctrica" amount={ene} total={costoBase} color="bg-blue-500" />
+              {machineEnabled && (
+                <BreakdownBar label="Amortización máquina" amount={amo} total={costoBase} color="bg-purple-500" />
               )}
-            </button>
+              {laborEnabled && (
+                <BreakdownBar label="Mano de obra" amount={man} total={costoBase} color="bg-teal-500" />
+              )}
+            </div>
 
-            <button
-              onClick={openSaveModal}
-              className="w-full flex items-center justify-center gap-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-300 hover:text-white text-sm font-medium py-2.5 rounded-xl transition-all"
-            >
-              <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6h5a2 2 0 012 2v7a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2h5v5.586l-1.293-1.293zM9 4a1 1 0 012 0v2H9V4z" />
-              </svg>
-              Guardar cálculo
-            </button>
+            <div className="border-t border-zinc-800 pt-4 mb-6">
+              <div className="flex justify-between text-sm">
+                <span className="text-zinc-500">Subtotal sin riesgo</span>
+                <span className="font-mono text-zinc-300">${fmt(costoBase)}</span>
+              </div>
+            </div>
+
+            <div className="border-t-2 border-dashed border-zinc-700 pt-5 text-center">
+              <span className="text-xs font-bold text-orange-500 uppercase tracking-widest block mb-2">
+                Costo por pieza
+              </span>
+              <div className="text-4xl font-black text-white font-mono">
+                ${fmt(costoUnidad)}
+              </div>
+              {tasaFallosNum > 0 && (
+                <div className="text-xs text-zinc-600 mt-1">
+                  incluye {tasaFallosNum}% de tasa de fallos
+                </div>
+              )}
+            </div>
+
+            {cantidadNum > 1 && (
+              <div className="mt-5 pt-4 border-t border-zinc-800 text-center">
+                <span className="text-xs font-bold text-teal-400 uppercase tracking-widest block mb-1">
+                  Total × {cantidadNum} piezas
+                </span>
+                <div className="text-2xl font-black text-teal-300 font-mono">
+                  ${fmt(costoTotal)}
+                </div>
+              </div>
+            )}
+
+            <div className="mt-6 space-y-3">
+              <button
+                onClick={handleCopy}
+                className="w-full flex items-center justify-center gap-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-300 hover:text-white text-sm font-medium py-2.5 rounded-xl transition-all"
+              >
+                {copied ? (
+                  <>
+                    <svg className="w-4 h-4 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    <span className="text-green-400">Copiado al portapapeles</span>
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                      <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
+                      <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z" />
+                    </svg>
+                    Copiar desglose
+                  </>
+                )}
+              </button>
+
+              <button
+                onClick={openSaveModal}
+                className="w-full flex items-center justify-center gap-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-300 hover:text-white text-sm font-medium py-2.5 rounded-xl transition-all"
+              >
+                <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6h5a2 2 0 012 2v7a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2h5v5.586l-1.293-1.293zM9 4a1 1 0 012 0v2H9V4z" />
+                </svg>
+                Guardar cálculo
+              </button>
+            </div>
           </div>
         </div>
-      </div>
 
-    </div>
+      </div>
     </>
   )
 }
@@ -323,7 +441,7 @@ function SaveModal({
           onChange={e => onChange(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && onSave()}
           placeholder="Ej: Medalla 5cm, soporte escritorio..."
-          className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all mb-4"
+          className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2.5 text-white text-sm placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all mb-4"
         />
 
         {status === 'error' && (
@@ -345,8 +463,8 @@ function SaveModal({
             {status === 'saving' ? (
               <>
                 <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                 </svg>
                 Guardando...
               </>
