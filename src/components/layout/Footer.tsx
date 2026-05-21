@@ -173,7 +173,7 @@ export default function Footer({ config, categories }: FooterProps) {
 
         </div>
 
-        <div className="mt-10 pt-6 border-t border-zinc-800/60 flex flex-col sm:flex-row items-center justify-between gap-2">
+        <div className="mt-10 pt-6 border-t border-zinc-800/60 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-zinc-500 text-xs">
             © {year} Caliber 3D · Desarrollado por {' '}
             <a
@@ -187,6 +187,14 @@ export default function Footer({ config, categories }: FooterProps) {
             {' '} -{' '}
              Playa del Carmen, México
           </p>
+          <div className="flex items-center gap-4">
+            <Link href="/aviso-de-privacidad" className="text-zinc-600 hover:text-zinc-400 text-xs transition-colors">
+              Aviso de Privacidad
+            </Link>
+            <Link href="/terminos-y-condiciones" className="text-zinc-600 hover:text-zinc-400 text-xs transition-colors">
+              Términos y Condiciones
+            </Link>
+          </div>
         </div>
       </div>
     </footer>
