@@ -260,10 +260,10 @@ export default function TerminosYCondicionesPage() {
         </p>
         <div className="flex flex-col sm:flex-row gap-3">
           <a
-            href="mailto:contacto@caliber3d.mx"
+            href="mailto:caliber.3dprinting@gmail.com"
             className="inline-flex items-center gap-2 text-orange-400 hover:text-orange-300 transition-colors text-sm"
           >
-            contacto@caliber3d.mx
+            caliber.3dprinting@gmail.com
           </a>
           <span className="hidden sm:block text-zinc-700">|</span>
           <Link

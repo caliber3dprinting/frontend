@@ -45,8 +45,8 @@ export default function AvisoDePrivacidadPage() {
           <p><span className="text-zinc-400">Sitio web:</span> <strong className="text-white">caliber3d.mx</strong></p>
           <p><span className="text-zinc-400">Domicilio:</span> Playa del Carmen, Quintana Roo, México</p>
           <p><span className="text-zinc-400">Correo para privacidad:</span>{' '}
-            <a href="mailto:contacto@caliber3d.mx" className="text-orange-400 hover:text-orange-300 transition-colors">
-              contacto@caliber3d.mx
+            <a href="mailto:caliber.3dprinting@gmail.com" className="text-orange-400 hover:text-orange-300 transition-colors">
+              caliber.3dprinting@gmail.com
             </a>
           </p>
         </div>
@@ -114,8 +114,8 @@ export default function AvisoDePrivacidadPage() {
             </ul>
             <p className="text-zinc-500 text-sm mt-2">
               Si no deseas que tus datos se usen para estas finalidades secundarias, envía un correo a{' '}
-              <a href="mailto:contacto@caliber3d.mx" className="text-orange-400 hover:text-orange-300">
-                contacto@caliber3d.mx
+              <a href="mailto:caliber.3dprinting@gmail.com" className="text-orange-400 hover:text-orange-300">
+                caliber.3dprinting@gmail.com
               </a>{' '}
               indicando tu oposición.
             </p>
@@ -251,8 +251,8 @@ export default function AvisoDePrivacidadPage() {
           <h3 className="text-white font-semibold text-sm">¿Cómo ejercer tus derechos?</h3>
           <p className="text-zinc-300 text-sm leading-relaxed">
             Envía tu solicitud a{' '}
-            <a href="mailto:contacto@caliber3d.mx" className="text-orange-400 hover:text-orange-300 transition-colors">
-              contacto@caliber3d.mx
+            <a href="mailto:caliber.3dprinting@gmail.com" className="text-orange-400 hover:text-orange-300 transition-colors">
+              caliber.3dprinting@gmail.com
             </a>{' '}
             con el asunto <strong className="text-zinc-200">"Ejercicio de derechos ARCO"</strong> incluyendo:
           </p>
