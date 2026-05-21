@@ -13,6 +13,7 @@ export default function robots(): MetadataRoute.Robots {
         '/_next/static/media/',
         '/sign-in',
         '/sign-up',
+        '/cdn-cgi/',
       ],
     },
     sitemap: `${BASE_URL}/sitemap.xml`,
