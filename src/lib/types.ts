@@ -128,6 +128,35 @@ export interface BlogPost {
 }
 
 // ─────────────────────────────────────────────
+// Community — Comments & Reviews
+// ─────────────────────────────────────────────
+
+export interface BlogComment {
+  id: string
+  clerkUserId: string
+  authorName: string
+  authorEmail: string | null
+  authorAvatar: string | null
+  content: string
+  post: Pick<BlogPost, 'id' | 'title' | 'slug'>
+  status: 'pending' | 'approved' | 'rejected'
+  createdAt: string
+}
+
+export interface ProductReview {
+  id: string
+  clerkUserId: string
+  authorName: string
+  authorEmail: string | null
+  authorAvatar: string | null
+  rating: number
+  content: string | null
+  product: Pick<Product, 'id' | 'title' | 'slug'>
+  status: 'pending' | 'approved' | 'rejected'
+  createdAt: string
+}
+
+// ─────────────────────────────────────────────
 // Query param helpers
 // ─────────────────────────────────────────────
 

@@ -2,9 +2,11 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { getBlogPostBySlug, getAllBlogSlugs, getSanityImageUrl } from '@/lib/sanity'
+import { getBlogPostBySlug, getAllBlogSlugs, getSanityImageUrl, getBlogComments } from '@/lib/sanity'
 import RichText from '@/components/ui/RichText'
 import Breadcrumb from '@/components/ui/Breadcrumb'
+import CommentList from '@/components/community/CommentList'
+import CommentForm from '@/components/community/CommentForm'
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://caliber3d.mx'
 
@@ -73,7 +75,10 @@ function formatDate(iso: string) {
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params
-  const post = await getBlogPostBySlug(slug)
+  const [post, comments] = await Promise.all([
+    getBlogPostBySlug(slug),
+    getBlogComments(slug).catch(() => []),
+  ])
 
   if (!post) notFound()
 
@@ -203,6 +208,31 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             </a>
           </div>
         </div>
+
+        {/* ─── Sección de comentarios ─── */}
+        <section className="mt-16 pt-12 border-t border-zinc-800">
+          <h2 className="text-2xl font-bold text-white mb-8">
+            Comentarios
+            {comments.length > 0 && (
+              <span className="ml-2 text-base font-normal text-zinc-500">
+                ({comments.length})
+              </span>
+            )}
+          </h2>
+
+          {/* Lista de comentarios aprobados */}
+          <CommentList comments={comments} />
+
+          {/* Formulario */}
+          <div className="mt-10">
+            <h3 className="text-lg font-semibold text-white mb-4">Dejá tu comentario</h3>
+            <CommentForm
+              postId={post.id}
+              postSlug={post.slug}
+              postTitle={post.title}
+            />
+          </div>
+        </section>
 
         {/* Link de vuelta */}
         <div className="mt-10 text-center">

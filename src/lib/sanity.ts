@@ -12,6 +12,8 @@ import type {
   BlogFilters,
   Quote,
   SanityImage,
+  BlogComment,
+  ProductReview,
 } from './types'
 
 export { sanityImageUrl as getSanityImageUrl }
@@ -278,6 +280,47 @@ export async function getQuotes(): Promise<Quote[]> {
 
 export async function updateQuoteStatus(id: string, status: Quote['status']): Promise<void> {
   await client.patch(id).set({ status }).commit()
+}
+
+// ─────────────────────────────────────────────
+// Blog Comments (approved, server-side)
+// ─────────────────────────────────────────────
+
+export async function getBlogComments(postSlug: string): Promise<BlogComment[]> {
+  return client.fetch<BlogComment[]>(
+    `*[_type == "blogComment" && post->slug.current == $postSlug && status == "approved"]
+     | order(_createdAt asc) {
+       "id": _id,
+       clerkUserId,
+       authorName,
+       authorAvatar,
+       content,
+       "createdAt": _createdAt
+     }`,
+    { postSlug },
+    { cache: 'no-store' }
+  )
+}
+
+// ─────────────────────────────────────────────
+// Product Reviews (approved, server-side)
+// ─────────────────────────────────────────────
+
+export async function getProductReviews(productSlug: string): Promise<ProductReview[]> {
+  return client.fetch<ProductReview[]>(
+    `*[_type == "productReview" && product->slug.current == $productSlug && status == "approved"]
+     | order(_createdAt desc) {
+       "id": _id,
+       clerkUserId,
+       authorName,
+       authorAvatar,
+       rating,
+       content,
+       "createdAt": _createdAt
+     }`,
+    { productSlug },
+    { cache: 'no-store' }
+  )
 }
 
 // ─────────────────────────────────────────────

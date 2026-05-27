@@ -3,9 +3,11 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import RichText from '@/components/ui/RichText'
 import Breadcrumb from '@/components/ui/Breadcrumb'
-import { getProductBySlug, getProducts, getSanityImageUrl } from '@/lib/sanity'
+import { getProductBySlug, getProducts, getSanityImageUrl, getProductReviews } from '@/lib/sanity'
 import ProductGallery from '@/components/catalog/ProductGallery'
 import { ProductCard } from '@/components/catalog/ProductGrid'
+import ProductReviewList, { ReviewsStats } from '@/components/community/ProductReviewList'
+import ProductReviewForm from '@/components/community/ProductReviewForm'
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://caliber3d.mx'
 
@@ -61,10 +63,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
   // Productos relacionados: misma categoría, excluyendo el actual
   const firstCategorySlug = product.categories?.[0]?.slug
-  const relatedRes = await getProducts({
-    categorySlug: firstCategorySlug,
-    pageSize: 4,
-  }).catch(() => ({ data: [] }))
+  const [relatedRes, reviews] = await Promise.all([
+    getProducts({ categorySlug: firstCategorySlug, pageSize: 4 }).catch(() => ({ data: [] })),
+    getProductReviews(slug).catch(() => []),
+  ])
   const related = relatedRes.data
     .filter((p) => p.slug !== slug)
     .slice(0, 3)
@@ -185,6 +187,34 @@ export default async function ProductPage({ params }: ProductPageProps) {
               Preguntar por WhatsApp
             </a>
           </div>
+        </div>
+      </div>
+
+      {/* ─── Reseñas ─── */}
+      <div className="mt-20 pt-12 border-t border-zinc-800">
+        <h2 className="text-2xl font-bold text-white mb-8">
+          Reseñas
+          {reviews.length > 0 && (
+            <span className="ml-2 text-base font-normal text-zinc-500">
+              ({reviews.length})
+            </span>
+          )}
+        </h2>
+
+        {/* Estadísticas de rating */}
+        <ReviewsStats reviews={reviews} />
+
+        {/* Lista de reseñas aprobadas */}
+        <ProductReviewList reviews={reviews} />
+
+        {/* Formulario de nueva reseña */}
+        <div className="mt-10">
+          <h3 className="text-lg font-semibold text-white mb-4">Dejá tu reseña</h3>
+          <ProductReviewForm
+            productId={product.id}
+            productSlug={product.slug}
+            productTitle={product.title}
+          />
         </div>
       </div>
 
