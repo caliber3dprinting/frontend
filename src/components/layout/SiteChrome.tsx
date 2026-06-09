@@ -5,6 +5,7 @@ import Navbar from './Navbar'
 import Footer from './Footer'
 import PageLoader from '@/components/ui/PageLoader'
 import ScrollProgressBar from '@/components/ui/ScrollProgressBar'
+import WorldCupPopup from '@/components/ui/WorldCupPopup'
 import type { GlobalConfig, Category } from '@/lib/types'
 
 interface SiteChromeProps {
@@ -25,6 +26,7 @@ export default function SiteChrome({ children, config, categories }: SiteChromeP
     <>
       <PageLoader />
       <ScrollProgressBar />
+      <WorldCupPopup />
       <Navbar whatsapp={config.whatsapp_number} />
       <main className="min-h-screen">{children}</main>
       <Footer config={config} categories={categories} />
