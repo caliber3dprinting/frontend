@@ -209,7 +209,10 @@ const BLOG_FIELDS = `
   title,
   "slug": slug.current,
   excerpt,
-  content,
+  "content": content[] {
+    ...,
+    asset->
+  },
   "cover_image": cover_image ${IMAGE_PROJECTION},
   "categories": categories[]->{
     "id": _id, "documentId": _id, name, "slug": slug.current
