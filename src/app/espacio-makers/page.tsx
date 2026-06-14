@@ -6,7 +6,7 @@ import EspacioMakersContent from '@/components/tools/EspacioMakersContent'
 export const metadata: Metadata = {
   title: 'Espacio Makers | Caliber 3D',
   description:
-    'Herramientas profesionales para impresores y diseñadores 3D: calculadora de costos y presupuestador. Acceso gratuito para usuarios registrados.',
+    'Herramientas profesionales para impresores y diseñadores 3D: calculadora de costos, presupuestador y calculadora de escala. Acceso gratuito para usuarios registrados.',
 }
 
 export default async function EspacioMakersPage() {
@@ -27,7 +27,7 @@ export default async function EspacioMakersPage() {
           </h1>
           <p className="text-zinc-400 text-base leading-relaxed">
             Herramientas pensadas para quienes hacen posible la impresión 3D: calculá costos reales,
-            generá presupuestos profesionales y tomá decisiones con datos.
+            generá presupuestos profesionales, sacá la escala exacta de tus piezas y tomá decisiones con datos.
           </p>
         </div>
 
