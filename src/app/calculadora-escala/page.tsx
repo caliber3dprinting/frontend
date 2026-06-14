@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { auth } from '@clerk/nextjs/server'
 import CalculadoraEscala from '@/components/tools/CalculadoraEscala'
 import CalculadoraEscalaGate from '@/components/tools/CalculadoraEscalaGate'
@@ -34,7 +35,23 @@ export default async function CalculadoraEscalaPage() {
 
         <CalculadoraEscala />
 
-        <div className="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl">
+        <div className="mt-12 mb-6 max-w-3xl bg-zinc-900 border border-zinc-800 rounded-xl px-5 py-4 flex flex-col sm:flex-row items-start sm:items-center gap-3">
+          <svg className="w-5 h-5 text-orange-500 shrink-0 mt-0.5 sm:mt-0" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+          </svg>
+          <p className="text-zinc-400 text-sm leading-relaxed">
+            ¿Querés entender cómo y cuándo escalar tus piezas? Tenemos una{' '}
+            <Link
+              href="/blog/como-escalar-piezas-3d-para-que-encajen"
+              className="text-orange-400 hover:text-orange-300 underline underline-offset-2 transition-colors"
+            >
+              guía completa de escala en impresión 3D
+            </Link>
+            {' '}que explica la fórmula, la holgura ideal y cómo aplicar el porcentaje paso a paso en Bambu Studio y Cura.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl">
           <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
             <p className="text-orange-500 text-xs font-bold uppercase tracking-widest mb-1">Cómo funciona</p>
             <p className="text-zinc-400 text-sm leading-relaxed">
