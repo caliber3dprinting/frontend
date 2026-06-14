@@ -9,7 +9,12 @@ const TOOLS = [
   {
     label: 'Presupuestador',
     description: 'Documentos profesionales para tus clientes en segundos.',
-    available: false,
+    available: true,
+  },
+  {
+    label: 'Calculadora de escala',
+    description: 'El porcentaje exacto para llevar un diámetro a la medida que necesitás.',
+    available: true,
   },
 ]
 
