@@ -134,7 +134,7 @@ export default function EspacioMakersCTA() {
               {/* Overlay label */}
               <div className="absolute bottom-4 right-4 bg-zinc-950/80 backdrop-blur-sm border border-zinc-700 rounded-lg px-3 py-2">
                 <p className="text-orange-500 text-xs font-bold">Espacio Makers</p>
-                <p className="text-zinc-500 text-xs">caliber3d.com</p>
+                <p className="text-zinc-500 text-xs">caliber3d.mx</p>
               </div>
             </div>
           </div>

@@ -367,7 +367,7 @@ export default function Presupuestador() {
   <div class="note">Cotización válida por 7 días hábiles. Los precios pueden variar según disponibilidad de materiales.</div>
   <div class="caliber-brand">
     <div class="name">CALIBER 3D PRINTING</div>
-    <div class="url">caliber3d.com.ar</div>
+    <div class="url">caliber3d.mx</div>
     <div class="rights">© ${year} Todos los derechos reservados</div>
   </div>
 </div>
