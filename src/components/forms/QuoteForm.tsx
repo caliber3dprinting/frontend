@@ -5,9 +5,12 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useState, useRef, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
+import Turnstile from './Turnstile'
 
 const MAX_FILE_MB = 15
 const MAX_FILE_BYTES = MAX_FILE_MB * 1024 * 1024
+
+const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
 
 const schema = z.object({
   name: z.string().min(2, 'Ingresa tu nombre completo'),
@@ -45,6 +48,11 @@ export default function QuoteForm() {
   const [preview, setPreview] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const topRef = useRef<HTMLDivElement>(null)
+
+  // Anti-spam
+  const honeypotRef = useRef<HTMLInputElement>(null)
+  const [turnstileToken, setTurnstileToken] = useState('')
+  const [turnstileReset, setTurnstileReset] = useState(0)
 
   useEffect(() => {
     if (status === 'success') {
@@ -95,6 +103,12 @@ export default function QuoteForm() {
   }
 
   const onSubmit = async (data: FormValues) => {
+    if (TURNSTILE_SITE_KEY && !turnstileToken) {
+      setStatus('error')
+      setErrorMessage('Completa la verificación de seguridad antes de enviar.')
+      return
+    }
+
     setStatus('loading')
     setErrorMessage('')
 
@@ -107,6 +121,9 @@ export default function QuoteForm() {
       fd.append('description', data.description)
       if (data.notes) fd.append('notes', data.notes)
       if (file) fd.append('file', file)
+      // Honeypot: los humanos lo dejan vacío; los bots lo rellenan.
+      fd.append('website', honeypotRef.current?.value ?? '')
+      if (turnstileToken) fd.append('cf-turnstile-response', turnstileToken)
 
       const res = await fetch('/api/quotes', { method: 'POST', body: fd })
 
@@ -121,6 +138,10 @@ export default function QuoteForm() {
     } catch (err) {
       setStatus('error')
       setErrorMessage(err instanceof Error ? err.message : 'Error inesperado')
+    } finally {
+      // El token de Turnstile es de un solo uso: lo limpiamos y pedimos uno nuevo.
+      setTurnstileToken('')
+      setTurnstileReset((n) => n + 1)
     }
   }
 
@@ -302,6 +323,28 @@ export default function QuoteForm() {
           className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition resize-none"
         />
       </div>
+
+      {/* Honeypot anti-spam — invisible para humanos, tentador para bots */}
+      <div aria-hidden="true" style={{ position: 'absolute', left: '-9999px', width: 1, height: 1, overflow: 'hidden' }}>
+        <label htmlFor="website">No llenar este campo</label>
+        <input
+          id="website"
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+          ref={honeypotRef}
+        />
+      </div>
+
+      {/* Verificación Turnstile (solo si hay site key configurada) */}
+      {TURNSTILE_SITE_KEY && (
+        <Turnstile
+          siteKey={TURNSTILE_SITE_KEY}
+          onVerify={setTurnstileToken}
+          onExpire={() => setTurnstileToken('')}
+          resetSignal={turnstileReset}
+        />
+      )}
 
       {/* Error global */}
       {status === 'error' && (

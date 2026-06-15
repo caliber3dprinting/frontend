@@ -68,6 +68,31 @@ function getClientIp(req: NextRequest): string {
   )
 }
 
+// Verifica el token de Cloudflare Turnstile contra el endpoint de siteverify.
+// Si TURNSTILE_SECRET_KEY no está configurado, se omite (degradación elegante)
+// para no romper el formulario antes de cargar las llaves en producción.
+async function verifyTurnstile(token: string | null, ip: string): Promise<boolean> {
+  const secret = process.env.TURNSTILE_SECRET_KEY
+  if (!secret) {
+    console.warn('[/api/quotes] TURNSTILE_SECRET_KEY no configurado — verificación omitida')
+    return true
+  }
+  if (!token) return false
+
+  try {
+    const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ secret, response: token, remoteip: ip }),
+    })
+    const data = (await res.json()) as { success?: boolean }
+    return data.success === true
+  } catch (err) {
+    console.error('[/api/quotes] Turnstile verify failed:', err)
+    return false
+  }
+}
+
 export async function POST(req: NextRequest) {
   const ip = getClientIp(req)
 
@@ -80,6 +105,26 @@ export async function POST(req: NextRequest) {
 
   try {
     const formData = await req.formData()
+
+    // Honeypot: si el campo trampa viene con contenido, es un bot. Respondemos
+    // con éxito falso para no darle pistas, sin enviar email ni guardar nada.
+    const honeypot = formData.get('website')
+    if (typeof honeypot === 'string' && honeypot.trim() !== '') {
+      return NextResponse.json({ success: true }, { status: 201 })
+    }
+
+    // Verificación Turnstile
+    const turnstileToken = formData.get('cf-turnstile-response')
+    const isHuman = await verifyTurnstile(
+      typeof turnstileToken === 'string' ? turnstileToken : null,
+      ip
+    )
+    if (!isHuman) {
+      return NextResponse.json(
+        { error: 'No pudimos verificar que no eres un robot. Recarga la página e intenta de nuevo.' },
+        { status: 403 }
+      )
+    }
 
     const fields = {
       name: formData.get('name') as string,
