@@ -13,7 +13,9 @@ function AnimatedCounter({ value, suffix = '' }: { value: string; suffix?: strin
   const ref = useRef<HTMLDivElement>(null)
   const inView = useInView(ref, { once: true })
   const numeric = parseInt(value.replace(/\D/g, ''), 10)
-  const [display, setDisplay] = useState('0')
+  // Inicia con el valor final para que el SSR muestre el número real
+  // (sin "0" antes de hidratar); la animación lo recorre de 0 al valor.
+  const [display, setDisplay] = useState(value)
 
   useEffect(() => {
     if (!inView || isNaN(numeric)) {
@@ -54,8 +56,9 @@ export default function HeroSection({ data }: HeroSectionProps) {
             src={typeof data.hero_image === 'string' ? data.hero_image : data.hero_image.url}
             alt="Taller de impresión 3D de Caliber 3D Printing en Playa del Carmen, Quintana Roo"
             fill
-            priority
-            fetchPriority="high"
+            // Fondo decorativo (opacidad 15-25%): no es el LCP, así que no debe
+            // competir por prioridad de descarga con la fuente y el texto del hero.
+            loading="eager"
             className="object-cover opacity-15 sm:opacity-25"
             sizes="100vw"
           />
@@ -95,60 +98,41 @@ export default function HeroSection({ data }: HeroSectionProps) {
       >
         <div className="max-w-3xl">
 
-          {/* Eyebrow */}
-          <motion.div
-            className="flex items-center gap-3 mb-6"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, ease: 'easeOut' }}
-          >
-            <motion.div
-              className="h-px bg-orange-500"
-              initial={{ width: 0 }}
-              animate={{ width: 40 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-            />
+          {/* Eyebrow — animación por CSS, visible desde el SSR */}
+          <div className="flex items-center gap-3 mb-6 hero-rise">
+            <span className="h-px w-10 bg-orange-500" />
             <span className="text-orange-400 text-sm font-semibold tracking-widest uppercase">
               Playa del Carmen · 5 Impresoras
             </span>
-          </motion.div>
+          </div>
 
-          {/* Title word by word */}
+          {/* Título — renderizado visible en el HTML del servidor (es el LCP).
+              La entrada se anima con CSS, sin depender de la hidratación. */}
           <h1
-            className="font-display font-black text-white mb-6 leading-none"
+            className="font-display font-black text-white mb-6 leading-none hero-rise"
             style={{ fontSize: 'clamp(3rem, 8vw, 7rem)' }}
           >
             {words.map((word, i) => (
-              <motion.span
-                key={i}
-                className="inline-block mr-[0.2em]"
-                initial={{ opacity: 0, y: 40, rotateX: -20 }}
-                animate={{ opacity: 1, y: 0, rotateX: 0 }}
-                transition={{ duration: 0.6, delay: 0.1 + i * 0.08, ease: [0.25, 0.4, 0.25, 1] }}
-              >
+              <span key={i} className="inline-block mr-[0.2em]">
                 {word === '3D' || word === '3d'
                   ? <span className="text-orange-500">{word}</span>
                   : word}
-              </motion.span>
+              </span>
             ))}
           </h1>
 
           {/* Subtitle */}
-          <motion.p
-            className="text-zinc-300 text-lg sm:text-xl leading-relaxed mb-6 sm:mb-10 max-w-xl"
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4, ease: 'easeOut' }}
+          <p
+            className="text-zinc-300 text-lg sm:text-xl leading-relaxed mb-6 sm:mb-10 max-w-xl hero-rise"
+            style={{ animationDelay: '0.1s' }}
           >
             {data.hero_subtitle}
-          </motion.p>
+          </p>
 
           {/* CTAs */}
-          <motion.div
-            className="flex flex-wrap gap-4"
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.55, ease: 'easeOut' }}
+          <div
+            className="flex flex-wrap gap-4 hero-rise"
+            style={{ animationDelay: '0.2s' }}
           >
             <Link
               href="/cotizar"
@@ -165,14 +149,12 @@ export default function HeroSection({ data }: HeroSectionProps) {
             >
               Ver catálogo
             </Link>
-          </motion.div>
+          </div>
 
           {/* Stats strip with animated counters */}
-          <motion.div
-            className="flex flex-wrap gap-6 sm:gap-8 mt-8 sm:mt-14 pt-6 sm:pt-10 border-t border-zinc-800/60"
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.7, ease: 'easeOut' }}
+          <div
+            className="flex flex-wrap gap-6 sm:gap-8 mt-8 sm:mt-14 pt-6 sm:pt-10 border-t border-zinc-800/60 hero-rise"
+            style={{ animationDelay: '0.3s' }}
           >
             {[
               { value: '5', label: 'Impresoras' },
@@ -184,7 +166,7 @@ export default function HeroSection({ data }: HeroSectionProps) {
                 <div className="text-zinc-400 text-sm mt-0.5">{label}</div>
               </div>
             ))}
-          </motion.div>
+          </div>
         </div>
       </motion.div>
 

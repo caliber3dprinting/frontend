@@ -1,12 +1,28 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Barlow, Barlow_Condensed } from 'next/font/google'
 import './globals.css'
 import { ClerkProvider } from '@clerk/nextjs'
 import SiteChrome from '@/components/layout/SiteChrome'
 import { getGlobalConfig, getCategories } from '@/lib/sanity'
 import { GoogleAnalytics } from '@next/third-parties/google'
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap', preload: true })
+// Fuentes vía next/font: se auto-hospedan, se precargan y eliminan el
+// @import render-blocking de Google Fonts. Barlow = cuerpo, Condensed = títulos.
+const barlow = Barlow({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700', '900'],
+  style: ['normal', 'italic'],
+  variable: '--font-body',
+  display: 'swap',
+  preload: true,
+})
+const barlowCondensed = Barlow_Condensed({
+  subsets: ['latin'],
+  weight: ['600', '700', '900'],
+  variable: '--font-display',
+  display: 'swap',
+  preload: true,
+})
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://caliber3d.mx'),
@@ -15,7 +31,7 @@ export const metadata: Metadata = {
     template: '%s | Caliber 3D Printing',
   },
   description:
-    'Impresión 3D a medida en Playa del Carmen. Fabricamos repuestos 3D, piezas técnicas y figuras personalizadas con precisión profesional. Solicita tu cotización sin compromiso.',
+    'Impresión 3D a medida en Playa del Carmen: repuestos, piezas técnicas y figuras personalizadas con precisión profesional. Cotiza sin compromiso.',
   openGraph: {
     siteName: 'Caliber 3D Printing',
     locale: 'es_MX',
@@ -104,7 +120,7 @@ export default async function RootLayout({
 
   return (
     <ClerkProvider>
-      <html lang="es" className={inter.variable} data-scroll-behavior="smooth">
+      <html lang="es" className={`${barlow.variable} ${barlowCondensed.variable}`} data-scroll-behavior="smooth">
         {/* Preconnect para el CDN de imágenes de Sanity — reduce el tiempo de conexión del LCP */}
         <link rel="preconnect" href="https://cdn.sanity.io" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://cdn.sanity.io" />

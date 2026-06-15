@@ -6,8 +6,14 @@ import AboutPreview from '@/components/home/AboutPreview'
 import TestimonialsSection from '@/components/home/TestimonialsSection'
 import LatestPosts from '@/components/home/LatestPosts'
 import QuoteCTA from '@/components/home/QuoteCTA'
+import type { Metadata } from 'next'
 
 export const revalidate = 60
+
+// URL canónica de la home — evita contenido duplicado (resuelve contra metadataBase).
+export const metadata: Metadata = {
+  alternates: { canonical: '/' },
+}
 
 const HOME_FALLBACK = {
   hero_title: 'Impresión 3D de alta precisión',
