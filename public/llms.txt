@@ -1,0 +1,35 @@
+# Caliber 3D Printing — Servicio de Impresión 3D en Playa del Carmen, México
+
+> Caliber 3D Printing es un taller de impresión 3D ubicado en Playa del Carmen, Quintana Roo, México. Ofrece impresión FDM y resina: prototipos, maquetas, trofeos, repuestos, piezas técnicas y detalles personalizados para empresas y particulares de Playa del Carmen, Cancún, Tulum, Cozumel y toda la Riviera Maya. Fabrica desde una sola unidad, sin moldes ni mínimos.
+
+## Servicios principales
+- Impresión 3D FDM (PLA, PETG, ABS, TPU)
+- Impresión 3D en resina (SLA/MSLA) para alto detalle
+- Maquetas arquitectónicas
+- Prototipos y piezas funcionales
+- Repuestos para hoteles, restaurantes y maquinaria
+- Trofeos, medallas y reconocimientos personalizados
+- Detalles personalizados para bodas y eventos
+- Figuras, coleccionables y artículos articulados
+
+## Áreas de servicio
+- Playa del Carmen (Quintana Roo)
+- Cancún
+- Tulum
+- Cozumel
+- Puerto Morelos
+- Solidaridad
+- Toda la Riviera Maya (envíos a todo México)
+
+## Contenido principal
+- [Catálogo de productos](https://caliber3d.mx/catalogo)
+- [Calculadora de costos de impresión 3D](https://caliber3d.mx/calculadora)
+- [Calculadora de escala](https://caliber3d.mx/calculadora-escala)
+- [Solicitar cotización](https://caliber3d.mx/cotizar)
+- [Blog técnico y guías](https://caliber3d.mx/blog)
+- [Sobre nosotros y proceso de trabajo](https://caliber3d.mx/nosotros)
+
+## Recursos para LLMs
+- Sitemap: https://caliber3d.mx/sitemap.xml
+- Contacto: caliber.3dprinting@gmail.com
+- WhatsApp: https://wa.me/529982017863

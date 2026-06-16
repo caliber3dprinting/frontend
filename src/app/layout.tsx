@@ -50,6 +50,11 @@ export const metadata: Metadata = {
     description:
       'Impresión 3D a medida en Playa del Carmen. Fabricamos repuestos 3D, piezas técnicas y figuras personalizadas con precisión profesional.',
   },
+  // Verificación de Google Search Console vía meta tag. Se activa seteando
+  // GOOGLE_SITE_VERIFICATION en el entorno (ver README-seo-setup.md).
+  ...(process.env.GOOGLE_SITE_VERIFICATION
+    ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } }
+    : {}),
 }
 
 export default async function RootLayout({
