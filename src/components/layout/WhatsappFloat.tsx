@@ -3,13 +3,13 @@
 import { usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { trackEvent } from '@/lib/analytics'
+import { buildWhatsappUrl } from '@/lib/whatsapp'
 
 const DEFAULT_MESSAGE = 'Hola Caliber 3D, quiero cotizar un proyecto'
 
 export default function WhatsappFloat({ whatsapp }: { whatsapp: string }) {
   const pathname = usePathname()
-  const number = whatsapp.replace(/\D/g, '')
-  const href = `https://wa.me/${number}?text=${encodeURIComponent(DEFAULT_MESSAGE)}`
+  const href = buildWhatsappUrl(DEFAULT_MESSAGE, whatsapp)
 
   return (
     <motion.a

@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuth, SignInButton, UserButton } from '@clerk/nextjs'
+import { buildWhatsappUrl } from '@/lib/whatsapp'
 
 const NAV_LINKS = [
   { href: '/catalogo', label: 'Catálogo' },
@@ -40,7 +41,7 @@ export default function Navbar({ whatsapp }: NavbarProps) {
   // Close on route change
   useEffect(() => setOpen(false), [pathname])
 
-  const waUrl = `https://wa.me/${whatsapp.replace(/\D/g, '')}?text=Hola%2C%20me%20gustar%C3%ADa%20cotizar%20una%20impresi%C3%B3n%203D`
+  const waUrl = buildWhatsappUrl('Hola, me gustaría cotizar una impresión 3D', whatsapp)
 
   return (
     <>

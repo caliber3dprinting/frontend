@@ -4,9 +4,6 @@ import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 import { trackEvent } from '@/lib/analytics'
 
-const WHATSAPP = process.env.NEXT_PUBLIC_WHATSAPP ?? '529982017863'
-const WA_URL = `https://wa.me/${WHATSAPP}?text=${encodeURIComponent('Hola, me gustaría solicitar una cotización 3D.')}`
-
 export default function QuoteCTA() {
   const ref = useRef<HTMLElement>(null)
   const inView = useInView(ref, { once: true, margin: '-10% 0px' })

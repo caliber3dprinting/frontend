@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import TrackedLink from '@/components/analytics/TrackedLink'
+import { buildWhatsappUrl } from '@/lib/whatsapp'
 import type { GlobalConfig, Category } from '@/lib/types'
 
 interface FooterProps {
@@ -20,7 +21,7 @@ const FOOTER_LINKS = [
 
 export default function Footer({ config, categories }: FooterProps) {
   const year = new Date().getFullYear()
-  const waUrl = `https://wa.me/${config.whatsapp_number.replace(/\D/g, '')}?text=Hola%2C%20me%20gustar%C3%ADa%20cotizar%20una%20impresi%C3%B3n%203D`
+  const waUrl = buildWhatsappUrl('Hola, me gustaría cotizar una impresión 3D', config.whatsapp_number)
 
   return (
     <footer className="border-t border-zinc-800 bg-zinc-950">

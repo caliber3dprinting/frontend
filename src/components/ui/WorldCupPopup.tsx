@@ -3,9 +3,9 @@
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
+import { buildWhatsappUrl } from '@/lib/whatsapp'
 
-const WHATSAPP = process.env.NEXT_PUBLIC_WHATSAPP ?? '529982017863'
-const WA_URL = `https://wa.me/${WHATSAPP}?text=${encodeURIComponent('¡Hola! Vi sus productos de Copa del Mundo y me interesa hacer un pedido 🏆⚽')}`
+const WA_URL = buildWhatsappUrl('¡Hola! Vi sus productos de Copa del Mundo y me interesa hacer un pedido 🏆⚽')
 
 const PRODUCTS = [
   {

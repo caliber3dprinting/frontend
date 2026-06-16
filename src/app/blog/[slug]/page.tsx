@@ -10,9 +10,9 @@ import CommentForm from '@/components/community/CommentForm'
 import TrackView from '@/components/analytics/TrackView'
 import TrackedLink from '@/components/analytics/TrackedLink'
 import ScrollDepthTracker from '@/components/analytics/ScrollDepthTracker'
+import { buildWhatsappUrl } from '@/lib/whatsapp'
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://caliber3d.mx'
-const WHATSAPP = process.env.NEXT_PUBLIC_WHATSAPP ?? '529982017863'
 
 
 interface BlogPostPageProps {
@@ -207,7 +207,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             <TrackedLink
               event="click_whatsapp"
               eventParams={{ location: 'blog', slug: post.slug }}
-              href={`https://wa.me/${WHATSAPP}?text=Hola!%20Le%C3%AD%20el%20art%C3%ADculo%20%22${encodeURIComponent(post.title)}%22%20y%20tengo%20una%20consulta`}
+              href={buildWhatsappUrl(`Hola! Leí el artículo "${post.title}" y tengo una consulta`)}
               target="_blank"
               rel="noopener noreferrer"
               className="bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-white font-semibold px-6 py-3 rounded-xl transition-colors"

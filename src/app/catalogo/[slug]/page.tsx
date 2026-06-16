@@ -10,9 +10,9 @@ import ProductReviewList, { ReviewsStats } from '@/components/community/ProductR
 import ProductReviewForm from '@/components/community/ProductReviewForm'
 import TrackView from '@/components/analytics/TrackView'
 import TrackedLink from '@/components/analytics/TrackedLink'
+import { buildWhatsappUrl } from '@/lib/whatsapp'
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://caliber3d.mx'
-const WHATSAPP = process.env.NEXT_PUBLIC_WHATSAPP ?? '529982017863'
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>
@@ -185,7 +185,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             <TrackedLink
               event="click_whatsapp"
               eventParams={{ location: 'product', slug: product.slug }}
-              href={`https://wa.me/${WHATSAPP}?text=Hola! Me interesa una pieza similar a: ${product.title}`}
+              href={buildWhatsappUrl(`Hola! Me interesa una pieza similar a: ${product.title}`)}
               target="_blank"
               rel="noopener noreferrer"
               className="flex-1 bg-zinc-800 hover:bg-zinc-700 text-white font-semibold py-3 px-6 rounded-xl text-center transition-colors"

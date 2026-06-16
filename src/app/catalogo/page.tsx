@@ -4,6 +4,7 @@ import { getProducts, getCategories } from '@/lib/sanity'
 import CategoryFilter from '@/components/catalog/CategoryFilter'
 import ProductGrid from '@/components/catalog/ProductGrid'
 import Breadcrumb from '@/components/ui/Breadcrumb'
+import { buildWhatsappUrl } from '@/lib/whatsapp'
 
 export const revalidate = 60
 
@@ -22,16 +23,12 @@ interface CatalogPageProps {
   searchParams: Promise<{ categoria?: string; pagina?: string }>
 }
 
-// ─── Contacto de fallback (se usa cuando Strapi no responde) ──────────────────
-// TODO: reemplaza estos valores con los reales si Strapi sigue caído
-const WHATSAPP = process.env.NEXT_PUBLIC_WHATSAPP ?? '529982017863'
+// ─── Contacto de fallback (se usa cuando Sanity no responde) ──────────────────
 const CONTACT_EMAIL = 'caliber.3dprinting@gmail.com'
 // ─────────────────────────────────────────────────────────────────────────────
 
 function CatalogError() {
-  const waUrl = WHATSAPP
-    ? `https://wa.me/${WHATSAPP.replace(/\D/g, '')}?text=Hola%2C%20quiero%20ver%20el%20cat%C3%A1logo%20de%20productos`
-    : null
+  const waUrl = buildWhatsappUrl('Hola, quiero ver el catálogo de productos')
 
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-30">
