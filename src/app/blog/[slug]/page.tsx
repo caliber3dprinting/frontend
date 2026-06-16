@@ -10,6 +10,8 @@ import CommentForm from '@/components/community/CommentForm'
 import TrackView from '@/components/analytics/TrackView'
 import TrackedLink from '@/components/analytics/TrackedLink'
 import ScrollDepthTracker from '@/components/analytics/ScrollDepthTracker'
+import JsonLd from '@/components/seo/JsonLd'
+import { articleSchema, breadcrumbSchema } from '@/lib/schema'
 import { buildWhatsappUrl } from '@/lib/whatsapp'
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://caliber3d.mx'
@@ -89,37 +91,29 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const imageUrl = post.cover_image ? getSanityImageUrl(post.cover_image, 'large') : null
   const categories = post.categories ?? []
 
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'BlogPosting',
-    headline: post.title,
-    description: post.excerpt,
-    datePublished: post.publishedAt,
-    dateModified: post.updatedAt,
-    url: `${BASE_URL}/blog/${post.slug}`,
-    image: imageUrl ?? undefined,
-    author: {
-      '@type': 'Person',
-      name: post.author ?? 'Caliber 3D Printing',
-    },
-    publisher: {
-      '@type': 'Organization',
-      name: 'Caliber 3D Printing',
-      url: BASE_URL,
-    },
-    mainEntityOfPage: {
-      '@type': 'WebPage',
-      '@id': `${BASE_URL}/blog/${post.slug}`,
-    },
-  }
+  const breadcrumbItems = [
+    { name: 'Inicio', url: BASE_URL },
+    { name: 'Blog', url: `${BASE_URL}/blog` },
+    ...(categories[0]
+      ? [{ name: categories[0].name, url: `${BASE_URL}/blog?categoria=${categories[0].slug}` }]
+      : []),
+    { name: post.title },
+  ]
 
   return (
     <>
-      {/* JSON-LD */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      <JsonLd
+        data={articleSchema({
+          title: post.title,
+          description: post.excerpt,
+          image: imageUrl ?? undefined,
+          slug: post.slug,
+          publishedAt: post.publishedAt,
+          updatedAt: post.updatedAt ?? undefined,
+          author: post.author ?? undefined,
+        })}
       />
+      <JsonLd data={breadcrumbSchema(breadcrumbItems)} />
       <TrackView event="view_blog_post" params={{ slug: post.slug }} />
       <ScrollDepthTracker params={{ slug: post.slug }} />
 

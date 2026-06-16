@@ -5,6 +5,8 @@ import RichText from '@/components/ui/RichText'
 import Breadcrumb from '@/components/ui/Breadcrumb'
 import { getAboutPage } from '@/lib/sanity'
 import { getSanityImageUrl } from '@/lib/sanity'
+import JsonLd from '@/components/seo/JsonLd'
+import { organizationSchema } from '@/lib/schema'
 import type { PortableTextBlock } from '@portabletext/react'
 
 export const revalidate = 60
@@ -53,6 +55,7 @@ export default async function NosotrosPage() {
   return (
     <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-25 space-y-16">
 
+      <JsonLd data={organizationSchema()} />
       <Breadcrumb items={[{ label: 'Nosotros' }]} />
 
       {/* Título */}

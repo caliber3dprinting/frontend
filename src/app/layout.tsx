@@ -6,6 +6,8 @@ import SiteChrome from '@/components/layout/SiteChrome'
 import { getGlobalConfig, getCategories } from '@/lib/sanity'
 import { getWhatsappNumber } from '@/lib/whatsapp'
 import Analytics from '@/components/analytics/Analytics'
+import JsonLd from '@/components/seo/JsonLd'
+import { localBusinessSchema } from '@/lib/schema'
 
 // Fuentes vía next/font: se auto-hospedan, se precargan y eliminan el
 // @import render-blocking de Google Fonts. Barlow = cuerpo, Condensed = títulos.
@@ -50,52 +52,6 @@ export const metadata: Metadata = {
   },
 }
 
-const localBusinessJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'LocalBusiness',
-  '@id': 'https://caliber3d.mx/#business',
-  name: 'Caliber 3D Printing',
-  url: 'https://caliber3d.mx',
-  image: 'https://caliber3d.mx/caliber-3d-logo.svg',
-  telephone: '+529982017863',
-  email: 'caliber.3dprinting@gmail.com',
-  priceRange: '$$',
-  address: {
-    '@type': 'PostalAddress',
-    addressLocality: 'Playa del Carmen',
-    addressRegion: 'Quintana Roo',
-    postalCode: '77710',
-    addressCountry: 'MX',
-  },
-  geo: {
-    '@type': 'GeoCoordinates',
-    latitude: 20.6296,
-    longitude: -87.0739,
-  },
-  areaServed: [
-    { '@type': 'City', name: 'Playa del Carmen' },
-    { '@type': 'City', name: 'Cancún' },
-    { '@type': 'City', name: 'Tulum' },
-    { '@type': 'City', name: 'Cozumel' },
-    { '@type': 'City', name: 'Puerto Morelos' },
-    { '@type': 'City', name: 'Solidaridad' },
-  ],
-  openingHoursSpecification: [
-    {
-      '@type': 'OpeningHoursSpecification',
-      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-      opens: '08:00',
-      closes: '18:00',
-    },
-    {
-      '@type': 'OpeningHoursSpecification',
-      dayOfWeek: ['Saturday'],
-      opens: '09:00',
-      closes: '14:00',
-    },
-  ],
-}
-
 export default async function RootLayout({
   children,
 }: {
@@ -126,12 +82,7 @@ export default async function RootLayout({
         <link rel="preconnect" href="https://cdn.sanity.io" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://cdn.sanity.io" />
         <body className="bg-zinc-950 text-zinc-100 antialiased" suppressHydrationWarning>
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{
-              __html: JSON.stringify(localBusinessJsonLd).replace(/</g, '\\u003c'),
-            }}
-          />
+          <JsonLd data={localBusinessSchema()} />
           <SiteChrome config={resolvedConfig} categories={categories}>{children}</SiteChrome>
         </body>
         {process.env.NEXT_PUBLIC_GA_ID && (

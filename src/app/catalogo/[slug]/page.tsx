@@ -10,6 +10,8 @@ import ProductReviewList, { ReviewsStats } from '@/components/community/ProductR
 import ProductReviewForm from '@/components/community/ProductReviewForm'
 import TrackView from '@/components/analytics/TrackView'
 import TrackedLink from '@/components/analytics/TrackedLink'
+import JsonLd from '@/components/seo/JsonLd'
+import { productSchema, breadcrumbSchema } from '@/lib/schema'
 import { buildWhatsappUrl } from '@/lib/whatsapp'
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://caliber3d.mx'
@@ -82,55 +84,26 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const coverUrl = product.cover_image ? getSanityImageUrl(product.cover_image, 'large') : undefined
   const materialNote = product.material ? ` en ${product.material}` : ''
 
-  const productJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Product',
-    name: product.title,
-    ...(coverUrl ? { image: coverUrl } : {}),
-    description: `${product.title}${materialNote}. Impresión 3D a medida en Playa del Carmen.`,
-    brand: {
-      '@type': 'Brand',
-      name: 'Caliber 3D Printing',
-    },
-    offers: {
-      '@type': 'Offer',
-      availability: 'https://schema.org/InStock',
-      priceCurrency: 'MXN',
-      seller: {
-        '@type': 'Organization',
-        name: 'Caliber 3D Printing',
-        url: BASE_URL,
-      },
-    },
-  }
-
-  const breadcrumbItems: Array<{ '@type': string; position: number; name: string; item?: string }> = [
-    { '@type': 'ListItem', position: 1, name: 'Inicio', item: BASE_URL },
-    { '@type': 'ListItem', position: 2, name: 'Catálogo', item: `${BASE_URL}/catalogo` },
+  const breadcrumbItems = [
+    { name: 'Inicio', url: BASE_URL },
+    { name: 'Catálogo', url: `${BASE_URL}/catalogo` },
+    ...(product.categories?.[0]
+      ? [{ name: product.categories[0].name, url: `${BASE_URL}/catalogo?categoria=${product.categories[0].slug}` }]
+      : []),
+    { name: product.title },
   ]
-  if (product.categories?.[0]) {
-    breadcrumbItems.push({ '@type': 'ListItem', position: 3, name: product.categories[0].name, item: `${BASE_URL}/catalogo?categoria=${product.categories[0].slug}` })
-    breadcrumbItems.push({ '@type': 'ListItem', position: 4, name: product.title })
-  } else {
-    breadcrumbItems.push({ '@type': 'ListItem', position: 3, name: product.title })
-  }
-
-  const breadcrumbJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: breadcrumbItems,
-  }
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+      <JsonLd
+        data={productSchema({
+          name: product.title,
+          image: coverUrl,
+          description: `${product.title}${materialNote}. Impresión 3D a medida en Playa del Carmen.`,
+          slug: product.slug,
+        })}
       />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
-      />
+      <JsonLd data={breadcrumbSchema(breadcrumbItems)} />
       <TrackView event="view_product" params={{ slug: product.slug, name: product.title }} />
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-30">
       {/* Breadcrumb */}
