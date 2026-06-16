@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
+import { trackEvent } from '@/lib/analytics'
 
 const PRINTER_PRESETS = [
   { label: 'Ender 3', watts: 120 },
@@ -176,6 +177,13 @@ export default function CalculadoraCostos() {
       })
       if (!res.ok) throw new Error()
       setSaveStatus('ok')
+      if (costoUnidad > 0) {
+        trackEvent('calculator_complete', {
+          action: 'save',
+          estimated_cost: Math.round(costoUnidad),
+          quantity: cantidadNum,
+        })
+      }
       setTimeout(() => setShowSaveModal(false), 1500)
     } catch {
       setSaveStatus('error')
@@ -195,6 +203,13 @@ export default function CalculadoraCostos() {
     ]
     await navigator.clipboard.writeText(lines.join('\n'))
     setCopied(true)
+    if (costoUnidad > 0) {
+      trackEvent('calculator_complete', {
+        action: 'copy',
+        estimated_cost: Math.round(costoUnidad),
+        quantity: cantidadNum,
+      })
+    }
     setTimeout(() => setCopied(false), 2000)
   }
 

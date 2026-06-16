@@ -3,6 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useRef, useEffect, useState } from 'react'
 import { motion, useScroll, useTransform, useInView, animate } from 'framer-motion'
+import { trackEvent } from '@/lib/analytics'
 import type { HomePage } from '@/lib/types'
 
 interface HeroSectionProps {
@@ -136,6 +137,7 @@ export default function HeroSection({ data }: HeroSectionProps) {
           >
             <Link
               href="/cotizar"
+              onClick={() => trackEvent('cta_click', { cta_id: 'home_hero_cotizar' })}
               className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-400 text-white font-bold px-7 py-4 rounded-xl text-base transition-all hover:scale-[1.03] active:scale-[0.97]"
             >
               {data.hero_cta_label}
@@ -145,6 +147,7 @@ export default function HeroSection({ data }: HeroSectionProps) {
             </Link>
             <Link
               href="/catalogo"
+              onClick={() => trackEvent('cta_click', { cta_id: 'home_hero_catalogo' })}
               className="inline-flex items-center gap-2 bg-zinc-800/80 hover:bg-zinc-700 border border-zinc-700 text-white font-semibold px-7 py-4 rounded-xl text-base transition-all hover:scale-[1.02]"
             >
               Ver catálogo

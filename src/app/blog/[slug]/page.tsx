@@ -7,8 +7,12 @@ import RichText from '@/components/ui/RichText'
 import Breadcrumb from '@/components/ui/Breadcrumb'
 import CommentList from '@/components/community/CommentList'
 import CommentForm from '@/components/community/CommentForm'
+import TrackView from '@/components/analytics/TrackView'
+import TrackedLink from '@/components/analytics/TrackedLink'
+import ScrollDepthTracker from '@/components/analytics/ScrollDepthTracker'
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://caliber3d.mx'
+const WHATSAPP = process.env.NEXT_PUBLIC_WHATSAPP ?? '529982017863'
 
 
 interface BlogPostPageProps {
@@ -116,6 +120,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      <TrackView event="view_blog_post" params={{ slug: post.slug }} />
+      <ScrollDepthTracker params={{ slug: post.slug }} />
 
       <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-30">
         {/* Breadcrumb */}
@@ -198,14 +204,16 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             >
               Solicitar cotización
             </Link>
-            <a
-              href={`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP}?text=Hola!%20Le%C3%AD%20el%20art%C3%ADculo%20%22${encodeURIComponent(post.title)}%22%20y%20tengo%20una%20consulta`}
+            <TrackedLink
+              event="click_whatsapp"
+              eventParams={{ location: 'blog', slug: post.slug }}
+              href={`https://wa.me/${WHATSAPP}?text=Hola!%20Le%C3%AD%20el%20art%C3%ADculo%20%22${encodeURIComponent(post.title)}%22%20y%20tengo%20una%20consulta`}
               target="_blank"
               rel="noopener noreferrer"
               className="bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-white font-semibold px-6 py-3 rounded-xl transition-colors"
             >
               Consultar por WhatsApp
-            </a>
+            </TrackedLink>
           </div>
         </div>
 

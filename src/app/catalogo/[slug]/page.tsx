@@ -8,8 +8,11 @@ import ProductGallery from '@/components/catalog/ProductGallery'
 import { ProductCard } from '@/components/catalog/ProductGrid'
 import ProductReviewList, { ReviewsStats } from '@/components/community/ProductReviewList'
 import ProductReviewForm from '@/components/community/ProductReviewForm'
+import TrackView from '@/components/analytics/TrackView'
+import TrackedLink from '@/components/analytics/TrackedLink'
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://caliber3d.mx'
+const WHATSAPP = process.env.NEXT_PUBLIC_WHATSAPP ?? '529982017863'
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>
@@ -128,6 +131,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
+      <TrackView event="view_product" params={{ slug: product.slug, name: product.title }} />
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-30">
       {/* Breadcrumb */}
       <div className="mb-8">
@@ -178,14 +182,16 @@ export default async function ProductPage({ params }: ProductPageProps) {
             >
               Solicitar cotización
             </Link>
-            <a
-              href={`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP}?text=Hola! Me interesa una pieza similar a: ${product.title}`}
+            <TrackedLink
+              event="click_whatsapp"
+              eventParams={{ location: 'product', slug: product.slug }}
+              href={`https://wa.me/${WHATSAPP}?text=Hola! Me interesa una pieza similar a: ${product.title}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex-1 bg-zinc-800 hover:bg-zinc-700 text-white font-semibold py-3 px-6 rounded-xl text-center transition-colors"
             >
               Preguntar por WhatsApp
-            </a>
+            </TrackedLink>
           </div>
         </div>
       </div>

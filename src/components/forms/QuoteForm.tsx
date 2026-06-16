@@ -6,6 +6,7 @@ import { z } from 'zod'
 import { useState, useRef, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Turnstile from './Turnstile'
+import { trackEvent } from '@/lib/analytics'
 
 const MAX_FILE_MB = 15
 const MAX_FILE_BYTES = MAX_FILE_MB * 1024 * 1024
@@ -133,11 +134,17 @@ export default function QuoteForm() {
       }
 
       setStatus('success')
+      trackEvent('submit_quote_form', {
+        category: data.category || 'unknown',
+        has_image: Boolean(file),
+      })
       reset()
       removeFile()
     } catch (err) {
       setStatus('error')
-      setErrorMessage(err instanceof Error ? err.message : 'Error inesperado')
+      const message = err instanceof Error ? err.message : 'Error inesperado'
+      setErrorMessage(message)
+      trackEvent('submit_quote_form_error', { reason: message })
     } finally {
       // El token de Turnstile es de un solo uso: lo limpiamos y pedimos uno nuevo.
       setTurnstileToken('')

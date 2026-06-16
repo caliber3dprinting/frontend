@@ -2,6 +2,7 @@
 import Link from 'next/link'
 import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
+import { trackEvent } from '@/lib/analytics'
 
 const WHATSAPP = process.env.NEXT_PUBLIC_WHATSAPP ?? '529982017863'
 const WA_URL = `https://wa.me/${WHATSAPP}?text=${encodeURIComponent('Hola, me gustaría solicitar una cotización 3D.')}`
@@ -68,6 +69,7 @@ export default function QuoteCTA() {
         >
           <Link
             href="/cotizar"
+            onClick={() => trackEvent('cta_click', { cta_id: 'home_quotecta_cotizar' })}
             className="inline-flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-400 text-white font-bold px-8 py-4 rounded-xl text-base transition-all hover:scale-[1.03] active:scale-[0.97]"
           >
             Solicitar cotización gratis
@@ -78,6 +80,7 @@ export default function QuoteCTA() {
 
           <Link
             href="/catalogo"
+            onClick={() => trackEvent('cta_click', { cta_id: 'home_quotecta_catalogo' })}
             className="inline-flex items-center justify-center gap-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-white font-semibold px-8 py-4 rounded-xl text-base transition-all hover:scale-[1.02]"
           >
             Explorar catálogo
