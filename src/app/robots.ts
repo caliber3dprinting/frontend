@@ -8,6 +8,8 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: '*',
       allow: '/',
       disallow: [
+        '/admin',
+        '/studio',
         '/api/',
         '/opengraph-image',
         '/_next/static/media/',
@@ -17,5 +19,6 @@ export default function robots(): MetadataRoute.Robots {
       ],
     },
     sitemap: `${BASE_URL}/sitemap.xml`,
+    host: BASE_URL,
   }
 }

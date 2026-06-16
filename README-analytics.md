@@ -54,3 +54,12 @@ Esto habilita medir conversiones reales (hoy "Eventos clave: sin datos").
   vista una sola vez al montar.
 - [`ScrollDepthTracker`](src/components/analytics/ScrollDepthTracker.tsx) —
   dispara `scroll_75` al alcanzar el 75% del scroll.
+- [`Analytics`](src/components/analytics/Analytics.tsx) — carga GA en todo el
+  sitio excepto `/studio` y `/admin` (evita trackear la actividad interna de admin).
+
+## Mejoras futuras
+
+- **WhatsApp inline a mitad del blog**: insertar un CTA de WhatsApp dentro del
+  contenido del post (tras ~60% del texto), además del botón flotante. Requiere
+  partir el array de Portable Text en `RichText` / Sanity, por lo que se pospone:
+  es invasivo y de bajo retorno mientras el botón flotante ya captura el contacto.

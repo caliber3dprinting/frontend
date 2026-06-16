@@ -4,7 +4,8 @@ import './globals.css'
 import { ClerkProvider } from '@clerk/nextjs'
 import SiteChrome from '@/components/layout/SiteChrome'
 import { getGlobalConfig, getCategories } from '@/lib/sanity'
-import { GoogleAnalytics } from '@next/third-parties/google'
+import { getWhatsappNumber } from '@/lib/whatsapp'
+import Analytics from '@/components/analytics/Analytics'
 
 // Fuentes vía next/font: se auto-hospedan, se precargan y eliminan el
 // @import render-blocking de Google Fonts. Barlow = cuerpo, Condensed = títulos.
@@ -104,7 +105,7 @@ export default async function RootLayout({
   // datos dinámicos (WhatsApp, redes sociales) sin prop drilling.
   // Fallback mientras el single type no exista en Sanity.
   const FALLBACK_CONFIG = {
-    whatsapp_number: process.env.NEXT_PUBLIC_WHATSAPP ?? '529982017863',
+    whatsapp_number: getWhatsappNumber(),
     contact_email: 'caliber.3dprinting@gmail.com',
     instagram_url: 'https://www.instagram.com/caliber3d.mx/',
     facebook_url: 'https://www.facebook.com/caliber3d.mx',
@@ -134,7 +135,7 @@ export default async function RootLayout({
           <SiteChrome config={resolvedConfig} categories={categories}>{children}</SiteChrome>
         </body>
         {process.env.NEXT_PUBLIC_GA_ID && (
-          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
+          <Analytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
         )}
       </html>
     </ClerkProvider>
