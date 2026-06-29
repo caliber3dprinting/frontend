@@ -16,6 +16,23 @@ export const blogPostType = defineType({
     defineField({ name: 'publishedAt', title: 'Fecha de publicación', type: 'datetime' }),
     defineField({ name: 'meta_title', title: 'Meta título (SEO)', type: 'string' }),
     defineField({ name: 'meta_description', title: 'Meta descripción (SEO)', type: 'text', rows: 2 }),
+    defineField({
+      name: 'faq',
+      title: 'Preguntas frecuentes (FAQ Schema)',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          name: 'faqItem',
+          title: 'Pregunta',
+          fields: [
+            defineField({ name: 'question', title: 'Pregunta', type: 'string', validation: (r) => r.required() }),
+            defineField({ name: 'answer', title: 'Respuesta', type: 'text', rows: 3, validation: (r) => r.required() }),
+          ],
+          preview: { select: { title: 'question', subtitle: 'answer' } },
+        },
+      ],
+    }),
   ],
   orderings: [{ title: 'Más reciente', name: 'publishedAtDesc', by: [{ field: 'publishedAt', direction: 'desc' }] }],
 })

@@ -221,6 +221,7 @@ const BLOG_FIELDS = `
   reading_time,
   meta_title,
   meta_description,
+  "faq": faq[]{ question, answer },
   "publishedAt": coalesce(publishedAt, _createdAt),
   "createdAt": _createdAt,
   "updatedAt": _updatedAt

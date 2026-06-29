@@ -122,6 +122,7 @@ export interface BlogPost {
   reading_time: number | null
   meta_title: string | null
   meta_description: string | null
+  faq: { question: string; answer: string }[] | null
   publishedAt: string
   createdAt: string
   updatedAt: string

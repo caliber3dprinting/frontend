@@ -11,7 +11,7 @@ import TrackView from '@/components/analytics/TrackView'
 import TrackedLink from '@/components/analytics/TrackedLink'
 import ScrollDepthTracker from '@/components/analytics/ScrollDepthTracker'
 import JsonLd from '@/components/seo/JsonLd'
-import { articleSchema, breadcrumbSchema } from '@/lib/schema'
+import { articleSchema, breadcrumbSchema, faqSchema } from '@/lib/schema'
 import { buildWhatsappUrl } from '@/lib/whatsapp'
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://caliber3d.mx'
@@ -114,6 +114,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         })}
       />
       <JsonLd data={breadcrumbSchema(breadcrumbItems)} />
+      {post.faq && post.faq.length > 0 && (
+        <JsonLd data={faqSchema(post.faq)} />
+      )}
       <TrackView event="view_blog_post" params={{ slug: post.slug }} />
       <ScrollDepthTracker params={{ slug: post.slug }} />
 
