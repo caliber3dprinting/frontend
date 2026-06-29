@@ -186,6 +186,21 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           </div>
         )}
 
+        {/* FAQ visual */}
+        {post.faq && post.faq.length > 0 && (
+          <section className="mt-16 pt-12 border-t border-zinc-800">
+            <h2 className="text-2xl font-bold text-white mb-8">Preguntas frecuentes</h2>
+            <dl className="space-y-6">
+              {post.faq.map((item, i) => (
+                <div key={i} className="border border-zinc-800 rounded-xl p-6">
+                  <dt className="text-base font-semibold text-white mb-2">{item.question}</dt>
+                  <dd className="text-zinc-400 leading-relaxed">{item.answer}</dd>
+                </div>
+              ))}
+            </dl>
+          </section>
+        )}
+
         {/* CTA final */}
         <div className="mt-16 p-8 bg-zinc-900 border border-zinc-800 rounded-2xl text-center">
           <h2 className="text-2xl font-bold text-white mb-3">
