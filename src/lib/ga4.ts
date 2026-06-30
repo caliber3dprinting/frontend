@@ -36,15 +36,27 @@ function bytesFromBase64(b64: string): Uint8Array {
 }
 
 function normalizePrivateKey(raw: string): string {
-  const value = raw.includes('BEGIN') ? raw : atob(raw)
+  let value = raw.trim()
+  // Quita comillas envolventes si quedaron pegadas al cargar la var en el dashboard
+  // (causa común de "Invalid character" al decodificar).
+  if (
+    (value.startsWith('"') && value.endsWith('"')) ||
+    (value.startsWith("'") && value.endsWith("'"))
+  ) {
+    value = value.slice(1, -1)
+  }
+  // Si no es un PEM, asumimos que viene en base64 y lo decodificamos.
+  if (!value.includes('BEGIN')) value = atob(value)
   return value.replace(/\\n/g, '\n')
 }
 
 function pemToArrayBuffer(pem: string): ArrayBuffer {
+  // Deja solo caracteres base64 válidos: descarta cabeceras, saltos, comillas y
+  // cualquier basura que se haya colado al pegar la clave en el hosting.
   const body = pem
     .replace(/-----BEGIN PRIVATE KEY-----/, '')
     .replace(/-----END PRIVATE KEY-----/, '')
-    .replace(/\s+/g, '')
+    .replace(/[^A-Za-z0-9+/=]/g, '')
   return bytesFromBase64(body).buffer as ArrayBuffer
 }
 
