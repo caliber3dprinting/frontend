@@ -1,5 +1,6 @@
 import { currentUser } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
+import Link from 'next/link'
 import { getQuotes } from '@/lib/sanity'
 import type { Quote } from '@/lib/types'
 import type { Metadata } from 'next'
@@ -52,9 +53,14 @@ export default async function AdminPage() {
 
   return (
     <main className="max-w-5xl mx-auto px-4 sm:px-6 py-24">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-white">Cotizaciones</h1>
-        <p className="text-zinc-400 text-sm mt-1">{quotes.length} en total</p>
+      <div className="mb-8 flex items-end justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-white">Cotizaciones</h1>
+          <p className="text-zinc-400 text-sm mt-1">{quotes.length} en total</p>
+        </div>
+        <Link href="/admin/analytics" className="text-sm text-orange-400 hover:text-orange-300 underline shrink-0">
+          Analytics →
+        </Link>
       </div>
 
       {/* Summary cards */}
