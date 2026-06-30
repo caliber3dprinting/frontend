@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { sendQuoteEmail } from '@/lib/mailer'
+import { notifyQuoteTelegram } from '@/lib/telegram'
 import { client } from '@/sanity/lib/client'
 
 const MAX_FILE_SIZE = 15 * 1024 * 1024
@@ -66,6 +67,24 @@ function getClientIp(req: NextRequest): string {
     req.headers.get('x-real-ip') ??
     'unknown'
   )
+}
+
+// Geo del visitante a partir de los headers que inyecta la plataforma. Vercel usa
+// x-vercel-ip-*; Cloudflare usa cf-ip*. Los valores vienen URL-encoded.
+function getGeo(req: NextRequest): { city?: string; country?: string } {
+  const decode = (v: string | null): string | undefined => {
+    if (!v) return undefined
+    try {
+      return decodeURIComponent(v) || undefined
+    } catch {
+      return v || undefined
+    }
+  }
+  const city =
+    decode(req.headers.get('x-vercel-ip-city')) ?? decode(req.headers.get('cf-ipcity'))
+  const country =
+    decode(req.headers.get('x-vercel-ip-country')) ?? decode(req.headers.get('cf-ipcountry'))
+  return { city, country }
 }
 
 // Verifica el token de Cloudflare Turnstile contra el endpoint de siteverify.
@@ -171,13 +190,37 @@ export async function POST(req: NextRequest) {
       notes: parsed.data.notes || undefined,
     }
 
+    // Atribución: de dónde viene el visitante (UTM capturados por el form) y geo.
+    const str = (key: string): string | undefined => {
+      const v = formData.get(key)
+      return typeof v === 'string' && v.trim() !== '' ? v.trim().slice(0, 200) : undefined
+    }
+    const attribution = {
+      source: str('utm_source') ?? str('referrer'),
+      medium: str('utm_medium'),
+      campaign: str('utm_campaign'),
+      ...getGeo(req),
+    }
+
     await Promise.allSettled([
       sendQuoteEmail({ ...cleanData, attachment }).catch((err) =>
         console.warn('[/api/quotes] Email failed:', err)
       ),
+      notifyQuoteTelegram({
+        name: cleanData.name,
+        vertical: cleanData.category,
+        source: attribution.source,
+        medium: attribution.medium,
+        campaign: attribution.campaign,
+        city: attribution.city,
+        country: attribution.country,
+        hasImage: Boolean(attachment),
+      }).catch((err) => console.warn('[/api/quotes] Telegram failed:', err)),
       client.create({
         _type: 'quote',
         ...cleanData,
+        ...attribution,
+        hasImage: Boolean(attachment),
         submittedAt: new Date().toISOString(),
         status: 'new',
       }).catch((err) => console.warn('[/api/quotes] Sanity write failed:', err)),

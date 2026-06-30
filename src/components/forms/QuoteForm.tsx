@@ -122,6 +122,22 @@ export default function QuoteForm() {
       fd.append('description', data.description)
       if (data.notes) fd.append('notes', data.notes)
       if (file) fd.append('file', file)
+      // Atribución: UTM de la URL + referrer, para saber de dónde llegó el lead.
+      const utmSource = searchParams.get('utm_source')
+      const utmMedium = searchParams.get('utm_medium')
+      const utmCampaign = searchParams.get('utm_campaign')
+      if (utmSource) fd.append('utm_source', utmSource)
+      if (utmMedium) fd.append('utm_medium', utmMedium)
+      if (utmCampaign) fd.append('utm_campaign', utmCampaign)
+      if (typeof document !== 'undefined' && document.referrer) {
+        try {
+          // Solo el host del referrer externo (evita mandar la URL interna completa).
+          const ref = new URL(document.referrer)
+          if (ref.host && ref.host !== window.location.host) fd.append('referrer', ref.host)
+        } catch {
+          /* referrer no parseable — lo omitimos */
+        }
+      }
       // Honeypot: los humanos lo dejan vacío; los bots lo rellenan.
       fd.append('website', honeypotRef.current?.value ?? '')
       if (turnstileToken) fd.append('cf-turnstile-response', turnstileToken)

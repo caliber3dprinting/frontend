@@ -32,6 +32,19 @@ async function sendEmail(payload: Record<string, unknown>) {
   }
 }
 
+// ─── Reporte de analytics (semanal) ──────────────────────────────────────────
+
+/** Envía el reporte de métricas al dueño. Destinatario: REPORT_RECIPIENT,
+ *  ADMIN_EMAIL o, en su defecto, QUOTE_RECIPIENT. */
+export async function sendAnalyticsReportEmail(subject: string, html: string) {
+  const to =
+    process.env.REPORT_RECIPIENT ??
+    process.env.ADMIN_EMAIL ??
+    process.env.QUOTE_RECIPIENT ??
+    'caliber.3dprinting@gmail.com'
+  await sendEmail({ to: [to], subject, html })
+}
+
 // ─── New-user notification ────────────────────────────────────────────────────
 
 export interface NewUserData {

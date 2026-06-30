@@ -49,3 +49,8 @@ next-env.d.ts
 # info del sitio
 diagrama-app.html
 diagrama-tecnico.html
+
+# credenciales de service account (GA4 / Google Cloud) — NUNCA commitear
+*.iam.gserviceaccount.com.json
+caliber-analytics-*.json
+*-service-account*.json

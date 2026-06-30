@@ -26,6 +26,13 @@ export const quoteType = defineType({
       },
     }),
     defineField({ name: 'submittedAt', title: 'Fecha de envío', type: 'datetime' }),
+    // ─── Atribución (capturada automáticamente, solo lectura) ───
+    defineField({ name: 'source', title: 'Fuente', type: 'string', readOnly: true }),
+    defineField({ name: 'medium', title: 'Medio', type: 'string', readOnly: true }),
+    defineField({ name: 'campaign', title: 'Campaña', type: 'string', readOnly: true }),
+    defineField({ name: 'city', title: 'Ciudad', type: 'string', readOnly: true }),
+    defineField({ name: 'country', title: 'País', type: 'string', readOnly: true }),
+    defineField({ name: 'hasImage', title: 'Incluyó imagen', type: 'boolean', readOnly: true }),
   ],
   orderings: [{ title: 'Más recientes', name: 'dateDesc', by: [{ field: 'submittedAt', direction: 'desc' }] }],
   preview: {

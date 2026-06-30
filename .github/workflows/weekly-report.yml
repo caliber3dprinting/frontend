@@ -1,0 +1,17 @@
+name: Weekly analytics report
+
+# Reporte semanal por email. Lunes 08:00 America/Cancun = 14:00 UTC.
+on:
+  schedule:
+    - cron: '0 14 * * 1'
+  workflow_dispatch: {}
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger weekly-report endpoint
+        run: |
+          curl --fail --silent --show-error \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            "${{ secrets.SITE_URL }}/api/cron/weekly-report"

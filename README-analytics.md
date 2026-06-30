@@ -57,6 +57,61 @@ Esto habilita medir conversiones reales (hoy "Eventos clave: sin datos").
 - [`Analytics`](src/components/analytics/Analytics.tsx) — carga GA en todo el
   sitio excepto `/studio` y `/admin` (evita trackear la actividad interna de admin).
 
+## Dashboard interno — `/admin/analytics`
+
+Panel gateado por `ADMIN_EMAIL` (mismo guard que `/admin`) con KPIs en vivo desde
+la **GA4 Data API** (REST + JWT firmado con Web Crypto — sin gRPC, corre en edge),
+más notificación a Telegram por cada cotización y reportes automáticos.
+
+### Piezas
+
+| Pieza | Archivo |
+|---|---|
+| Telegram (cotización: fuente/vertical/ciudad) | [`src/lib/telegram.ts`](src/lib/telegram.ts), disparado en [`api/quotes/route.ts`](src/app/api/quotes/route.ts) |
+| Cliente GA4 Data API (REST + JWT) | [`src/lib/ga4.ts`](src/lib/ga4.ts) |
+| Dashboard en vivo + Recharts | [`src/app/admin/analytics/page.tsx`](src/app/admin/analytics/page.tsx), [`src/components/admin/AnalyticsCharts.tsx`](src/components/admin/AnalyticsCharts.tsx) |
+| Snapshot diario (Sanity) | doc `gaDailySnapshot` + [`api/cron/ga-sync`](src/app/api/cron/ga-sync/route.ts) |
+| Reporte semanal por email | [`api/cron/weekly-report`](src/app/api/cron/weekly-report/route.ts) (Resend) |
+| Programación (cron) | [`.github/workflows/ga-daily-sync.yml`](.github/workflows/ga-daily-sync.yml), [`weekly-report.yml`](.github/workflows/weekly-report.yml) |
+
+> **Almacenamiento:** los snapshots y la atribución de cotizaciones se guardan en
+> **Sanity** (no Postgres). El cron diario es una **GitHub Action** que llama al
+> endpoint protegido — el sitio no usa Netlify ni cron nativo.
+
+### Credenciales a generar
+
+1. **GA4 Service Account** — en Google Cloud: habilitar *Google Analytics Data API*,
+   crear service account + clave JSON, y dar a su `client_email` rol **Viewer** en
+   la propiedad GA4. Anotar el **Property ID numérico** (no el `G-XXXX`).
+2. **Telegram Bot** — `@BotFather` → `/newbot` (token) y obtener el **chat ID**
+   (`api.telegram.org/bot<TOKEN>/getUpdates`).
+3. **Resend** — ya configurado (`RESEND_API_KEY`).
+
+### Variables de entorno (`.env.local` + dashboard de hosting)
+
+```bash
+GA4_PROPERTY_ID=421398765
+GA4_CLIENT_EMAIL=caliber-analytics@proyecto.iam.gserviceaccount.com
+GA4_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+# (admite el PEM con \n literales o el PEM en base64)
+TELEGRAM_BOT_TOKEN=123456:ABC...
+TELEGRAM_CHAT_ID=987654321
+CRON_SECRET=<aleatorio-largo>          # protege los endpoints /api/cron/*
+REPORT_RECIPIENT=tucorreo@ejemplo.com  # opcional; default ADMIN_EMAIL/QUOTE_RECIPIENT
+```
+
+Todas degradan con elegancia: si falta una credencial, esa pieza se omite sin
+romper el sitio (mismo patrón que Turnstile).
+
+### Secrets de GitHub Actions (Settings → Secrets → Actions)
+
+- `CRON_SECRET` — el mismo valor que en el hosting.
+- `SITE_URL` — base de producción, ej. `https://caliber3d.mx`.
+
+Disparo manual de prueba: pestaña **Actions → (workflow) → Run workflow**, o
+`curl -H "Authorization: Bearer $CRON_SECRET" $SITE_URL/api/cron/ga-sync`.
+Backfill de un día: `.../api/cron/ga-sync?date=2026-06-29`.
+
 ## Mejoras futuras
 
 - **WhatsApp inline a mitad del blog**: insertar un CTA de WhatsApp dentro del

@@ -10,6 +10,7 @@ import { presupuestoType } from './presupuesto'
 import { calculoType } from './calculo'
 import { blogCommentType } from './blogComment'
 import { productReviewType } from './productReview'
+import { gaDailySnapshotType } from './gaDailySnapshot'
 
 export const schemaTypes = [
   categoryType,
@@ -24,4 +25,5 @@ export const schemaTypes = [
   calculoType,
   blogCommentType,
   productReviewType,
+  gaDailySnapshotType,
 ]
