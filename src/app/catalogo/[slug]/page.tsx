@@ -41,12 +41,21 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   if (!product) return { title: 'Producto no encontrado' }
 
   const materialNote = product.material ? ` en ${product.material}` : ''
-  const desc = `${product.title}${materialNote}. Impresión 3D a medida en Playa del Carmen. Cotización personalizada en menos de 24h.`
+  const desc = `${product.title}${materialNote}: impresión 3D a medida en Playa del Carmen. Cotizá por WhatsApp. Envíos en toda la Riviera Maya.`
+
+  // Título ≤60 chars con keyword local + marca; degrada si el nombre es largo.
+  const SUFFIX = ' | Caliber 3D'
+  const full = `${product.title} — Impresión 3D en Playa del Carmen${SUFFIX}`
+  const short = `${product.title} — Impresión 3D${SUFFIX}`
+  let title = full
+  if (title.length > 60) title = short
+  if (title.length > 60) title = product.title.slice(0, 60 - SUFFIX.length - 1).trimEnd() + '…' + SUFFIX
 
   const canonicalUrl = `${BASE_URL}/catalogo/${slug}`
 
   return {
-    title: `${product.title} — Impresión 3D a Medida`,
+    // absolute evita que el template del layout agregue una segunda marca.
+    title: { absolute: title },
     description: desc.length > 160 ? desc.slice(0, 157) + '…' : desc,
     alternates: {
       canonical: canonicalUrl,

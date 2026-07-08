@@ -11,7 +11,11 @@ import type { Metadata } from 'next'
 export const revalidate = 60
 
 // URL canónica de la home — evita contenido duplicado (resuelve contra metadataBase).
+// title.absolute evita que el template del layout duplique la marca.
 export const metadata: Metadata = {
+  title: { absolute: 'Impresión 3D en Playa del Carmen y Riviera Maya | Caliber 3D' },
+  description:
+    'Servicio profesional de impresión 3D en Playa del Carmen, Cancún y Tulum. Cotizá por WhatsApp o con nuestra calculadora online. Entrega en 24-72 horas.',
   alternates: { canonical: '/' },
 }
 

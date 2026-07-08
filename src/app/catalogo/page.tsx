@@ -11,9 +11,9 @@ export const revalidate = 60
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://caliber3d.mx'
 
 export const metadata: Metadata = {
-  title: 'Catálogo de Impresión 3D a Medida',
+  title: { absolute: 'Catálogo de Impresión 3D en Playa del Carmen | Caliber 3D' },
   description:
-    'Catálogo de repuestos 3D, figuras personalizadas y piezas técnicas de Caliber 3D Printing. Impresión 3D a medida con alta precisión en Playa del Carmen.',
+    'Explorá nuestro catálogo de piezas impresas en 3D: trofeos, cake toppers, maquetas, prototipos, repuestos y más. Envíos en toda la Riviera Maya.',
   alternates: {
     canonical: `${BASE_URL}/catalogo`,
   },

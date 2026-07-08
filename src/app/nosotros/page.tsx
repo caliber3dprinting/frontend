@@ -12,9 +12,9 @@ import type { PortableTextBlock } from '@portabletext/react'
 export const revalidate = 60
 
 export const metadata: Metadata = {
-  title: 'Ingeniería y Proceso en Impresión 3D',
+  title: { absolute: 'Caliber 3D — Taller de Impresión 3D en Playa del Carmen' },
   description:
-    'Proceso técnico riguroso y trato personalizado en cada proyecto. Caliber 3D Printing fabrica repuestos 3D, piezas técnicas y prototipos de alta calidad en Playa del Carmen.',
+    'Somos un taller de impresión 3D en Playa del Carmen especializado en hoteles, bodas, arquitectos y particulares de la Riviera Maya. Conocé nuestro equipo.',
   alternates: { canonical: '/nosotros' },
 }
 

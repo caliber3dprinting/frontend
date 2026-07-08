@@ -9,9 +9,9 @@ const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://caliber3d.mx'
 export const revalidate = 60
 
 export const metadata: Metadata = {
-  title: 'Blog de Impresión 3D | Guías, Materiales y Proyectos',
+  title: { absolute: 'Blog Impresión 3D — Guías, Materiales y Precios | Caliber 3D' },
   description:
-    'Aprende sobre impresión 3D: guías prácticas, comparativas de materiales, proyectos reales y consejos de Caliber 3D Printing en Playa del Carmen.',
+    'Guías prácticas sobre impresión 3D en México: materiales, precios, tiempos, casos de éxito y aplicaciones para empresas de la Riviera Maya.',
   alternates: {
     canonical: `${BASE_URL}/blog`,
   },

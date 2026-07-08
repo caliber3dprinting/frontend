@@ -7,9 +7,9 @@ import CalculadoraGate from '@/components/tools/CalculadoraGate'
 const BLOG_POST_SLUG = 'como-calcular-costo-impresion-3d'
 
 export const metadata: Metadata = {
-  title: 'Calculadora de Costos de Impresión 3D | Caliber 3D',
+  title: { absolute: 'Calculadora Impresión 3D — Precio Instantáneo | Caliber 3D' },
   description:
-    'Herramienta gratuita para diseñadores e impresores: calculá el costo real de producir una pieza 3D considerando material, energía, amortización de máquina y mano de obra.',
+    'Calculá el costo real de tu impresión 3D en segundos. Estimación por material, tamaño y complejidad. Gratis y sin compromiso. Playa del Carmen.',
   alternates: { canonical: '/calculadora' },
 }
 

@@ -4,9 +4,9 @@ import QuoteForm from '@/components/forms/QuoteForm'
 import Breadcrumb from '@/components/ui/Breadcrumb'
 
 export const metadata: Metadata = {
-  title: 'Solicita tu Cotización de Impresión 3D',
+  title: { absolute: 'Cotizá tu Impresión 3D — Respuesta en 24hs | Caliber 3D' },
   description:
-    'Describe tu proyecto y recibe una propuesta técnica personalizada en menos de 24 horas. Impresión 3D a medida, repuestos 3D y piezas de precisión en Playa del Carmen.',
+    'Enviá tu proyecto de impresión 3D y recibí cotización en menos de 24 horas. Servicio en Playa del Carmen, Cancún, Tulum y la Riviera Maya. WhatsApp directo.',
   alternates: { canonical: '/cotizar' },
 }
 
