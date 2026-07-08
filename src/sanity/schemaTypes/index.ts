@@ -11,12 +11,14 @@ import { calculoType } from './calculo'
 import { blogCommentType } from './blogComment'
 import { productReviewType } from './productReview'
 import { gaDailySnapshotType } from './gaDailySnapshot'
+import { answerBoxType } from './answerBox'
 
 export const schemaTypes = [
   categoryType,
   productType,
   testimonialType,
   blogPostType,
+  answerBoxType,
   homePageType,
   aboutPageType,
   globalConfigType,

@@ -8,7 +8,7 @@ export const blogPostType = defineType({
     defineField({ name: 'title', title: 'Título', type: 'string', validation: (r) => r.required() }),
     defineField({ name: 'slug', title: 'Slug', type: 'slug', options: { source: 'title' }, validation: (r) => r.required() }),
     defineField({ name: 'excerpt', title: 'Resumen', type: 'text', rows: 3, validation: (r) => r.required() }),
-    defineField({ name: 'content', title: 'Contenido', type: 'array', of: [{ type: 'block' }, { type: 'image', options: { hotspot: true }, fields: [{ name: 'alt', type: 'string', title: 'Texto alternativo' }, { name: 'caption', type: 'string', title: 'Leyenda' }] }] }),
+    defineField({ name: 'content', title: 'Contenido', type: 'array', of: [{ type: 'block' }, { type: 'image', options: { hotspot: true }, fields: [{ name: 'alt', type: 'string', title: 'Texto alternativo' }, { name: 'caption', type: 'string', title: 'Leyenda' }] }, { type: 'answerBox' }] }),
     defineField({ name: 'cover_image', title: 'Imagen de portada', type: 'image', options: { hotspot: true }, fields: [defineField({ name: 'alt', type: 'string', title: 'Texto alternativo' })] }),
     defineField({ name: 'categories', title: 'Categorías', type: 'array', of: [{ type: 'reference', to: [{ type: 'category' }] }] }),
     defineField({ name: 'author', title: 'Autor', type: 'string' }),

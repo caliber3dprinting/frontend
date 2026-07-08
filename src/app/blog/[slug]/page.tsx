@@ -11,7 +11,8 @@ import TrackView from '@/components/analytics/TrackView'
 import TrackedLink from '@/components/analytics/TrackedLink'
 import ScrollDepthTracker from '@/components/analytics/ScrollDepthTracker'
 import JsonLd from '@/components/seo/JsonLd'
-import { articleSchema, breadcrumbSchema, faqSchema } from '@/lib/schema'
+import { articleSchema } from '@/lib/schema'
+import FAQSection from '@/components/blog/FAQSection'
 import { buildWhatsappUrl } from '@/lib/whatsapp'
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://caliber3d.mx'
@@ -60,6 +61,9 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
       publishedTime: post.publishedAt,
       modifiedTime: post.updatedAt,
       authors: post.author ? [post.author] : undefined,
+      // article:section y article:tag ayudan a que redes y LLMs categoricen el post
+      section: post.categories?.[0]?.name,
+      tags: post.categories?.map((c) => c.name),
       images: imageUrl ? [{ url: imageUrl, alt: post.title }] : [],
     },
     twitter: {
@@ -91,15 +95,6 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const imageUrl = post.cover_image ? getSanityImageUrl(post.cover_image, 'large') : null
   const categories = post.categories ?? []
 
-  const breadcrumbItems = [
-    { name: 'Inicio', url: BASE_URL },
-    { name: 'Blog', url: `${BASE_URL}/blog` },
-    ...(categories[0]
-      ? [{ name: categories[0].name, url: `${BASE_URL}/blog?categoria=${categories[0].slug}` }]
-      : []),
-    { name: post.title },
-  ]
-
   return (
     <>
       <JsonLd
@@ -113,10 +108,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           author: post.author ?? undefined,
         })}
       />
-      <JsonLd data={breadcrumbSchema(breadcrumbItems)} />
-      {post.faq && post.faq.length > 0 && (
-        <JsonLd data={faqSchema(post.faq)} />
-      )}
+      {/* El BreadcrumbList JSON-LD lo emite el propio componente <Breadcrumb /> */}
       <TrackView event="view_blog_post" params={{ slug: post.slug }} />
       <ScrollDepthTracker params={{ slug: post.slug }} />
 
@@ -186,20 +178,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           </div>
         )}
 
-        {/* FAQ visual */}
-        {post.faq && post.faq.length > 0 && (
-          <section className="mt-16 pt-12 border-t border-zinc-800">
-            <h2 className="text-2xl font-bold text-white mb-8">Preguntas frecuentes</h2>
-            <dl className="space-y-6">
-              {post.faq.map((item, i) => (
-                <div key={i} className="border border-zinc-800 rounded-xl p-6">
-                  <dt className="text-base font-semibold text-white mb-2">{item.question}</dt>
-                  <dd className="text-zinc-400 leading-relaxed">{item.answer}</dd>
-                </div>
-              ))}
-            </dl>
-          </section>
-        )}
+        {/* FAQ: lista visual + JSON-LD FAQPage (AEO) */}
+        {post.faq && <FAQSection faqs={post.faq} />}
 
         {/* CTA final */}
         <div className="mt-16 p-8 bg-zinc-900 border border-zinc-800 rounded-2xl text-center">

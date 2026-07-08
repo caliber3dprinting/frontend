@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import { PortableText, type PortableTextComponents } from '@portabletext/react'
 import type { PortableTextBlock } from '@portabletext/react'
+import { AnswerBox } from '@/components/blog/AnswerBox'
 
 const components: PortableTextComponents = {
   block: {
@@ -99,6 +100,9 @@ const components: PortableTextComponents = {
       <pre className="my-6 bg-zinc-900 border border-zinc-800 rounded-xl px-5 py-4 overflow-x-auto">
         <code className="text-orange-300 text-sm font-mono leading-relaxed">{value?.code}</code>
       </pre>
+    ),
+    answerBox: ({ value }) => (
+      <AnswerBox question={value?.question ?? ''}>{value?.answer}</AnswerBox>
     ),
   },
 }

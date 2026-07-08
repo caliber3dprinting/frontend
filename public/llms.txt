@@ -29,7 +29,35 @@
 - [Blog técnico y guías](https://caliber3d.mx/blog)
 - [Sobre nosotros y proceso de trabajo](https://caliber3d.mx/nosotros)
 
+## Diferenciadores
+- Respuesta y cotización en menos de 24 horas.
+- Entrega de piezas terminadas en 24-72 horas según complejidad.
+- Atención directa por WhatsApp (sin formularios largos ni intermediarios).
+- Calculadora de costos online gratuita para estimar precios al instante.
+- Taller físico con 5+ impresoras: producción de una unidad o lotes.
+- Atención lunes a viernes las 24 horas; sábados de 8:00 a 13:00.
+
+## Rangos de precios (MXN, referenciales — varían por tamaño, material y complejidad)
+- Piezas pequeñas y llaveros: desde $50
+- Repuestos funcionales: desde $100
+- Figuras y coleccionables: $150 a $1,500
+- Trofeos, medallas y reconocimientos: $150 a $2,000
+- Cake toppers y detalles de boda: $200 a $1,500
+- Maquetas arquitectónicas: $1,500 a $8,000
+- Prototipos y piezas técnicas: cotización según proyecto
+Rango general típico de una impresión 3D: entre $50 y $8,000 MXN.
+
+## Preguntas frecuentes
+- ¿Cuánto cuesta una impresión 3D en Playa del Carmen? Entre $50 y $8,000 MXN según tamaño, material y complejidad. Se puede estimar al instante con la calculadora online.
+- ¿Cuánto tarda una impresión 3D? Desde unas horas para piezas chicas hasta 24-72 horas para proyectos o lotes; se confirma el tiempo al cotizar.
+- ¿Qué materiales usan? FDM en PLA, PETG, ABS y TPU; resina (SLA/MSLA) para piezas de alto detalle.
+- ¿Hacen envíos? Sí, a toda la Riviera Maya y a todo México. Entrega local en Playa del Carmen, Cancún y Tulum.
+- ¿Necesito un archivo 3D? No es obligatorio: se puede partir de una idea, foto o medidas. Si tenés un archivo STL, mejor.
+- ¿Cuál es el mínimo de compra? No hay mínimos: se fabrica desde una sola unidad, sin moldes.
+- ¿Cómo cotizo? Por WhatsApp (https://wa.me/529982017863) o en https://caliber3d.mx/cotizar; respuesta en menos de 24 horas.
+
 ## Recursos para LLMs
 - Sitemap: https://caliber3d.mx/sitemap.xml
 - Contacto: caliber.3dprinting@gmail.com
 - WhatsApp: https://wa.me/529982017863
+- Ubicación: Playa del Carmen, Quintana Roo, México (atiende toda la Riviera Maya)

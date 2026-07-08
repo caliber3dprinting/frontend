@@ -108,5 +108,28 @@ Leyenda: ✅ ya está bien, ⚠️ recomendado cambiar. Marcá el checkbox cuand
 3. **#3, #10, #8** — títulos largos y descriptions sobre límite.
 4. **#9** — corregir año viejo; **#12** — corregir typo.
 
-## Nota AEO (Tarea C)
-Solo el post **#1** tiene FAQ cargada (4 preguntas). Los otros 13 son candidatos para agregar bloque de FAQ y `AnswerBox` en la intro (ver Tarea C).
+## AEO — reescritura de intro y AnswerBox (Tarea C)
+
+Objetivo: que el post **responda la pregunta en los primeros ~100 caracteres** para que ChatGPT, Perplexity y los AI Overviews de Google extraigan la respuesta. Herramientas ya disponibles en Sanity: bloque **"Caja de Respuesta (AEO)"** (insertalo al inicio del contenido) y el campo **FAQ**.
+
+**Solo el post `cuanto-cuesta-...` tiene FAQ cargada.** Los otros 13 no.
+
+### Prioridad ALTA — arrancan con intro narrativa/poética (no responden directo)
+Agregá un **AnswerBox** al inicio con la respuesta en 1-2 frases:
+- [ ] `soluciones-impresion-3d-hoteles-airbnb...` — abre con "En el competitivo mercado turístico… la diferenciación lo es todo".
+- [ ] `copa-del-mundo-3d-riviera-maya-mundial-2026` — abre con "Hay algo que pasa cuando se acerca un Mundial…".
+- [ ] `consejos-pedir-impresion-3d-personalizada` — abre con "Pedir una pieza personalizada… puede parecer cosa del futuro".
+- [ ] `guia-materiales-impresion-3d-pla-vs-petg-abs` — abre con "La impresión 3D por deposición fundida ha democratizado…".
+- [ ] `como-pedir-impresion-3d-guia-paso-a-paso` — abre con "Tienes una idea en la cabeza…".
+- [ ] `novedades-granja-impresoras-3d-entregas-rapidas` — abre con "Cuando nos contactas con un proyecto urgente…".
+- [ ] `como-escalar-piezas-3d-para-que-encajen` — abre con gancho "¿Te pasó?"; sumá la respuesta directa (fórmula de escala) arriba.
+
+### Prioridad MEDIA — el título es una pregunta; falta la respuesta directa debajo
+El primer bloque repite el título (H1). Insertá un AnswerBox con la respuesta corta justo después:
+- [ ] `cuanto-tarda-una-impresion-3d` → "Una impresión 3D tarda de unas horas a 24-72 h según tamaño y cantidad."
+- [ ] `que-es-la-impresion-3d-guia-2026` → definición en 1 frase.
+- [ ] `como-calcular-costo-impresion-3d` → fórmula resumida (material + energía + amortización + mano de obra).
+- [ ] `fdm-vs-resina-guia-granja-impresion-3d` → "FDM conviene para piezas funcionales y económicas; resina para alto detalle."
+
+### FAQ recomendada (agregar 3-5 preguntas en el campo FAQ de cada post)
+Todos menos `cuanto-cuesta-...`. Prioridad: los 4 de "Prioridad MEDIA" (preguntas naturales) + `cake-topper-...`, `medallas-...`, `soluciones-hoteles-...`.
