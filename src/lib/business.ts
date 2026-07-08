@@ -29,13 +29,13 @@ export const BUSINESS = {
   phoneE164: '+529982017863', // formato E.164 para schema.org / tel:
   whatsapp: '529982017863', // solo dígitos para wa.me
 
-  email: 'caliber.3dprinting@gmail.com', // ⚠️ confirmar: ver nota en el reporte
+  email: 'caliber.3dprinting@gmail.com',
 
   address: {
-    street: '', // ⚠️ pendiente confirmar (calle y número exactos)
+    street: 'Privada Zafiro, Fraccionamiento La Joya, casa 38',
     locality: 'Playa del Carmen',
     region: 'Quintana Roo',
-    postalCode: '77710',
+    postalCode: '77710', // ⚠️ confirmar CP exacto de La Joya
     country: 'MX',
   },
 
@@ -52,9 +52,9 @@ export const BUSINESS = {
     'Quintana Roo',
   ],
 
-  // ⚠️ Coordenadas aproximadas de Playa del Carmen. Confirmar contra la ubicación
-  // exacta del Perfil de Empresa de Google.
-  geo: { latitude: 20.6296, longitude: -87.0739 },
+  // Coordenadas del taller, derivadas del Plus Code de Google Maps
+  // "76GJJV9W+F5" (JV9W+F5 Playa del Carmen).
+  geo: { latitude: 20.61869, longitude: -87.10456 },
 
   // Horarios: lunes a viernes abierto 24 hs; sábados 08:00–13:00; domingos cerrado.
   openingHours: OPENING_HOURS,
@@ -62,7 +62,7 @@ export const BUSINESS = {
   hoursText: 'Lunes a viernes las 24 hs · Sábados de 8:00 a 13:00 hs',
 
   social: {
-    instagram: 'https://www.instagram.com/caliber3d.mx/', // ⚠️ confirmar URL exacta
+    instagram: 'https://www.instagram.com/caliber3d.mx/',
     facebook: 'https://www.facebook.com/caliber3d.mx', // ⚠️ confirmar URL exacta
     tiktok: '', // sin TikTok
     googleBusiness: '', // se completa cuando el perfil esté verificado
