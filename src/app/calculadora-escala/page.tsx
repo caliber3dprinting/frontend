@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   title: 'Calculadora de Escala 3D | Caliber 3D',
   description:
     'Herramienta gratuita para técnicos en impresión 3D: calculá el porcentaje exacto de escala para llevar un diámetro a la medida que necesitás en Bambu Studio o Cura.',
+  alternates: { canonical: '/calculadora-escala' },
 }
 
 export default async function CalculadoraEscalaPage() {

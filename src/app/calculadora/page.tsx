@@ -10,6 +10,7 @@ export const metadata: Metadata = {
   title: 'Calculadora de Costos de Impresión 3D | Caliber 3D',
   description:
     'Herramienta gratuita para diseñadores e impresores: calculá el costo real de producir una pieza 3D considerando material, energía, amortización de máquina y mano de obra.',
+  alternates: { canonical: '/calculadora' },
 }
 
 export default async function CalculadoraPage() {

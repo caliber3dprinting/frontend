@@ -15,6 +15,7 @@ export const metadata: Metadata = {
   title: 'Ingeniería y Proceso en Impresión 3D',
   description:
     'Proceso técnico riguroso y trato personalizado en cada proyecto. Caliber 3D Printing fabrica repuestos 3D, piezas técnicas y prototipos de alta calidad en Playa del Carmen.',
+  alternates: { canonical: '/nosotros' },
 }
 
 const FALLBACK = {

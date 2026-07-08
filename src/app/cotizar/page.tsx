@@ -7,6 +7,7 @@ export const metadata: Metadata = {
   title: 'Solicita tu Cotización de Impresión 3D',
   description:
     'Describe tu proyecto y recibe una propuesta técnica personalizada en menos de 24 horas. Impresión 3D a medida, repuestos 3D y piezas de precisión en Playa del Carmen.',
+  alternates: { canonical: '/cotizar' },
 }
 
 export default function QuotePage() {

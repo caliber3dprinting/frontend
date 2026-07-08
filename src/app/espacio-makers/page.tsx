@@ -7,6 +7,7 @@ export const metadata: Metadata = {
   title: 'Espacio Makers | Caliber 3D',
   description:
     'Herramientas profesionales para impresores y diseñadores 3D: calculadora de costos, presupuestador y calculadora de escala. Acceso gratuito para usuarios registrados.',
+  alternates: { canonical: '/espacio-makers' },
 }
 
 export default async function EspacioMakersPage() {
