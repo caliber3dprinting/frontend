@@ -35,7 +35,7 @@ export const BUSINESS = {
     street: 'Privada Zafiro, Fraccionamiento La Joya, casa 38',
     locality: 'Playa del Carmen',
     region: 'Quintana Roo',
-    postalCode: '77710', // ⚠️ confirmar CP exacto de La Joya
+    postalCode: '77710', // La Joya: se usa 77710 (también figuran 77716/77717 en algunas fuentes)
     country: 'MX',
   },
 
@@ -63,7 +63,7 @@ export const BUSINESS = {
 
   social: {
     instagram: 'https://www.instagram.com/caliber3d.mx/',
-    facebook: 'https://www.facebook.com/caliber3d.mx', // ⚠️ confirmar URL exacta
+    facebook: 'https://www.facebook.com/caliber3d.mx',
     tiktok: '', // sin TikTok
     googleBusiness: '', // se completa cuando el perfil esté verificado
   },
