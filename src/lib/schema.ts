@@ -1,65 +1,81 @@
 // Generadores de JSON-LD (schema.org) tipados y centralizados.
 // Se inyectan con el componente <JsonLd data={...} />.
+// Los datos de negocio (NAP) viven en un único lugar: src/lib/business.ts
 
-const SITE_URL = 'https://caliber3d.mx'
+import { BUSINESS, BUSINESS_SAME_AS } from './business'
 
-// Datos de negocio reutilizados por LocalBusiness y Organization.
-const SAME_AS = [
-  'https://www.instagram.com/caliber3d.mx/',
-  'https://www.facebook.com/caliber3d.mx',
-]
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://caliber3d.mx'
 
 const BUSINESS_DESCRIPTION =
   'Servicio de impresión 3D FDM y resina en Playa del Carmen: repuestos, piezas técnicas, ' +
   'prototipos, maquetas y figuras personalizadas para empresas y particulares de la Riviera Maya.'
+
+// Construye el bloque openingHoursSpecification desde BUSINESS.openingHours,
+// omitiendo los días cerrados (null).
+function openingHoursSpecification() {
+  const { weekdays, saturday, sunday } = BUSINESS.openingHours
+  const spec: Array<{
+    '@type': 'OpeningHoursSpecification'
+    dayOfWeek: string[]
+    opens: string
+    closes: string
+  }> = []
+
+  if (weekdays) {
+    spec.push({
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+      opens: weekdays.opens,
+      closes: weekdays.closes,
+    })
+  }
+  if (saturday) {
+    spec.push({
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Saturday'],
+      opens: saturday.opens,
+      closes: saturday.closes,
+    })
+  }
+  if (sunday) {
+    spec.push({
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Sunday'],
+      opens: sunday.opens,
+      closes: sunday.closes,
+    })
+  }
+  return spec
+}
 
 export function localBusinessSchema() {
   return {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
     '@id': `${SITE_URL}/#business`,
-    name: 'Caliber 3D Printing',
+    name: BUSINESS.legalName,
     description: BUSINESS_DESCRIPTION,
     url: SITE_URL,
     image: `${SITE_URL}/caliber-3d-logo.svg`,
-    telephone: '+529982017863',
-    email: 'caliber.3dprinting@gmail.com',
+    telephone: BUSINESS.phoneE164,
+    email: BUSINESS.email,
     priceRange: '$$',
     address: {
       '@type': 'PostalAddress',
-      addressLocality: 'Playa del Carmen',
-      addressRegion: 'Quintana Roo',
-      postalCode: '77710',
-      addressCountry: 'MX',
+      ...(BUSINESS.address.street ? { streetAddress: BUSINESS.address.street } : {}),
+      addressLocality: BUSINESS.address.locality,
+      addressRegion: BUSINESS.address.region,
+      postalCode: BUSINESS.address.postalCode,
+      addressCountry: BUSINESS.address.country,
     },
     geo: {
       '@type': 'GeoCoordinates',
-      latitude: 20.6296,
-      longitude: -87.0739,
+      latitude: BUSINESS.geo.latitude,
+      longitude: BUSINESS.geo.longitude,
     },
-    areaServed: [
-      { '@type': 'City', name: 'Playa del Carmen' },
-      { '@type': 'City', name: 'Cancún' },
-      { '@type': 'City', name: 'Tulum' },
-      { '@type': 'City', name: 'Cozumel' },
-      { '@type': 'City', name: 'Puerto Morelos' },
-      { '@type': 'City', name: 'Solidaridad' },
-    ],
-    openingHoursSpecification: [
-      {
-        '@type': 'OpeningHoursSpecification',
-        dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-        opens: '08:00',
-        closes: '18:00',
-      },
-      {
-        '@type': 'OpeningHoursSpecification',
-        dayOfWeek: ['Saturday'],
-        opens: '09:00',
-        closes: '14:00',
-      },
-    ],
-    sameAs: SAME_AS,
+    areaServed: BUSINESS.areaServed.map((name) => ({ '@type': 'City', name })),
+    openingHoursSpecification: openingHoursSpecification(),
+    sameAs: BUSINESS_SAME_AS,
   }
 }
 
@@ -68,12 +84,12 @@ export function organizationSchema() {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     '@id': `${SITE_URL}/#organization`,
-    name: 'Caliber 3D Printing',
+    name: BUSINESS.legalName,
     description: BUSINESS_DESCRIPTION,
     url: SITE_URL,
     logo: { '@type': 'ImageObject', url: `${SITE_URL}/caliber-3d-logo.svg` },
-    email: 'caliber.3dprinting@gmail.com',
-    sameAs: SAME_AS,
+    email: BUSINESS.email,
+    sameAs: BUSINESS_SAME_AS,
   }
 }
 
@@ -90,7 +106,7 @@ export function productSchema(p: {
     name: p.name,
     ...(p.image ? { image: p.image } : {}),
     description: p.description,
-    brand: { '@type': 'Brand', name: 'Caliber 3D Printing' },
+    brand: { '@type': 'Brand', name: BUSINESS.legalName },
     // Offer solo cuando hay precio: un Offer sin price genera warnings en Google.
     ...(p.priceFrom
       ? {
@@ -100,7 +116,7 @@ export function productSchema(p: {
             price: p.priceFrom,
             availability: 'https://schema.org/InStock',
             url: `${SITE_URL}/catalogo/${p.slug}`,
-            seller: { '@type': 'Organization', name: 'Caliber 3D Printing', url: SITE_URL },
+            seller: { '@type': 'Organization', name: BUSINESS.legalName, url: SITE_URL },
           },
         }
       : {}),
@@ -124,10 +140,10 @@ export function articleSchema(a: {
     ...(a.image ? { image: a.image } : {}),
     datePublished: a.publishedAt,
     dateModified: a.updatedAt ?? a.publishedAt,
-    author: { '@type': 'Person', name: a.author ?? 'Caliber 3D Printing' },
+    author: { '@type': 'Person', name: a.author ?? BUSINESS.legalName },
     publisher: {
       '@type': 'Organization',
-      name: 'Caliber 3D Printing',
+      name: BUSINESS.legalName,
       logo: { '@type': 'ImageObject', url: `${SITE_URL}/caliber-3d-logo.svg` },
     },
     mainEntityOfPage: { '@type': 'WebPage', '@id': `${SITE_URL}/blog/${a.slug}` },

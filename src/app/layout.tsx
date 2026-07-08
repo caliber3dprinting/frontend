@@ -8,6 +8,7 @@ import { getWhatsappNumber } from '@/lib/whatsapp'
 import Analytics from '@/components/analytics/Analytics'
 import JsonLd from '@/components/seo/JsonLd'
 import { localBusinessSchema } from '@/lib/schema'
+import { BUSINESS } from '@/lib/business'
 
 // Fuentes vía next/font: se auto-hospedan, se precargan y eliminan el
 // @import render-blocking de Google Fonts. Barlow = cuerpo, Condensed = títulos.
@@ -66,13 +67,13 @@ export default async function RootLayout({
   // datos dinámicos (WhatsApp, redes sociales) sin prop drilling.
   // Fallback mientras el single type no exista en Sanity.
   const FALLBACK_CONFIG = {
-    whatsapp_number: getWhatsappNumber(),
-    contact_email: 'caliber.3dprinting@gmail.com',
-    instagram_url: 'https://www.instagram.com/caliber3d.mx/',
-    facebook_url: 'https://www.facebook.com/caliber3d.mx',
-    tiktok_url: null,
-    business_hours: 'Lunes a viernes de 08 a 18 hrs, sábados de 9 a 14 hrs',
-    address: 'Playa del Carmen, Quintana Roo',
+    whatsapp_number: getWhatsappNumber(BUSINESS.whatsapp),
+    contact_email: BUSINESS.email,
+    instagram_url: BUSINESS.social.instagram || null,
+    facebook_url: BUSINESS.social.facebook || null,
+    tiktok_url: BUSINESS.social.tiktok || null,
+    business_hours: BUSINESS.hoursText,
+    address: `${BUSINESS.address.locality}, ${BUSINESS.address.region}`,
   }
   const [config, categories] = await Promise.all([
     getGlobalConfig().catch(() => null),

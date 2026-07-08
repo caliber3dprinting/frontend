@@ -43,6 +43,8 @@ export default async function HomePage() {
       <EspacioMakersCTA />
       <AboutPreview data={homeData} />
       <TestimonialsSection testimonials={testimonials} />
+      {/* TODO(reseñas Google): insertar aquí el widget de reseñas del Perfil de
+          Empresa de Google cuando esté verificado. Ej: <GoogleReviews placeId="..." /> */}
       <LatestPosts posts={blogResult.data} />
       <QuoteCTA />
     </>

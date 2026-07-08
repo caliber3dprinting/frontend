@@ -16,6 +16,7 @@ const FOOTER_LINKS = [
   { href: '/calculadora', label: 'Calculadora 3D' },
   { href: '/calculadora-escala', label: 'Calculadora de escala' },
   { href: '/nosotros', label: 'Nosotros' },
+  { href: '/contacto', label: 'Contacto' },
   { href: '/cotizar', label: 'Solicitar cotización' },
 ]
 

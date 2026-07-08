@@ -15,7 +15,7 @@ const securityHeaders = [
       "font-src 'self' https://*.clerk.accounts.dev https://clerk.caliber3d.mx",
       "worker-src blob:",
       "connect-src 'self' https://cdn.sanity.io https://*.api.sanity.io https://*.clerk.accounts.dev https://clerk.caliber3d.mx https://api.clerk.com wss://*.clerk.accounts.dev wss://clerk.caliber3d.mx https://challenges.cloudflare.com https://clerk-telemetry.com https://www.googletagmanager.com https://www.google-analytics.com https://analytics.google.com https://stats.g.doubleclick.net",
-      "frame-src https://*.clerk.accounts.dev https://clerk.caliber3d.mx https://challenges.cloudflare.com",
+      "frame-src https://*.clerk.accounts.dev https://clerk.caliber3d.mx https://challenges.cloudflare.com https://www.google.com https://maps.google.com",
       "frame-ancestors 'none'",
       "object-src 'none'",
       "base-uri 'self'",
