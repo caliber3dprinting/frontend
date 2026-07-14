@@ -93,6 +93,27 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const coverUrl = product.cover_image ? getSanityImageUrl(product.cover_image, 'large') : undefined
   const materialNote = product.material ? ` en ${product.material}` : ''
 
+  // aggregateRating a partir de reseñas aprobadas (getProductReviews ya filtra).
+  const reviewCount = reviews.length
+  const aggregateRating =
+    reviewCount > 0
+      ? {
+          ratingValue: Math.round((reviews.reduce((s, r) => s + r.rating, 0) / reviewCount) * 10) / 10,
+          reviewCount,
+        }
+      : undefined
+
+  // Devuelve null si el producto no tiene ni precio ni reseñas: en ese caso no
+  // emitimos markup de Product para no generar el error crítico de Google.
+  const prodSchema = productSchema({
+    name: product.title,
+    image: coverUrl,
+    description: `${product.title}${materialNote}. Impresión 3D a medida en Playa del Carmen.`,
+    slug: product.slug,
+    priceFrom: product.price ?? undefined,
+    aggregateRating,
+  })
+
   const breadcrumbItems = [
     { name: 'Inicio', url: BASE_URL },
     { name: 'Catálogo', url: `${BASE_URL}/catalogo` },
@@ -104,14 +125,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
   return (
     <>
-      <JsonLd
-        data={productSchema({
-          name: product.title,
-          image: coverUrl,
-          description: `${product.title}${materialNote}. Impresión 3D a medida en Playa del Carmen.`,
-          slug: product.slug,
-        })}
-      />
+      {prodSchema && <JsonLd data={prodSchema} />}
       <JsonLd data={breadcrumbSchema(breadcrumbItems)} />
       <TrackView event="view_product" params={{ slug: product.slug, name: product.title }} />
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-30">

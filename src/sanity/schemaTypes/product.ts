@@ -9,6 +9,13 @@ export const productType = defineType({
     defineField({ name: 'slug', title: 'Slug', type: 'slug', options: { source: 'title' }, validation: (r) => r.required() }),
     defineField({ name: 'description', title: 'Descripción', type: 'array', of: [{ type: 'block' }] }),
     defineField({ name: 'material', title: 'Material', type: 'string' }),
+    defineField({
+      name: 'price',
+      title: 'Precio desde (MXN)',
+      description: 'Precio base opcional. Si se completa, habilita el rich result de oferta con precio en Google.',
+      type: 'number',
+      validation: (r) => r.min(0),
+    }),
     defineField({ name: 'featured', title: 'Destacado', type: 'boolean', initialValue: false }),
     defineField({
       name: 'status',

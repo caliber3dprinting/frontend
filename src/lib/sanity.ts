@@ -58,6 +58,7 @@ const PRODUCT_FIELDS = `
   "slug": slug.current,
   description,
   material,
+  price,
   featured,
   "status": select(defined(status) => status, "published"),
   "cover_image": cover_image ${IMAGE_PROJECTION},

@@ -99,7 +99,16 @@ export function productSchema(p: {
   description: string
   slug: string
   priceFrom?: number
+  aggregateRating?: { ratingValue: number; reviewCount: number }
 }) {
+  const hasOffer = Boolean(p.priceFrom)
+  const hasRating = Boolean(p.aggregateRating && p.aggregateRating.reviewCount > 0)
+
+  // Google marca inválido (error crítico) un Product sin offers, review ni
+  // aggregateRating. Sin precio y sin reseñas, no emitimos markup de Product:
+  // mejor no tener rich result que tener markup inválido que bloquea la Búsqueda.
+  if (!hasOffer && !hasRating) return null
+
   return {
     '@context': 'https://schema.org',
     '@type': 'Product',
@@ -107,6 +116,17 @@ export function productSchema(p: {
     ...(p.image ? { image: p.image } : {}),
     description: p.description,
     brand: { '@type': 'Brand', name: BUSINESS.legalName },
+    ...(hasRating
+      ? {
+          aggregateRating: {
+            '@type': 'AggregateRating',
+            ratingValue: p.aggregateRating!.ratingValue,
+            reviewCount: p.aggregateRating!.reviewCount,
+            bestRating: 5,
+            worstRating: 1,
+          },
+        }
+      : {}),
     // Offer solo cuando hay precio: un Offer sin price genera warnings en Google.
     ...(p.priceFrom
       ? {

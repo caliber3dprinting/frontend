@@ -33,6 +33,7 @@ export interface Product {
   slug: string
   description: PortableTextBlock[] | null
   material: string | null
+  price: number | null
   featured: boolean
   status: 'draft' | 'published'
   cover_image: SanityImage | null
