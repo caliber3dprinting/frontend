@@ -11,7 +11,7 @@ import ProductReviewForm from '@/components/community/ProductReviewForm'
 import TrackView from '@/components/analytics/TrackView'
 import TrackedLink from '@/components/analytics/TrackedLink'
 import JsonLd from '@/components/seo/JsonLd'
-import { productSchema, breadcrumbSchema } from '@/lib/schema'
+import { productSchema } from '@/lib/schema'
 import { buildWhatsappUrl } from '@/lib/whatsapp'
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://caliber3d.mx'
@@ -114,19 +114,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
     aggregateRating,
   })
 
-  const breadcrumbItems = [
-    { name: 'Inicio', url: BASE_URL },
-    { name: 'Catálogo', url: `${BASE_URL}/catalogo` },
-    ...(product.categories?.[0]
-      ? [{ name: product.categories[0].name, url: `${BASE_URL}/catalogo?categoria=${product.categories[0].slug}` }]
-      : []),
-    { name: product.title },
-  ]
-
   return (
     <>
       {prodSchema && <JsonLd data={prodSchema} />}
-      <JsonLd data={breadcrumbSchema(breadcrumbItems)} />
+      {/* El BreadcrumbList JSON-LD lo emite el propio componente <Breadcrumb /> */}
       <TrackView event="view_product" params={{ slug: product.slug, name: product.title }} />
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-30">
       {/* Breadcrumb */}

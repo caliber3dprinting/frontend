@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { breadcrumbSchema } from '@/lib/schema'
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://caliber3d.mx'
 
@@ -10,16 +11,13 @@ export interface BreadcrumbItem {
 export default function Breadcrumb({ items }: { items: BreadcrumbItem[] }) {
   const allItems = [{ label: 'Inicio', href: '/' }, ...items]
 
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: allItems.map((item, index) => ({
-      '@type': 'ListItem',
-      position: index + 1,
+  // Única fuente del BreadcrumbList JSON-LD: las páginas no deben emitir otro.
+  const jsonLd = breadcrumbSchema(
+    allItems.map((item) => ({
       name: item.label,
-      ...(item.href ? { item: `${BASE_URL}${item.href}` } : {}),
-    })),
-  }
+      ...(item.href ? { url: `${BASE_URL}${item.href}` } : {}),
+    }))
+  )
 
   return (
     <>
